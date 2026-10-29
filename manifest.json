@@ -1,0 +1,24 @@
+{
+  "name": "DS Enterprises — FMCG Management & Field Sales System",
+  "short_name": "DS Enterprises",
+  "description": "Complete distribution management and sales officer field operations system engineered for FMCG distributors.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#13233f",
+  "theme_color": "#13233f",
+  "icons": [
+    {
+      "src": "assets/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock & Inventory — DS Enterprises FMCG System</title>
+  <meta name="description" content="DS Enterprises FMCG Distribution & Field Sales System — Stock & Inventory" />
+  <meta name="theme-color" content="#10213f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" />
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/dashboard.css" />
+  <link rel="stylesheet" href="../assets/css/responsive.css" />
+  <link rel="stylesheet" href="../assets/css/print.css" />
+
+  <!-- External CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body data-page="stock.html">
+
+  <!-- ── COMPONENTS (injected by DS_Components loader in app.js) ─────── -->
+  <div data-component="header"></div>
+  <div class="ds-container">
+    <div data-component="sidebar"></div>
+
+    <main class="ds-main-content">
+      <div class="ds-panel">
+        <div class="ds-panel-header" style="flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 class="ds-panel-title">📦 IMS Inventory & Product Catalog Management</h3>
+            <p class="ds-panel-subtitle">Product information CRUD, image catalog, purchase/selling margins, stock inward/adjustments & valuation</p>
+          </div>
+          <div class="stock-action-bar" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; width:100%;">
+            <!-- View Mode Switcher -->
+            <div class="btn-group" style="display:inline-flex; background:#e2e8f0; padding:2px; border-radius:6px; flex:1; min-width:240px;">
+              <button type="button" id="btnViewCards" class="btn btn-sm" onclick="DS_Stock.setViewMode('cards')" style="flex:1; padding:6px 10px; font-weight:700; border-radius:4px; background:#ffffff; color:#0f172a; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+                🖼️ Product Cards
+              </button>
+              <button type="button" id="btnViewTable" class="btn btn-sm" onclick="DS_Stock.setViewMode('table')" style="flex:1; padding:6px 10px; font-weight:700; border-radius:4px; background:transparent; color:#64748b;">
+                📋 Ledger Table
+              </button>
+            </div>
+
+            <!-- Add Product (Admin & IMS Manager) -->
+            <button type="button" id="btnOpenAddProduct" class="btn btn-primary btn-sm" onclick="DS_Stock.openProductModal()" style="font-weight:700; padding:7px 14px; min-height:36px;">
+              + Add New Product
+            </button>
+            <button type="button" class="btn btn-sm" onclick="DS_Stock.purgeZeroStockProducts()" style="font-weight:700; padding:7px 12px; min-height:36px; border:1px solid #fca5a5; background:#fff1f2; color:#be123c;" title="Remove out-of-stock / inactive products from inventory (0-स्टॉक वाले आइटम्स हटाएं)">
+              🗑️ Remove 0-Stock Items
+            </button>
+            <div style="display:inline-flex; gap:6px;">
+              <button type="button" class="btn btn-success btn-sm" onclick="DS_Stock.exportExcel()" style="padding:6px 10px;">📊 Excel</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Stock.exportPDF()" style="padding:6px 10px;">📄 PDF</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="ds-filter-bar" style="flex-wrap:wrap; gap:12px; align-items:flex-end;">
+          <div class="form-group" style="min-width:130px;">
+            <label class="form-label">Firm Name</label>
+            <select id="stFirm" class="form-control"><option value="">All Firms</option></select>
+          </div>
+
+          <div class="form-group" style="min-width:130px;">
+            <label class="form-label">Brand</label>
+            <select id="stBrand" class="form-control"><option value="">All Brands</option></select>
+          </div>
+
+          <div class="form-group" style="min-width:130px;">
+            <label class="form-label">Category</label>
+            <select id="stCat" class="form-control"><option value="">All Categories</option></select>
+          </div>
+
+          <div class="form-group" style="min-width:130px;">
+            <label class="form-label">Sub Category</label>
+            <select id="stSubCat" class="form-control"><option value="">All Sub Categories</option></select>
+          </div>
+
+          <div class="form-group" style="min-width:110px;">
+            <label class="form-label">City</label>
+            <select id="stCity" class="form-control"><option value="">All</option></select>
+          </div>
+
+          <div class="form-group" style="min-width:120px;">
+            <label class="form-label">City_1 (Main)</label>
+            <select id="stCity1" class="form-control"><option value="">All</option></select>
+          </div>
+
+          <div class="form-group" style="min-width:130px;">
+            <label class="form-label">Route / Beat</label>
+            <select id="stRoute" class="form-control"><option value="">All</option></select>
+          </div>
+
+          <div class="form-group" style="min-width:120px;">
+            <label class="form-label">Stock Status</label>
+            <select id="stStockStatus" class="form-control">
+              <option value="">All</option>
+              <option value="in_stock">In Stock (>0)</option>
+              <option value="low_stock">Low Stock (≤ Reorder)</option>
+              <option value="out_of_stock">Out of Stock (0)</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="flex:1; min-width:180px;">
+            <label class="form-label">Search SKU or Product Name</label>
+            <input type="text" id="stSearch" class="form-control" placeholder="Search product name, brand or code..." autocomplete="off" spellcheck="false" />
+          </div>
+
+          <div style="display:flex; align-items:flex-end;">
+            <button type="button" class="btn btn-secondary" onclick="DS_Stock.resetFilters()" title="Reset Filters" style="height:38px; padding:0 12px; font-size:12px; font-weight:700;">
+              ↺ Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Low Stock Alert Banner (Dynamic) -->
+        <div id="stLowStockBanner" style="display:none; padding:10px 14px; background:#fff1f2; border:1px solid #fecdd3; border-radius:8px; color:#be123c; font-size:13px; font-weight:600; margin-bottom:14px;">
+          ⚠️ <span id="stLowStockCount">0</span> products are below minimum reorder level! Please replenish warehouse stock.
+        </div>
+
+        <!-- Stock KPIs -->
+        <div class="kpi-grid" id="stockKpi" style="margin-bottom:16px;"></div>
+
+        <!-- Brand Stock Chart -->
+        <div class="ds-panel" style="margin-bottom:20px;">
+          <h4 style="margin:0 0 10px; font-size:15px; font-weight:700;">🏷 Brand-wise Stock Valuation</h4>
+          <div style="height:240px; position:relative;">
+            <canvas id="stockBrandChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Brand / Company Summary Table with Market Outstanding -->
+        <div class="ds-panel" style="margin-bottom:20px;">
+          <div class="ds-panel-header">
+            <h4 class="ds-panel-title">🏢 Brand / Company Summary</h4>
+            <span style="font-size:12px; color:var(--ds-text-muted);">Stock balance linked with active market outstanding</span>
+          </div>
+          <div class="ds-table-wrap" style="max-height:260px; overflow-y:auto;">
+            <table class="ds-table" id="brandStockTable">
+              <thead>
+                <tr>
+                  <th>Brand / Company</th>
+                  <th class="num">Stock Qty</th>
+                  <th class="num">Stock Value</th>
+                  <th class="num" style="color:#b91c1c;">Market Outstanding</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Brand Deep Dive Outstanding Panel (Reveals when brand is filtered) -->
+        <div class="ds-panel" id="stockBrandOutstandingPanel" style="display:none; background:#f8fafc; border:2px solid #0284c7; margin-bottom:20px;">
+          <div class="ds-panel-header">
+            <h4 class="ds-panel-title" id="stockBrandOutstandingTitle">Brand Outstanding Detail</h4>
+            <span style="font-size:12px; color:var(--ds-text-muted);">Market recovery due for selected brand</span>
+          </div>
+          <div class="ds-table-wrap" style="max-height:260px; overflow-y:auto;">
+            <table class="ds-table" id="stockBrandOutstandingTable">
+              <thead>
+                <tr>
+                  <th>Party / Store</th>
+                  <th>Date</th>
+                  <th>Invoice Number</th>
+                  <th class="num">Aging</th>
+                  <th>City_1</th>
+                  <th>City</th>
+                  <th>Route</th>
+                  <th class="num">Outstanding Due</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- VIEW CONTAINER 1: IMS PRODUCT CARDS GRID (DEFAULT) -->
+        <div id="stockCardsView" class="ds-panel" style="margin-bottom:20px;">
+          <div class="ds-panel-header">
+            <div>
+              <h4 class="ds-panel-title">🖼️ FMCG Product Catalog & IMS Inventory Cards</h4>
+              <p class="ds-panel-subtitle">Visual item cards with product images, margins, reorder thresholds & quick stock adjustment</p>
+            </div>
+            <div id="cardsResultCount" style="font-size:12px; color:var(--ds-text-muted); font-weight:600;"></div>
+          </div>
+          <div class="product-cards-grid" id="imsProductGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px; margin-top:10px;">
+            <!-- Rendered by assets/js/stock.js -->
+          </div>
+        </div>
+
+        <!-- VIEW CONTAINER 2: STOCK DETAIL TABLE (LEDGER VIEW) -->
+        <div id="stockTableView" class="ds-panel" style="display:none; margin-bottom:20px;">
+          <div class="ds-panel-header">
+            <h4 class="ds-panel-title">📋 Stock Inventory Detail Ledger</h4>
+            <span style="font-size:12px; color:var(--ds-text-muted);">Full tabular inventory balance with purchase costs and margins</span>
+          </div>
+          <div class="ds-table-wrap" style="max-height:500px; overflow-y:auto;">
+            <table class="ds-table" id="stockTable">
+              <thead>
+                <tr>
+                  <th style="width:50px;">Photo</th>
+                  <th>SKU Code</th>
+                  <th>Item Description</th>
+                  <th>Brand</th>
+                  <th>Category</th>
+                  <th class="num">Cost (₹)</th>
+                  <th class="num">Selling Rate</th>
+                  <th class="num">MRP</th>
+                  <th class="num">Margin %</th>
+                  <th class="num">Stock Qty</th>
+                  <th class="num">Stock Value</th>
+                  <th>Status</th>
+                  <th style="text-align:center;">Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- MODAL: ADD / EDIT PRODUCT INFORMATION (ENTERPRISE IMS) -->
+      <!-- ============================================================ -->
+      <div id="productModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="productModalTitle">
+        <div class="modal-card" style="width:min(680px, 95%); max-height:90vh; display:flex; flex-direction:column;">
+          <div class="modal-header">
+            <h3 class="modal-title" id="productModalTitle">📦 Add New FMCG Product</h3>
+            <button type="button" class="modal-close" aria-label="Close modal" onclick="DS_App.closeModal('productModal')">×</button>
+          </div>
+
+          <form id="productForm" onsubmit="DS_Stock.handleSaveProduct(event)" style="overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:14px;">
+            
+            <input type="hidden" id="prodEditCode" value="" />
+
+            <!-- Product Code & Name -->
+            <div style="display:grid; grid-template-columns:1fr 2fr; gap:12px;">
+              <div class="form-group">
+                <label class="form-label" for="prodCode">SKU / Item Code *</label>
+                <input type="text" id="prodCode" class="form-control" required placeholder="e.g. SKU-015" style="font-weight:700;" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="prodName">Product / Item Name *</label>
+                <input type="text" id="prodName" class="form-control" required placeholder="e.g. Parle Hide & Seek 120g" />
+              </div>
+            </div>
+
+            <!-- Brand & Category & Sub Category & Firm -->
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">
+              <div class="form-group">
+                <label class="form-label" for="prodBrand">Brand *</label>
+                <input type="text" id="prodBrand" class="form-control" required list="brandDatalist" placeholder="e.g. Parle / Britannia" />
+                <datalist id="brandDatalist"></datalist>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="prodCategory">Category *</label>
+                <input type="text" id="prodCategory" class="form-control" required list="catDatalist" placeholder="e.g. Biscuits & Bakery" />
+                <datalist id="catDatalist"></datalist>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="prodSubCategory">Sub Category</label>
+                <input type="text" id="prodSubCategory" class="form-control" list="subCatDatalist" placeholder="e.g. Glucose Biscuits" />
+                <datalist id="subCatDatalist"></datalist>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="prodFirm">Firm / Company</label>
+                <input type="text" id="prodFirm" class="form-control" placeholder="e.g. Parle Products" />
+              </div>
+            </div>
+
+            <!-- Pricing & Margins -->
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px;">
+              <div style="font-size:11px; font-weight:800; text-transform:uppercase; color:#0284c7; margin-bottom:8px;">
+                💰 Pricing, Cost & Valuation
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px;">
+                <div class="form-group">
+                  <label class="form-label" for="prodPurchasePrice">Purchase Cost (₹) *</label>
+                  <input type="number" id="prodPurchasePrice" class="form-control" step="0.01" min="0" required placeholder="0.00" oninput="DS_Stock.calcMarginPreview()" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="prodRate">Selling Rate (₹) *</label>
+                  <input type="number" id="prodRate" class="form-control" step="0.01" min="0" required placeholder="0.00" oninput="DS_Stock.calcMarginPreview()" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="prodMrp">MRP (₹) *</label>
+                  <input type="number" id="prodMrp" class="form-control" step="0.01" min="0" required placeholder="0.00" oninput="DS_Stock.calcMarginPreview()" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="prodUnit">Pack Unit *</label>
+                  <select id="prodUnit" class="form-control">
+                    <option value="Pkt">Pkt (Packet)</option>
+                    <option value="Case">Case</option>
+                    <option value="Pouch">Pouch</option>
+                    <option value="Bag">Bag</option>
+                    <option value="Pcs">Pcs (Piece)</option>
+                    <option value="Pack">Pack</option>
+                    <option value="Box">Box</option>
+                    <option value="Tetra">Tetra</option>
+                    <option value="Brick">Brick</option>
+                    <option value="Jar">Jar</option>
+                    <option value="Bottle">Bottle</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Live Profit Margin Calculator Indicator -->
+              <div id="prodMarginBox" style="margin-top:10px; padding:8px 12px; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:6px; font-size:12px; color:#065f46; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+                <div>Unit Margin: <strong id="lblMarginAmt">₹ 0.00</strong></div>
+                <div>Profit Margin: <strong id="lblMarginPct">0.0%</strong></div>
+                <div>Retailer Discount vs MRP: <strong id="lblDiscountPct">0.0%</strong></div>
+              </div>
+            </div>
+
+            <!-- Stock & Inventory Reorder Thresholds -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="form-group">
+                <label class="form-label" for="prodStock">Current Warehouse Stock Quantity *</label>
+                <input type="number" id="prodStock" class="form-control" min="0" required placeholder="e.g. 150" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="prodMinStock">Minimum Reorder Alert Level</label>
+                <input type="number" id="prodMinStock" class="form-control" min="0" value="30" placeholder="e.g. 30" />
+              </div>
+            </div>
+
+            <!-- Product Image Support (File Upload + URL + Quick Presets) -->
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px;">
+              <div style="font-size:11px; font-weight:800; text-transform:uppercase; color:#0284c7; margin-bottom:8px;">
+                📸 Product Image (Upload or URL)
+              </div>
+              
+              <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+                <!-- Preview Thumbnail Box -->
+                <div style="width:84px; height:84px; border-radius:10px; border:2px dashed #cbd5e1; background:#ffffff; overflow:hidden; display:grid; place-items:center; flex-shrink:0;">
+                  <img id="prodImgPreview" src="" alt="Preview" style="width:100%; height:100%; object-fit:contain; display:none;" />
+                  <span id="prodImgPlaceholder" style="font-size:24px; color:#94a3b8;">🖼️</span>
+                </div>
+
+                <div style="flex:1; min-width:240px; display:flex; flex-direction:column; gap:8px;">
+                  <div class="form-group" style="margin:0;">
+                    <label class="form-label" style="font-size:11px;">Upload Image from Device:</label>
+                    <input type="file" id="prodImgFile" class="form-control" accept="image/*" onchange="DS_Stock.handleImageFileSelect(this)" style="padding:4px; font-size:12px;" />
+                  </div>
+                  <div class="form-group" style="margin:0;">
+                    <label class="form-label" style="font-size:11px;">Or Enter Image File Path / Web URL:</label>
+                    <input type="text" id="prodImgUrl" class="form-control" placeholder="assets/images/products/... or https://..." oninput="DS_Stock.handleImageUrlInput(this.value)" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick FMCG Presets -->
+              <div style="margin-top:10px;">
+                <span style="font-size:11px; color:var(--ds-text-muted); font-weight:600; display:block; margin-bottom:4px;">Quick Catalog Presets:</span>
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/parle_g.jpg')">🍪 Parle-G</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/good_day.jpg')">🍪 Good Day</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/dark_fantasy.jpg')">🍫 Dark Fantasy</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/tata_tea.jpg')">☕ Tata Tea</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/fortune_oil.jpg')">🌻 Fortune Oil</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/surf_excel.jpg')">🧴 Surf Excel</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/lifebuoy_soap.jpg')">🧼 Lifebuoy Soap</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/godrej_soap.jpg')">🧼 Godrej Sandal</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/maggi.jpg')">🍜 Maggi Noodles</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/aashirvaad_atta.jpg')">🌾 Aashirvaad Atta</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/amul_butter.jpg')">🧈 Amul Butter</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/dabur_red.jpg')">🪥 Dabur Red</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/real_juice.jpg')">🧃 Real Juice</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;" onclick="DS_Stock.setPresetImage('assets/images/products/goodknight.jpg')">🦟 Goodknight Refill</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px; margin-top:6px; padding:0;">
+              <button type="button" class="btn btn-secondary" onclick="DS_App.closeModal('productModal')">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="font-weight:700;">✓ Save Product Information</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- MODAL: QUICK STOCK ADJUSTMENT & INWARD BATCH -->
+      <!-- ============================================================ -->
+      <div id="stockAdjustModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="stockAdjustTitle">
+        <div class="modal-card" style="width:min(440px, 95%);">
+          <div class="modal-header">
+            <h3 class="modal-title" id="stockAdjustTitle">⚡ Stock Inward / Inventory Adjustment</h3>
+            <button type="button" class="modal-close" aria-label="Close modal" onclick="DS_App.closeModal('stockAdjustModal')">×</button>
+          </div>
+
+          <form id="stockAdjustForm" onsubmit="DS_Stock.handleSaveStockAdjust(event)">
+            <div class="modal-body" style="display:flex; flex-direction:column; gap:12px;">
+              <input type="hidden" id="adjProdCode" value="" />
+
+              <div style="padding:10px 12px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px;">
+                <div style="font-size:11px; text-transform:uppercase; color:#1e40af; font-weight:700;">Selected SKU:</div>
+                <div style="font-size:14px; font-weight:800; color:#1e293b;" id="adjProdNameDisplay">-</div>
+                <div style="font-size:12px; color:#475569; margin-top:2px;">
+                  Current Balance: <strong id="adjProdCurrentStock" style="color:#0284c7;">0</strong>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="adjActionType">Adjustment Action *</label>
+                <select id="adjActionType" class="form-control" required onchange="DS_Stock.updateAdjustPreview()">
+                  <option value="inward">➕ Inward Stock Intake (Received from Factory / Supplier)</option>
+                  <option value="outward">➖ Outward Stock Deduction (Damage / Expired / Return)</option>
+                  <option value="set">🟰 Reconcile Exact Count (Physical Audit Count)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="adjQty">Quantity *</label>
+                <input type="number" id="adjQty" class="form-control" min="1" required placeholder="Enter quantity" oninput="DS_Stock.updateAdjustPreview()" />
+              </div>
+
+              <div id="adjResultPreview" style="font-size:12px; color:#0f766e; font-weight:700; padding:6px 10px; background:#f0fdfa; border-radius:6px;">
+                Resulting Balance: -
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="adjReason">Adjustment Note / Reference</label>
+                <input type="text" id="adjReason" class="form-control" placeholder="e.g. Inward PO#9821 / Transit damage write-off" />
+              </div>
+            </div>
+
+            <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px;">
+              <button type="button" class="btn btn-secondary" onclick="DS_App.closeModal('stockAdjustModal')">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="font-weight:700;">✓ Update Inventory Count</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Footer Component -->
+      <div data-component="footer"></div>
+    </main>
+  </div>
+  <div data-component="modal"></div>
+  <div data-component="notification"></div>
+
+
+
+  <!-- Scripts -->
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/app.js?v=4.0"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/whatsapp.js"></script>
+  <script src="../assets/js/stock.js"></script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!-- ==========================================================================
+     DS ENTERPRISES — REUSABLE MODALS
+     File: components/modal.html
+     ========================================================================== -->
+
+<!-- 1. Admin Confirmation / Security PIN Modal -->
+<div id="dsAdminConfirmModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+  <div class="modal-card" style="width:min(420px, 95%);">
+    <div class="modal-header">
+      <h3 class="modal-title" id="confirmModalTitle">🔐 Admin Password Verification</h3>
+      <button type="button" class="modal-close" aria-label="Close modal" onclick="DS_App.closeModal('dsAdminConfirmModal')">×</button>
+    </div>
+    <div class="modal-body" style="text-align:center;">
+      <p style="font-size:13px; color:var(--ds-text-muted); margin-bottom:12px;">
+        Enter Admin Master Password (Admin@919) to authorize administrative access:
+      </p>
+      <input type="password" id="dsAdminConfirmPassword" class="form-control" placeholder="Admin Master Password" maxlength="32"
+        onkeydown="if (event.key === 'Enter' && window.onAdminConfirmSubmit) { event.preventDefault(); window.onAdminConfirmSubmit(); }"
+        style="width:100%; font-size:16px; text-align:center; margin-bottom:16px; padding:10px 14px; font-weight:700;" />
+
+      <div style="display:flex; justify-content:space-between; gap:8px;">
+        <button type="button" class="btn btn-secondary" onclick="DS_App.closeModal('dsAdminConfirmModal')">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="if (window.onAdminConfirmSubmit) window.onAdminConfirmSubmit();">Unlock Admin Panel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. Universal Formatted Text Copy / WhatsApp Modal -->
+<div id="dsTextCopyModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="textCopyModalTitle">
+  <div class="modal-card" style="width:min(520px, 95%);">
+    <div class="modal-header">
+      <h3 class="modal-title" id="textCopyModalTitle" style="display:flex; align-items:center; gap:8px;">
+        <span>📋</span> <span>Formatted Message</span>
+      </h3>
+      <button type="button" class="modal-close" aria-label="Close dialog" onclick="DS_App.closeModal('dsTextCopyModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; padding:10px 12px; border-radius:8px; font-size:12px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+        <span style="font-size:16px;">✓</span> <span>Text copied to clipboard! Paste directly into WhatsApp message (Ctrl+V).</span>
+      </div>
+      <textarea id="dsCopyModalTextarea" readonly class="form-control"
+        style="width:100%; height:230px; font-family:'Courier New', monospace; font-size:12px; line-height:1.45; white-space:pre-wrap; background:#f8fafc; resize:vertical; padding:10px; border:1px solid #cbd5e1;"></textarea>
+      <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+        <button type="button" class="btn btn-primary btn-lg" style="flex:1; min-width:180px;" onclick="DS_WhatsApp.copyFromModalTextarea()">
+          📋 Copy Text Again
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="DS_App.closeModal('dsTextCopyModal')">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. Session Inactivity Timeout Warning Modal -->
+<div id="dsSessionTimeoutModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="timeoutModalTitle" style="z-index: 10001;">
+  <div class="modal-card" style="width:min(440px, 94%); border-top: 4px solid var(--ds-warning, #f59e0b); box-shadow: 0 25px 60px rgba(0,0,0,0.45);">
+    <div class="modal-header" style="background: rgba(245, 158, 11, 0.08);">
+      <h3 class="modal-title" id="timeoutModalTitle" style="color:#b45309; display:flex; align-items:center; gap:8px;">
+        <span style="font-size:20px;">⏱️</span>
+        <span>Session Expiring Soon</span>
+      </h3>
+      <button type="button" class="modal-close" aria-label="Close dialog" onclick="DS_Auth.keepSessionAlive()">×</button>
+    </div>
+    <div class="modal-body" style="text-align:center; padding: 22px 20px 16px;">
+      <p style="font-size:14px; color:var(--ds-text, #334155); margin:0 0 14px; line-height:1.5;">
+        You have been inactive for a while. For data security, your session will automatically log out in:
+      </p>
+      
+      <!-- Big Countdown Digits -->
+      <div style="display:inline-flex; align-items:baseline; justify-content:center; gap:4px; background:#fef3c7; border:1px solid #fde68a; border-radius:12px; padding:10px 24px; margin-bottom:14px;">
+        <span id="dsSessionTimeoutSecs" style="font-size:38px; font-weight:900; color:#b45309; font-variant-numeric:tabular-nums; line-height:1;">60</span>
+        <span style="font-size:14px; font-weight:700; color:#b45309;">seconds</span>
+      </div>
+
+      <!-- Animated Progress Track -->
+      <div style="width:100%; height:6px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-bottom:18px;">
+        <div id="dsSessionTimeoutBar" style="height:100%; width:100%; background:linear-gradient(90deg, #f59e0b, #ef4444); transition:width 1s linear;"></div>
+      </div>
+
+      <p style="font-size:12px; color:var(--ds-text-muted, #64748b); margin:0 0 18px;">
+        Click <strong>Stay Signed In</strong> to continue working without interruption.
+      </p>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button type="button" class="btn btn-primary" style="flex:1; min-width:140px; padding:12px; font-weight:800; font-size:14px;" onclick="DS_Auth.keepSessionAlive()">
+          ✓ Stay Signed In
+        </button>
+        <button type="button" class="btn btn-secondary" style="padding:12px 16px; font-weight:700; font-size:13px; color:#b91c1c; border-color:#fecaca;" onclick="DS_Auth.logout('manual')">
+          🚪 Log Out Now
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

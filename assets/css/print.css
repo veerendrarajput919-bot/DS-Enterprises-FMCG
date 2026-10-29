@@ -1,0 +1,169 @@
+/* ==========================================================================
+   DS ENTERPRISES — PRINT ENGINE
+   File: assets/css/print.css
+   Includes: Dispatch Challan slips, Loading Sheets, A4 layout rules
+   ========================================================================== */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+
+  /* Hide interactive web elements */
+  .ds-header,
+  .ds-sidebar,
+  .ds-mobile-toggle,
+  .ds-sidebar-backdrop,
+  .ds-filter-bar,
+  .btn,
+  .no-print,
+  .ds-toast-container,
+  .quick-actions-bar,
+  button {
+    display: none !important;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .ds-container,
+  .ds-layout {
+    display: block !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .ds-main-content {
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  .ds-panel {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* ==========================================================================
+     OFFICIAL DISPATCH CHALLAN SLIP PRINT FORMAT
+     ========================================================================== */
+  .challan-print-sheet {
+    display: block !important;
+    width: 100%;
+    border: 2px solid #000000;
+    padding: 16px;
+    margin: 0 auto;
+    page-break-inside: avoid;
+    font-family: Arial, sans-serif;
+  }
+
+  .challan-header {
+    border-bottom: 2px solid #000000;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .challan-title h1 {
+    font-size: 18pt;
+    margin: 0 0 4px;
+    text-transform: uppercase;
+  }
+
+  .challan-title p {
+    margin: 0;
+    font-size: 9pt;
+  }
+
+  .challan-meta {
+    text-align: right;
+    font-size: 10pt;
+  }
+
+  .challan-parties {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 14px;
+    font-size: 10pt;
+  }
+
+  .challan-box {
+    flex: 1;
+    border: 1px solid #000000;
+    padding: 8px 10px;
+    border-radius: 4px;
+  }
+
+  .challan-box h3 {
+    margin: 0 0 6px;
+    font-size: 10pt;
+    text-transform: uppercase;
+    border-bottom: 1px dashed #666;
+    padding-bottom: 3px;
+  }
+
+  .challan-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-bottom: 14px;
+    font-size: 9.5pt;
+  }
+
+  .challan-table th,
+  .challan-table td {
+    border: 1px solid #000000 !important;
+    padding: 6px 8px !important;
+    color: #000000 !important;
+  }
+
+  .challan-table th {
+    background-color: #f2f2f2 !important;
+    text-transform: uppercase;
+    font-weight: bold;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .challan-signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+    padding-top: 10px;
+  }
+
+  .sign-box {
+    width: 200px;
+    text-align: center;
+    border-top: 1px solid #000000;
+    padding-top: 6px;
+    font-size: 9pt;
+    font-weight: bold;
+  }
+
+  /* Table rules for generic print */
+  .ds-table-wrap {
+    overflow: visible !important;
+    border: none !important;
+  }
+
+  .ds-table {
+    border: 1px solid #000000 !important;
+  }
+
+  .ds-table th, .ds-table td {
+    border-bottom: 1px solid #333333 !important;
+    color: #000000 !important;
+  }
+}

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bill Management & Invoices — DS Enterprises FMCG System</title>
+  <meta name="description" content="DS Enterprises FMCG Distribution & Field Sales System — Bill Management, Status Views, Paid, Unpaid and Outstanding Bill Tracking" />
+  <meta name="theme-color" content="#10213f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" />
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/dashboard.css" />
+  <link rel="stylesheet" href="../assets/css/responsive.css" />
+  <link rel="stylesheet" href="../assets/css/print.css" />
+
+  <!-- External CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body data-page="bill-management.html">
+
+  <!-- Components injected by DS_Components in app.js -->
+  <div data-component="header"></div>
+  <div class="ds-container">
+    <div data-component="sidebar"></div>
+
+    <main class="ds-main-content">
+      <!-- Section Breadcrumb / Top Bar -->
+      <div class="ds-tab-bar" style="margin-bottom:16px;">
+        <a href="bill-management.html" class="ds-subnav-pill active">🧾 Bill Management & Ledger</a>
+        <a href="route-analysis.html" class="ds-subnav-pill">📍 Route & Beat Tracker</a>
+        <a href="order-punching.html" class="ds-subnav-pill">🛒 Field Order Punching</a>
+        <a href="order-report.html" class="ds-subnav-pill">📋 All Orders & Reports</a>
+        <a href="outstanding.html" class="ds-subnav-pill">⏳ Outstanding & Aging Hub</a>
+        <a href="payment-collections.html" class="ds-subnav-pill">💵 Payment Collections</a>
+      </div>
+
+      <div class="ds-panel">
+        <div class="ds-panel-header" style="flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 class="ds-panel-title">🧾 FMCG Bill Management & Status Ledger</h3>
+            <p class="ds-panel-subtitle">Dedicated bill views: All Bills, Paid Bills, Unpaid Bills & Overdue Outstanding with real-time totals</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="DS_BillManagement.exportExcel()" style="font-weight:700;">
+              📊 Export Excel
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="DS_BillManagement.exportCSV()" style="font-weight:700;">
+              📄 Export CSV
+            </button>
+            <a href="order-punching.html" class="btn btn-primary btn-sm" style="font-weight:700;">
+              🛒 Punch New Order
+            </a>
+          </div>
+        </div>
+
+        <!-- 4 Primary Status View Tabs -->
+        <div style="display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap; align-items:center; background:#f8fafc; padding:10px 14px; border-radius:12px; border:1px solid #e2e8f0;">
+          <span style="font-size:12px; font-weight:800; color:var(--ds-text-muted); margin-right:4px;">VIEW STATUS:</span>
+          
+          <button type="button" class="btn btn-primary" id="bmTabAll" onclick="DS_BillManagement.setView('all')" style="font-weight:700; border-radius:20px; padding:6px 16px; font-size:12.5px; display:inline-flex; align-items:center; gap:6px;">
+            📋 All Bills <span id="bmBadgeAll" class="badge" style="background:rgba(255,255,255,0.3); color:#fff; font-size:11px; padding:1px 6px;">0</span>
+          </button>
+          
+          <button type="button" class="btn btn-secondary" id="bmTabPaid" onclick="DS_BillManagement.setView('paid')" style="font-weight:700; border-radius:20px; padding:6px 16px; font-size:12.5px; display:inline-flex; align-items:center; gap:6px;">
+            ✅ Paid Bills <span id="bmBadgePaid" class="badge" style="background:#dcfce7; color:#15803d; font-size:11px; padding:1px 6px;">0</span>
+          </button>
+          
+          <button type="button" class="btn btn-secondary" id="bmTabUnpaid" onclick="DS_BillManagement.setView('unpaid')" style="font-weight:700; border-radius:20px; padding:6px 16px; font-size:12.5px; display:inline-flex; align-items:center; gap:6px;">
+            ⏳ Unpaid Bills <span id="bmBadgeUnpaid" class="badge" style="background:#fef3c7; color:#b45309; font-size:11px; padding:1px 6px;">0</span>
+          </button>
+          
+          <button type="button" class="btn btn-secondary" id="bmTabOutstanding" onclick="DS_BillManagement.setView('outstanding')" style="font-weight:700; border-radius:20px; padding:6px 16px; font-size:12.5px; display:inline-flex; align-items:center; gap:6px;">
+            🚨 Outstanding Bills <span id="bmBadgeOutstanding" class="badge" style="background:#fee2e2; color:#b91c1c; font-size:11px; padding:1px 6px;">0</span>
+          </button>
+
+          <span id="bmActiveViewNotice" style="margin-left:auto; font-size:12px; color:var(--ds-text-secondary); font-weight:600;">
+            Showing: <strong>All Bills</strong>
+          </span>
+        </div>
+
+        <!-- Dynamic KPI Cards -->
+        <div class="kpi-grid" id="bmKpis" style="margin-bottom:18px;">
+          <!-- Injected dynamically -->
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="ds-filter-bar" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:14px; margin-bottom:18px; box-shadow:0 1px 3px rgba(0,0,0,0.03); flex-wrap:wrap; gap:12px;">
+          <div class="form-group" style="min-width:130px;">
+            <label class="form-label">Period</label>
+            <select id="bmFilterPreset" class="form-control" onchange="DS_BillManagement.applyPreset(this.value)">
+              <option value="all" selected>All Time</option>
+              <option value="month">This Month</option>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="7days">7 Days</option>
+              <option value="lastmonth">Last Month</option>
+              <option value="3months">3 Months</option>
+              <option value="6months">6 Months</option>
+              <option value="365days">365 Days</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">From Date</label>
+            <input type="date" id="bmFromDate" class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">To Date</label>
+            <input type="date" id="bmToDate" class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">City 1 (Main)</label>
+            <select id="bmFilterCity1" class="form-control"><option value="">All City 1</option></select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <select id="bmFilterCity" class="form-control"><option value="">All Cities</option></select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Route / Beat</label>
+            <select id="bmFilterRoute" class="form-control"><option value="">All Routes</option></select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Brand</label>
+            <select id="bmFilterBrand" class="form-control"><option value="">All Brands</option></select>
+          </div>
+
+          <div class="form-group" style="flex:1; min-width:200px;">
+            <label class="form-label">Search Bill / Party / Route</label>
+            <div style="position:relative; display:flex; align-items:center;">
+              <input type="text" id="bmSearchInput" name="bill_mgmt_search" class="form-control" placeholder="Search Bill No, Party Name, Route..." autocomplete="off" spellcheck="false" style="padding-right:26px;" />
+              <button type="button" id="bmSearchClearBtn" onclick="DS_BillManagement.clearSearch()" title="Clear Search" style="position:absolute; right:8px; background:none; border:none; color:#64748b; font-weight:800; cursor:pointer; font-size:13px; display:none; padding:0; line-height:1;">✕</button>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:flex-end;">
+            <button type="button" class="btn btn-secondary" onclick="DS_BillManagement.resetFilters()" title="Reset all filters" style="height:38px; padding:0 14px; font-size:12px; font-weight:700;">
+              ↺ Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Bill Ledger Table -->
+        <div class="ds-table-wrap">
+          <table class="ds-table" id="bmBillTable">
+            <thead>
+              <tr>
+                <th class="num" style="width:45px;">#</th>
+                <th>Bill / Invoice No.</th>
+                <th style="text-align:center;">Bill Date</th>
+                <th>Party / Retail Store</th>
+                <th>Beat Route</th>
+                <th>City</th>
+                <th class="num">Bill Amount</th>
+                <th class="num">Paid Amount</th>
+                <th class="num">Balance Due</th>
+                <th style="text-align:center;">Status & Aging</th>
+                <th style="text-align:center; min-width:140px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="bmTableBody">
+              <tr><td colspan="11" class="text-center" style="padding:24px; color:var(--ds-text-muted);">Loading bill records...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Footer Component -->
+      <div data-component="footer"></div>
+    </main>
+  </div>
+  <div data-component="modal"></div>
+  <div data-component="notification"></div>
+
+  <!-- Shared App Scripts -->
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/whatsapp.js"></script>
+  <script src="../assets/js/app.js"></script>
+
+  <!-- Interactive Bill Management Controller -->
+  <script>
+    (function(window){
+      'use strict';
+
+      function esc(s) {
+        return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      }
+
+      function n(v) {
+        if (typeof v === 'number') return isNaN(v) ? 0 : v;
+        const x = parseFloat(String(v || '').replace(/,/g, '').trim());
+        return isNaN(x) ? 0 : x;
+      }
+
+      function formatDate(dStr) {
+        if (!dStr) return '-';
+        const d = new Date(String(dStr).slice(0, 10) + 'T00:00:00');
+        if (isNaN(d.getTime())) return dStr;
+        return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      }
+
+      function getAgeDays(dStr) {
+        if (!dStr) return 0;
+        const d = new Date(String(dStr).slice(0, 10) + 'T00:00:00');
+        if (isNaN(d.getTime())) return 0;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return Math.max(0, Math.floor((today - d) / (1000 * 60 * 60 * 24)));
+      }
+
+      const DS_BillManagement = {
+        _view: 'all', // 'all', 'paid', 'unpaid', 'outstanding'
+
+        init: function () {
+          if (window.DS_Storage) DS_Storage.init();
+          const s = document.getElementById('bmSearchInput');
+          if (s) s.value = '';
+          const p = document.getElementById('bmFilterPreset');
+          if (p) p.value = 'all';
+          this.applyPreset('all');
+          this.populateFilters();
+          this.bindEvents();
+          this.update();
+        },
+
+        bindEvents: function () {
+          ['bmFromDate', 'bmToDate', 'bmFilterCity1', 'bmFilterCity', 'bmFilterRoute', 'bmFilterBrand'].forEach(id => {
+            document.getElementById(id)?.addEventListener('change', () => this.update());
+          });
+          const sInp = document.getElementById('bmSearchInput');
+          if (sInp) {
+            sInp.addEventListener('input', () => {
+              const clearBtn = document.getElementById('bmSearchClearBtn');
+              if (clearBtn) clearBtn.style.display = sInp.value.trim() ? 'inline-block' : 'none';
+              this.update();
+            });
+          }
+        },
+
+        clearSearch: function () {
+          const s = document.getElementById('bmSearchInput');
+          if (s) s.value = '';
+          const btn = document.getElementById('bmSearchClearBtn');
+          if (btn) btn.style.display = 'none';
+          this.update();
+        },
+
+        setView: function (view) {
+          this._view = view || 'all';
+
+          const tabs = {
+            all: 'bmTabAll',
+            paid: 'bmTabPaid',
+            unpaid: 'bmTabUnpaid',
+            outstanding: 'bmTabOutstanding'
+          };
+
+          Object.values(tabs).forEach(tId => {
+            const btn = document.getElementById(tId);
+            if (btn) btn.className = 'btn btn-secondary';
+          });
+
+          const activeBtn = document.getElementById(tabs[this._view] || 'bmTabAll');
+          if (activeBtn) activeBtn.className = 'btn btn-primary';
+
+          const notice = document.getElementById('bmActiveViewNotice');
+          if (notice) {
+            const labelMap = {
+              all: 'All Bills',
+              paid: 'Paid Bills (Settled)',
+              unpaid: 'Unpaid Bills (Pending)',
+              outstanding: 'Outstanding Bills (Overdue)'
+            };
+            notice.innerHTML = `Showing: <strong>${labelMap[this._view] || 'All Bills'}</strong>`;
+          }
+
+          this.update();
+        },
+
+        applyPreset: function (preset) {
+          const fromEl = document.getElementById('bmFromDate');
+          const toEl = document.getElementById('bmToDate');
+          const now = new Date();
+          const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          let a = null, b = today;
+
+          if (preset === 'today') {
+            a = today;
+          } else if (preset === 'yesterday') {
+            a = new Date(today);
+            a.setDate(a.getDate() - 1);
+            b = a;
+          } else if (preset === '7days') {
+            a = new Date(today);
+            a.setDate(a.getDate() - 6);
+          } else if (preset === 'month') {
+            a = new Date(today.getFullYear(), today.getMonth(), 1);
+          } else if (preset === 'lastmonth') {
+            a = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            b = new Date(today.getFullYear(), today.getMonth(), 0);
+          } else if (preset === '3months') {
+            a = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+          } else if (preset === '6months') {
+            a = new Date(today.getFullYear(), today.getMonth() - 5, 1);
+          } else if (preset === '365days') {
+            a = new Date(today);
+            a.setDate(a.getDate() - 364);
+          } else if (preset === 'all') {
+            a = null;
+            b = null;
+          }
+
+          const ymd = d => d.toISOString().slice(0, 10);
+          if (preset !== 'custom' && fromEl && toEl) {
+            fromEl.value = a ? ymd(a) : '';
+            toEl.value = b ? ymd(b) : '';
+          }
+          this.update();
+        },
+
+        resetFilters: function () {
+          this._view = 'all';
+          this.setView('all');
+
+          const p = document.getElementById('bmFilterPreset');
+          if (p) p.value = 'all';
+
+          ['bmFilterCity1', 'bmFilterCity', 'bmFilterRoute', 'bmFilterBrand', 'bmSearchInput'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+          });
+          const clearBtn = document.getElementById('bmSearchClearBtn');
+          if (clearBtn) clearBtn.style.display = 'none';
+
+          this.applyPreset('all');
+        },
+
+        // Collect all bills from both sales and orders, deduplicating by Bill/Invoice number
+        getAllRawBills: function () {
+          const db = window.DS_Storage ? window.DS_Storage.getDB() : {};
+          const orders = window.DS_Storage ? window.DS_Storage.getOrders() : [];
+          const sales = db.sales || [];
+          const unpaidList = db.unpaid || [];
+          const partyList = db.party || [];
+
+          const partyMap = new Map(partyList.map(p => [String(p.name || '').trim().toLowerCase(), p]));
+          const unpaidMap = new Map();
+          unpaidList.forEach(u => {
+            const key = String(u.invoice || u.billNo || u.invoiceNo || u.bill_no || '').trim().toLowerCase();
+            if (key) unpaidMap.set(key, u);
+          });
+
+          const billMap = new Map();
+
+          // 1. Ingest sales rows (consolidating multi-item invoice records so invoices are never duplicated!)
+          sales.forEach(s => {
+            const inv = String(s['Invoice No.'] || s.invoiceNo || s.invoice_no || s.bill_no || s.billNo || '').trim();
+            if (!inv) return;
+
+            const key = inv.toLowerCase();
+            const party = String(s['Party Name'] || s.party || s.party_name || 'Retail Store').trim();
+            const pMeta = partyMap.get(party.toLowerCase()) || {};
+
+            const date = String(s.Date || s.date || '').slice(0, 10);
+            const city = s.City || s.city || pMeta.city || pMeta.City || 'Kanpur';
+            const city1 = s.City_1 || s.city1 || pMeta.city1 || pMeta.City_1 || city;
+            const route = s.Route || s.route || pMeta.route || pMeta.Route || 'General Beat';
+            const brand = s.Brand || s.brand || '';
+            const amt = n(s.AmountNum) || n(s.amount);
+
+            let rec = billMap.get(key);
+            if (!rec) {
+              const uRecord = unpaidMap.get(key);
+              const isUnpaid = Boolean(uRecord) || String(s.status || s.payment_status || '').toLowerCase() === 'unpaid';
+
+              rec = {
+                id: inv,
+                invoiceNo: inv,
+                billNo: inv,
+                date: date,
+                party: party,
+                route: route,
+                city: city,
+                city1: city1,
+                brands: new Set(),
+                totalAmount: 0,
+                paidAmount: 0,
+                balanceDue: 0,
+                isUnpaid: isUnpaid,
+                status: isUnpaid ? 'Unpaid' : 'Paid',
+                source: 'sales'
+              };
+              billMap.set(key, rec);
+            }
+
+            rec.totalAmount += amt;
+            if (brand) rec.brands.add(brand);
+            if (date && (!rec.date || date < rec.date)) rec.date = date;
+          });
+
+          // 2. Ingest orders (ensuring no duplicate entries if invoice was already created from sales)
+          orders.forEach(o => {
+            const inv = String(o.invoice_no || o.bill_no || o.invoiceNo || o.billNo || o.id || '').trim();
+            if (!inv) return;
+            const key = inv.toLowerCase();
+
+            if (billMap.has(key)) {
+              // Update metadata if order has additional notes or details
+              const existing = billMap.get(key);
+              if (o.status === 'Delivered' && existing.isUnpaid) {
+                // If marked delivered, update status
+                existing.status = 'Paid';
+                existing.isUnpaid = false;
+              }
+              return;
+            }
+
+            const party = String(o.storeName || o.party || 'Retail Store').trim();
+            const pMeta = partyMap.get(party.toLowerCase()) || {};
+            const date = String(o.date || o.dateTime || '').slice(0, 10);
+            const city = o.city || pMeta.city || 'Kanpur';
+            const city1 = o.city1 || o.city_1 || pMeta.city1 || city;
+            const route = o.route || pMeta.route || 'General Beat';
+            const amt = n(o.total) || 0;
+
+            const uRecord = unpaidMap.get(key);
+            const isPaid = (o.paymentStatus === 'Paid' || o.payment === 'Paid' || o.status === 'Delivered') && !uRecord;
+            const isUnpaid = !isPaid;
+
+            const brands = new Set();
+            if (Array.isArray(o.items)) {
+              o.items.forEach(it => { if (it.brand) brands.add(it.brand); });
+            }
+
+            billMap.set(key, {
+              id: o.id || inv,
+              invoiceNo: inv,
+              billNo: inv,
+              date: date,
+              party: party,
+              route: route,
+              city: city,
+              city1: city1,
+              brands: brands,
+              totalAmount: amt,
+              paidAmount: 0,
+              balanceDue: 0,
+              isUnpaid: isUnpaid,
+              status: isUnpaid ? 'Unpaid' : 'Paid',
+              source: 'order'
+            });
+          });
+
+          // Final pass: ensure balanceDue & paidAmount align precisely with status and totals
+          const result = [];
+          billMap.forEach(b => {
+            const uRecord = unpaidMap.get(b.invoiceNo.toLowerCase());
+            if (uRecord) {
+              b.isUnpaid = true;
+              const recBal = n(uRecord.amount) || n(uRecord.balanceAmount);
+              b.balanceDue = recBal > 0 ? recBal : b.totalAmount;
+              b.paidAmount = Math.max(0, b.totalAmount - b.balanceDue);
+              b.status = 'Unpaid';
+            } else if (b.isUnpaid) {
+              b.balanceDue = b.totalAmount;
+              b.paidAmount = 0;
+              b.status = 'Unpaid';
+            } else {
+              b.balanceDue = 0;
+              b.paidAmount = b.totalAmount;
+              b.status = 'Paid';
+            }
+
+            const age = getAgeDays(b.date);
+            b.ageDays = age;
+            b.isOutstanding = b.isUnpaid && (b.balanceDue > 0);
+            b.brandList = [...b.brands].join(', ') || 'General FMCG';
+            result.push(b);
+          });
+
+          return result;
+        },
+
+        populateFilters: function () {
+          const bills = this.getAllRawBills();
+          const city1s = [...new Set(bills.map(b => b.city1).filter(Boolean))].sort();
+          const cities = [...new Set(bills.map(b => b.city).filter(Boolean))].sort();
+          const routes = [...new Set(bills.map(b => b.route).filter(Boolean))].sort();
+
+          const brandSet = new Set();
+          bills.forEach(b => {
+            b.brands.forEach(br => brandSet.add(br));
+          });
+          const brands = [...brandSet].filter(Boolean).sort();
+
+          const fill = (id, arr, def) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const cur = el.value;
+            el.innerHTML = `<option value="">${def}</option>` + arr.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+            if (arr.includes(cur)) el.value = cur;
+          };
+
+          fill('bmFilterCity1', city1s, 'All City 1');
+          fill('bmFilterCity', cities, 'All Cities');
+          fill('bmFilterRoute', routes, 'All Routes');
+          fill('bmFilterBrand', brands, 'All Brands');
+        },
+
+        getFilteredBills: function () {
+          const all = this.getAllRawBills();
+
+          const fromVal = document.getElementById('bmFromDate')?.value || '';
+          const toVal = document.getElementById('bmToDate')?.value || '';
+          const city1 = (document.getElementById('bmFilterCity1')?.value || '').toLowerCase().trim();
+          const city = (document.getElementById('bmFilterCity')?.value || '').toLowerCase().trim();
+          const route = document.getElementById('bmFilterRoute')?.value || '';
+          const brand = (document.getElementById('bmFilterBrand')?.value || '').toLowerCase().trim();
+          const search = (document.getElementById('bmSearchInput')?.value || '').toLowerCase().trim();
+
+          const fromD = fromVal ? new Date(fromVal + 'T00:00:00') : null;
+          const toD = toVal ? new Date(toVal + 'T23:59:59') : null;
+
+          return all.filter(b => {
+            if (fromD || toD) {
+              const d = new Date(b.date + 'T00:00:00');
+              if (!isNaN(d.getTime())) {
+                if (fromD && d < fromD) return false;
+                if (toD && d > toD) return false;
+              }
+            }
+
+            if (city1 && b.city1.toLowerCase() !== city1) return false;
+            if (city && b.city.toLowerCase() !== city) return false;
+            if (route && b.route !== route) return false;
+
+            if (brand) {
+              const hasBrand = [...b.brands].some(br => br.toLowerCase() === brand);
+              if (!hasBrand) return false;
+            }
+
+            if (search) {
+              const hay = `${b.billNo} ${b.party} ${b.route} ${b.city} ${b.city1} ${b.brandList}`.toLowerCase();
+              if (!hay.includes(search)) return false;
+            }
+
+            // Apply Status View Filter
+            if (this._view === 'paid' && b.isUnpaid) return false;
+            if (this._view === 'unpaid' && !b.isUnpaid) return false;
+            if (this._view === 'outstanding' && !b.isOutstanding) return false;
+
+            return true;
+          });
+        },
+
+        update: function () {
+          const allRaw = this.getAllRawBills();
+          const fromVal = document.getElementById('bmFromDate')?.value || '';
+          const toVal = document.getElementById('bmToDate')?.value || '';
+          const city1 = (document.getElementById('bmFilterCity1')?.value || '').toLowerCase().trim();
+          const city = (document.getElementById('bmFilterCity')?.value || '').toLowerCase().trim();
+          const route = document.getElementById('bmFilterRoute')?.value || '';
+          const brand = (document.getElementById('bmFilterBrand')?.value || '').toLowerCase().trim();
+          const search = (document.getElementById('bmSearchInput')?.value || '').toLowerCase().trim();
+
+          const fromD = fromVal ? new Date(fromVal + 'T00:00:00') : null;
+          const toD = toVal ? new Date(toVal + 'T23:59:59') : null;
+
+          // Dimension-filtered set without status view to compute tab badge counts accurately
+          const baseFiltered = allRaw.filter(b => {
+            if (fromD || toD) {
+              const d = new Date(b.date + 'T00:00:00');
+              if (!isNaN(d.getTime())) {
+                if (fromD && d < fromD) return false;
+                if (toD && d > toD) return false;
+              }
+            }
+            if (city1 && b.city1.toLowerCase() !== city1) return false;
+            if (city && b.city.toLowerCase() !== city) return false;
+            if (route && b.route !== route) return false;
+            if (brand) {
+              const hasBrand = [...b.brands].some(br => br.toLowerCase() === brand);
+              if (!hasBrand) return false;
+            }
+            if (search) {
+              const hay = `${b.billNo} ${b.party} ${b.route} ${b.city} ${b.city1} ${b.brandList}`.toLowerCase();
+              if (!hay.includes(search)) return false;
+            }
+            return true;
+          });
+
+          // Count badges
+          let cAll = baseFiltered.length;
+          let cPaid = 0, cUnpaid = 0, cOutstanding = 0;
+          let vAll = 0, vPaid = 0, vUnpaid = 0, vOutstanding = 0;
+
+          baseFiltered.forEach(b => {
+            vAll += b.totalAmount;
+            if (!b.isUnpaid) {
+              cPaid++;
+              vPaid += b.totalAmount;
+            } else {
+              cUnpaid++;
+              vUnpaid += b.balanceDue;
+              if (b.isOutstanding) {
+                cOutstanding++;
+                vOutstanding += b.balanceDue;
+              }
+            }
+          });
+
+          const setBadge = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val.toLocaleString('en-IN');
+          };
+          setBadge('bmBadgeAll', cAll);
+          setBadge('bmBadgePaid', cPaid);
+          setBadge('bmBadgeUnpaid', cUnpaid);
+          setBadge('bmBadgeOutstanding', cOutstanding);
+
+          // Render Dynamic KPIs
+          const kpiEl = document.getElementById('bmKpis');
+          if (kpiEl) {
+            kpiEl.innerHTML = [
+              ['Total Bills Value', DS_App.money(vAll), `${cAll} Bills Active`, 'blue'],
+              ['Paid Collections', DS_App.money(vPaid), `${cPaid} Invoices Settled`, 'emerald'],
+              ['Unpaid Balances', DS_App.money(vUnpaid), `${cUnpaid} Invoices Pending`, 'amber'],
+              ['Overdue Outstanding', DS_App.money(vOutstanding), `${cOutstanding} Bills Overdue`, 'danger']
+            ].map(it => `
+              <div class="kpi-card ${it[3]}" style="padding:14px 16px;">
+                <div class="kpi-label">${it[0]}</div>
+                <div class="kpi-value" style="font-size:22px; font-weight:900;">${it[1]}</div>
+                <div style="font-size:11px; color:var(--ds-text-muted); margin-top:3px;">${it[2]}</div>
+              </div>
+            `).join('');
+          }
+
+          // Active filtered bills based on selected status view
+          const filtered = this.getFilteredBills();
+          this.renderTable(filtered);
+        },
+
+        renderTable: function (bills) {
+          const tbody = document.getElementById('bmTableBody');
+          if (!tbody) return;
+
+          if (!bills || bills.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="11" class="text-center" style="padding:32px; color:var(--ds-text-muted);">
+                  <div style="font-size:14px; font-weight:700; color:#475569; margin-bottom:6px;">No bills found matching current view and filters</div>
+                  <button type="button" class="btn btn-sm btn-secondary" onclick="DS_BillManagement.resetFilters()">↺ Reset All Filters</button>
+                </td>
+              </tr>
+            `;
+            return;
+          }
+
+          // Sort by date descending, then bill number
+          bills.sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.totalAmount - a.totalAmount);
+
+          tbody.innerHTML = bills.map((b, i) => {
+            const isPaid = !b.isUnpaid;
+            const isOut = b.isOutstanding;
+
+            let badgeHtml = '';
+            if (isPaid) {
+              badgeHtml = '<span class="badge" style="background:#dcfce7; color:#15803d; font-weight:700;">✅ Paid (Settled)</span>';
+            } else if (isOut) {
+              badgeHtml = `<span class="badge" style="background:#fee2e2; color:#b91c1c; font-weight:800;">🚨 Overdue (${b.ageDays}d)</span>`;
+            } else {
+              badgeHtml = `<span class="badge" style="background:#fef3c7; color:#b45309; font-weight:700;">⏳ Unpaid (${b.ageDays}d)</span>`;
+            }
+
+            return `
+              <tr>
+                <td class="num font-mono">${i + 1}</td>
+                <td>
+                  <span class="badge" style="background:#eff6ff; color:#1d4ed8; font-family:monospace; font-weight:800; font-size:12px; padding:3px 8px; border-radius:6px;">
+                    🧾 ${esc(b.billNo)}
+                  </span>
+                  <div style="font-size:10.5px; color:var(--ds-text-muted); margin-top:2px;">${esc(b.brandList)}</div>
+                </td>
+                <td style="text-align:center; font-size:12px; font-weight:600; color:var(--ds-text-secondary);">${formatDate(b.date)}</td>
+                <td>
+                  <strong>${esc(b.party)}</strong>
+                  <div style="font-size:11px; color:var(--ds-text-muted);">${esc(b.city1)} • ${esc(b.city)}</div>
+                </td>
+                <td>${esc(b.route)}</td>
+                <td>${esc(b.city)}</td>
+                <td class="num font-mono"><strong>${DS_App.money(b.totalAmount)}</strong></td>
+                <td class="num font-mono" style="color:#16a34a;">${DS_App.money(b.paidAmount)}</td>
+                <td class="num font-mono" style="color:${b.balanceDue > 0 ? '#b91c1c' : '#16a34a'}; font-weight:800;">${DS_App.money(b.balanceDue)}</td>
+                <td style="text-align:center;">${badgeHtml}</td>
+                <td style="text-align:center;">
+                  <div style="display:flex; gap:6px; justify-content:center;">
+                    ${b.balanceDue > 0 ? `
+                      <button type="button" class="btn btn-sm btn-primary" onclick="DS_WhatsApp.sendPartyPaymentReminder('${esc(b.party)}')" title="Send WhatsApp Payment Follow-up">💬 Reminder</button>
+                      <a href="payment-collections.html?party=${encodeURIComponent(b.party)}&invoice=${encodeURIComponent(b.billNo)}&amount=${b.balanceDue}" class="btn btn-sm btn-success" title="Collect Payment Receipt">💵 Collect</a>
+                    ` : `
+                      <span class="badge" style="background:#f1f5f9; color:#475569; font-size:11px;">✓ Cleared</span>
+                    `}
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        },
+
+        exportExcel: function () {
+          if (typeof XLSX === 'undefined') {
+            DS_App.toast('XLSX library not loaded', 'error');
+            return;
+          }
+          const bills = this.getFilteredBills();
+          if (!bills.length) {
+            DS_App.toast('No bills to export', 'warning');
+            return;
+          }
+          const data = bills.map((b, i) => ({
+            '#': i + 1,
+            'Bill No': b.billNo,
+            'Bill Date': b.date,
+            'Party Name': b.party,
+            'Route / Beat': b.route,
+            'City': b.city,
+            'City 1': b.city1,
+            'Brands': b.brandList,
+            'Total Amount': b.totalAmount,
+            'Paid Amount': b.paidAmount,
+            'Balance Due': b.balanceDue,
+            'Payment Status': b.status,
+            'Aging (Days)': b.ageDays
+          }));
+
+          const ws = XLSX.utils.json_to_sheet(data);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Bills Ledger');
+          XLSX.writeFile(wb, `DS_Enterprises_Bills_${this._view.toUpperCase()}_${new Date().toISOString().slice(0,10)}.xlsx`);
+          DS_App.toast('Downloaded Bills Excel successfully', 'success');
+        },
+
+        exportCSV: function () {
+          const bills = this.getFilteredBills();
+          if (!bills.length) {
+            DS_App.toast('No bills to export', 'warning');
+            return;
+          }
+          const header = ['#', 'Bill No', 'Date', 'Party Name', 'Route', 'City', 'Total Amount', 'Paid Amount', 'Balance Due', 'Status', 'Aging Days'];
+          const lines = [header.join(',')];
+          bills.forEach((b, i) => {
+            lines.push([
+              i + 1,
+              `"${b.billNo}"`,
+              `"${b.date}"`,
+              `"${b.party.replace(/"/g, '""')}"`,
+              `"${b.route.replace(/"/g, '""')}"`,
+              `"${b.city.replace(/"/g, '""')}"`,
+              b.totalAmount.toFixed(2),
+              b.paidAmount.toFixed(2),
+              b.balanceDue.toFixed(2),
+              `"${b.status}"`,
+              b.ageDays
+            ].join(','));
+          });
+          const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `DS_Enterprises_Bills_${this._view.toUpperCase()}_${new Date().toISOString().slice(0,10)}.csv`;
+          a.click();
+          DS_App.toast('Downloaded Bills CSV successfully', 'success');
+        }
+      };
+
+      window.DS_BillManagement = DS_BillManagement;
+      document.addEventListener('DOMContentLoaded', () => DS_BillManagement.init());
+      window.addEventListener('ds:components:loaded', () => DS_BillManagement.init());
+      window.addEventListener('ds:db-updated', () => {
+        DS_BillManagement.populateFilters();
+        DS_BillManagement.update();
+      });
+    })(window);
+  </script>
+</body>
+</html>

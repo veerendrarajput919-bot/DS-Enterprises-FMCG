@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DS Enterprises — FMCG Management & Field Sales System</title>
+  <meta name="description" content="Enterprise FMCG Distribution & Sales Officer Field Operations Management System with Offline-First LocalStorage, Real-time MySQL Sync, WhatsApp receipts and route analysis." />
+  <meta name="theme-color" content="#10213f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" />
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="./assets/css/style.css" />
+  <link rel="stylesheet" href="./assets/css/dashboard.css" />
+  <link rel="stylesheet" href="./assets/css/responsive.css" />
+  <link rel="stylesheet" href="./assets/css/print.css" />
+
+  <!-- External CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) reg.unregister();
+      });
+    }
+
+    // Instant routing guard: redirect root index.html to dashboard or login
+    (function () {
+      const loggedIn = sessionStorage.getItem('ds_auth_logged_in') === 'true' || localStorage.getItem('ds_auth_logged_in') === 'true';
+      if (loggedIn) {
+        window.location.replace('pages/dashboard.html');
+      } else {
+        window.location.replace('pages/login.html');
+      }
+    })();
+  </script>
+</head>
+<body data-page="index.html">
+
+  <!-- ── COMPONENTS (injected by DS_Components loader in app.js) ─────── -->
+  <div data-component="header"></div>
+  <div class="ds-container">
+    <div data-component="sidebar"></div>
+
+    <main class="ds-main-content">
+<!-- Sales Officer Beat Hero Card (Visible in SO mode) -->
+<div id="dsSoHeroSection" class="so-hero-card" style="display:none;">
+  <div class="so-hero-top">
+    <div class="so-hero-title">
+      <h2 id="soHeroName">Sales Officer</h2>
+      <p id="soHeroRoute">Assigned Beat: Civil Lines Beat</p>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <a href="pages/order-punching.html" class="btn btn-warning">🛒 Punch Field Order</a>
+      <a href="pages/payment-collections.html" class="btn btn-success">💵 Collect Payment</a>
+    </div>
+  </div>
+  <div class="so-target-section">
+    <div class="so-target-labels">
+      <span>Monthly Sales Target Progress</span>
+      <span id="soTargetText">₹ 0 of ₹ 3,50,000 (0%)</span>
+    </div>
+    <div class="so-target-track">
+      <div id="soTargetBarFill" class="so-target-fill" style="width: 0%;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Executive KPI Metrics -->
+<div class="kpi-grid">
+  <div class="kpi-card emerald">
+    <div class="kpi-header">
+      <span class="kpi-label">MTD Sales Turnover</span>
+      <div class="kpi-icon-wrap" style="color:var(--ds-emerald);">₹</div>
+    </div>
+    <div class="kpi-value" id="kpiTotalSales">₹ 0.00</div>
+    <div class="kpi-subtext">Gross billed this month</div>
+  </div>
+
+  <div class="kpi-card gold">
+    <div class="kpi-header">
+      <span class="kpi-label">Pending Orders</span>
+      <div class="kpi-icon-wrap" style="color:var(--ds-gold);">🛒</div>
+    </div>
+    <div class="kpi-value" id="kpiPendingOrders">0 Orders</div>
+    <div class="kpi-subtext">Awaiting fulfillment / dispatch</div>
+  </div>
+
+  <div class="kpi-card danger">
+    <div class="kpi-header">
+      <span class="kpi-label">Outstanding Balances</span>
+      <div class="kpi-icon-wrap" style="color:var(--ds-danger);">⏳</div>
+    </div>
+    <div class="kpi-value" id="kpiOutstanding">₹ 0.00</div>
+    <div class="kpi-subtext">Total receivables from market</div>
+  </div>
+
+  <div class="kpi-card teal">
+    <div class="kpi-header">
+      <span class="kpi-label">Low Stock Alerts</span>
+      <div class="kpi-icon-wrap" style="color:var(--ds-teal);">📦</div>
+    </div>
+    <div class="kpi-value" id="kpiLowStock">0 Items</div>
+    <div class="kpi-subtext">Below safety threshold</div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <span class="kpi-label">Active Field Staff</span>
+      <div class="kpi-icon-wrap">👥</div>
+    </div>
+    <div class="kpi-value" id="kpiActiveOfficers">5 Active</div>
+    <div class="kpi-subtext">Field sales officers assigned</div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <span class="kpi-label">Retail Outlets</span>
+      <div class="kpi-icon-wrap">🏪</div>
+    </div>
+    <div class="kpi-value" id="kpiTotalStores">0 Retailers</div>
+    <div class="kpi-subtext">Registered kirana network</div>
+  </div>
+</div>
+
+<!-- Quick Action Shortcuts (Filtered by Role Permissions) -->
+<div class="quick-actions-bar">
+  <a href="pages/order-punching.html" class="quick-action-btn" data-permission="canPunchOrders">🛒 Punch New Order</a>
+  <a href="pages/payment-collections.html" class="quick-action-btn" data-permission="canCollectPayments">💵 Record Collection</a>
+  <a href="pages/order-approval.html" class="quick-action-btn" data-permission="canApproveOrders">⚡ Order Fulfillment</a>
+  <a href="pages/dispatch-challan.html" class="quick-action-btn" data-permission="canManageDispatch">🚚 Dispatch Challan</a>
+  <a href="pages/sales-analysis.html" class="quick-action-btn" data-permission="canViewAnalytics">📈 Sales Analysis</a>
+  <a href="pages/upload-update.html" class="quick-action-btn" data-permission="canImportData">📥 Upload Excel Sheet</a>
+</div>
+
+<!-- Interactive Chart.js Visualizations Grid -->
+<div class="ds-grid-charts" style="margin-top:16px;">
+  <div class="ds-panel" style="margin-bottom:0;">
+    <div class="ds-panel-header">
+      <div>
+        <h3 class="ds-panel-title">📈 7-Day Sales Turnover Trend</h3>
+        <p class="ds-panel-subtitle">Daily billed value across all field routes</p>
+      </div>
+    </div>
+    <div style="height:260px; position:relative;">
+      <canvas id="dsSalesTrendChart"></canvas>
+    </div>
+  </div>
+
+  <div class="ds-panel" style="margin-bottom:0;">
+    <div class="ds-panel-header">
+      <div>
+        <h3 class="ds-panel-title">🥧 Brand Revenue Share</h3>
+        <p class="ds-panel-subtitle">Market turnover contribution by brand</p>
+      </div>
+    </div>
+    <div style="height:260px; position:relative;">
+      <canvas id="dsBrandShareChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Beat Retailers List (If SO) -->
+<div id="dsBeatStoresSection" class="ds-panel" style="margin-top:16px;">
+  <div class="ds-panel-header">
+    <div>
+      <h3 class="ds-panel-title">📍 Today's Assigned Beat Retailers</h3>
+      <p class="ds-panel-subtitle">Retail outlets scheduled for sales booking and collection visits</p>
+    </div>
+    <a href="pages/route-analysis.html" class="btn btn-secondary btn-sm">Route Analysis</a>
+  </div>
+  <div class="store-grid" id="dsBeatStoresList">
+    <!-- Populated by DS_Dashboard.renderBeatStores() -->
+  </div>
+</div>
+
+<!-- Grid: Recent Orders & Top Brands -->
+<div class="ds-grid-2-1" style="margin-top:16px;">
+  <div class="ds-panel">
+    <div class="ds-panel-header">
+      <div>
+        <h3 class="ds-panel-title">📋 Recent Punched Orders</h3>
+        <p class="ds-panel-subtitle">Latest orders booked across field beats</p>
+      </div>
+      <a href="pages/order-report.html" class="btn btn-secondary btn-sm">View All Orders</a>
+    </div>
+    <div class="ds-table-wrap">
+      <table class="ds-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Store / Party</th>
+            <th>Beat Route</th>
+            <th>Sales Officer</th>
+            <th class="num">Amount</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="dsRecentOrdersTableBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="ds-panel">
+    <div class="ds-panel-header">
+      <div>
+        <h3 class="ds-panel-title">🏆 Top Performing Brands</h3>
+        <p class="ds-panel-subtitle">Sales contribution breakdown</p>
+      </div>
+      <a href="pages/item-brand-wise-sale.html" class="btn btn-secondary btn-sm">Full Matrix</a>
+    </div>
+    <div id="dsTopBrandsList" style="padding-top:6px;">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Low Stock Alert Warning Box -->
+<div class="ds-panel" style="margin-top:16px; border-left:4px solid var(--ds-danger);">
+  <div class="ds-panel-header">
+    <div>
+      <h3 class="ds-panel-title" style="color:var(--ds-danger-dark);">⚠️ Low Stock Warehouse Alerts</h3>
+      <p class="ds-panel-subtitle">SKUs reaching or breaching safety buffer threshold</p>
+    </div>
+    <a href="pages/stock.html" class="btn btn-danger btn-sm">Manage Stock</a>
+  </div>
+  <div class="ds-table-wrap">
+    <table class="ds-table">
+      <thead>
+        <tr>
+          <th>SKU Code</th>
+          <th>Item Description</th>
+          <th>Brand</th>
+          <th class="num">Current Stock</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="dsLowStockTableBody">
+        <!-- Populated by JS -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+      <!-- Footer Component -->
+      <div data-component="footer"></div>
+    </main>
+  </div>
+  <div data-component="modal"></div>
+  <div data-component="notification"></div>
+
+  <!-- Bottom Mobile Navigation Touch Dock -->
+  <nav class="ds-bottom-nav" aria-label="Mobile Bottom Navigation">
+    <a href="index.html" class="ds-bottom-nav-item active">
+      <span class="ds-bottom-nav-icon">📊</span>
+      <span>Dashboard</span>
+    </a>
+    <a href="pages/order-punching.html" class="ds-bottom-nav-item">
+      <span class="ds-bottom-nav-icon">🛒</span>
+      <span>Punch</span>
+    </a>
+    <a href="pages/payment-collections.html" class="ds-bottom-nav-item">
+      <span class="ds-bottom-nav-icon">💵</span>
+      <span>Collect</span>
+    </a>
+    <a href="pages/order-report.html" class="ds-bottom-nav-item">
+      <span class="ds-bottom-nav-icon">📋</span>
+      <span>Orders</span>
+    </a>
+    <button type="button" class="ds-bottom-nav-item" onclick="document.querySelector('.ds-sidebar')?.classList.toggle('open'); document.querySelector('.ds-sidebar-backdrop')?.classList.toggle('active');">
+      <span class="ds-bottom-nav-icon">☰</span>
+      <span>Menu</span>
+    </button>
+  </nav>
+
+  <!-- Core Scripts -->
+  <script src="./assets/js/storage.js"></script>
+  <script src="./assets/js/auth.js"></script>
+  <script src="./assets/js/app.js?v=4.0"></script>
+  <script src="./assets/js/api.js"></script>
+  <script src="./assets/js/whatsapp.js"></script>
+  <script src="./assets/js/dashboard.js"></script>
+</body>
+</html>

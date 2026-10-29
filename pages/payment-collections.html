@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Collections — DS Enterprises FMCG System</title>
+  <meta name="description" content="DS Enterprises FMCG Distribution & Field Sales System — Payment Collections — DS Enterprises FMCG System" />
+  <meta name="theme-color" content="#10213f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" />
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/dashboard.css" />
+  <link rel="stylesheet" href="../assets/css/responsive.css" />
+  <link rel="stylesheet" href="../assets/css/print.css" />
+
+  <!-- External CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) reg.unregister();
+      });
+    }
+  </script>
+</head>
+<body data-page="payment-collections.html">
+
+  <!-- ── COMPONENTS (injected by DS_Components loader in app.js) ─────── -->
+  <div data-component="header"></div>
+  <div class="ds-container">
+    <div data-component="sidebar"></div>
+
+    <main class="ds-main-content">
+      <!-- Unified Receivables Workflow Navigation Bar -->
+      <div class="ds-tab-bar">
+        <a href="payment-collections.html" class="ds-subnav-pill active">💵 Record Collection</a>
+        <a href="outstanding.html" class="ds-subnav-pill">⏳ Outstanding & Aging Hub</a>
+        <a href="bill-management.html" class="ds-subnav-pill">🧾 Bill Management</a>
+        <a href="route-analysis.html" class="ds-subnav-pill">📍 Route & Beat Tracker</a>
+        <a href="order-punching.html" class="ds-subnav-pill">🛒 Field Order Punching</a>
+      </div>
+
+<div class="ds-grid-split">
+  <!-- Collection Entry Form -->
+  <div class="ds-panel">
+    <div class="ds-panel-header">
+      <div>
+        <h3 class="ds-panel-title">💵 Record Field Collection</h3>
+        <p class="ds-panel-subtitle">Punch cash, UPI or cheque recovery</p>
+      </div>
+    </div>
+
+    <form onsubmit="DS_Payments.recordPayment(event)">
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">Retail Store / Kirana</label>
+        <select id="paymentPartySelect" class="form-control" required>
+          <option value="">-- Choose Store --</option>
+        </select>
+      </div>
+
+      <div style="background:var(--ds-surface-subtle); padding:10px 14px; border-radius:8px; margin-bottom:12px; border:1px solid var(--ds-border-light);">
+        <div style="font-size:11px; text-transform:uppercase; color:var(--ds-text-muted); font-weight:700;">Current Outstanding Balance</div>
+        <div id="paymentCurrentOutstanding" style="font-size:18px; font-weight:800; color:var(--ds-danger-dark);">₹ 0.00</div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">Collection Amount (₹)</label>
+        <input type="number" id="paymentAmountInput" min="1" step="any" class="form-control" placeholder="e.g. 5000" required />
+      </div>
+
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">Payment Mode</label>
+        <select id="paymentModeSelect" class="form-control">
+          <option value="Cash">Cash</option>
+          <option value="UPI">UPI / QR Code</option>
+          <option value="Cheque">Bank Cheque</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">Reference No / Cheque No / UPI ID</label>
+        <input type="text" id="paymentRefInput" class="form-control" placeholder="e.g. UPI88371940" autocomplete="off" spellcheck="false" />
+      </div>
+
+      <div class="form-group" style="margin-bottom:16px;">
+        <label class="form-label">Remarks</label>
+        <input type="text" id="paymentRemarksInput" class="form-control" value="Weekly recovery clearance" autocomplete="off" spellcheck="false" />
+      </div>
+
+      <button type="submit" class="btn btn-success btn-lg" style="width:100%;">
+        ✓ Save Collection & WhatsApp Receipt
+      </button>
+    </form>
+  </div>
+
+  <!-- Collections History Table -->
+  <div class="ds-panel">
+    <div class="ds-panel-header">
+      <div>
+        <h3 class="ds-panel-title">📋 Payment Collection History</h3>
+        <p class="ds-panel-subtitle">Log of field recoveries and electronic receipts</p>
+      </div>
+    </div>
+
+    <!-- Filter Bar for Payment Collections -->
+    <div class="ds-filter-bar" style="margin-bottom:12px; padding:10px 12px; gap:8px;">
+      <div class="form-group" style="min-width:120px;">
+        <label class="form-label">Period</label>
+        <select id="pPreset" class="form-control">
+          <option value="all" selected>All Time</option>
+          <option value="month">This Month</option>
+          <option value="today">Today</option>
+          <option value="yesterday">Yesterday</option>
+          <option value="7days">7 Days</option>
+          <option value="lastmonth">Last Month</option>
+          <option value="3months">3 Months</option>
+          <option value="365days">365 Days</option>
+          <option value="custom">Custom Range</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">From Date</label>
+        <input type="date" id="pFrom" class="form-control" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">To Date</label>
+        <input type="date" id="pTo" class="form-control" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">City</label>
+        <select id="pCity" class="form-control"><option value="">All</option></select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">City_1 (Main)</label>
+        <select id="pCity1" class="form-control"><option value="">All</option></select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Route / Beat</label>
+        <select id="pRoute" class="form-control"><option value="">All</option></select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Party Category</label>
+        <select id="pCat" class="form-control"><option value="">All</option></select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Sub Category</label>
+        <select id="pSubCat" class="form-control"><option value="">All</option></select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Brand</label>
+        <select id="pBrand" class="form-control"><option value="">All</option></select>
+      </div>
+
+      <div class="form-group" style="min-width:110px;">
+        <label class="form-label">Payment Mode</label>
+        <select id="pMode" class="form-control">
+          <option value="">All Modes</option>
+          <option value="Cash">Cash</option>
+          <option value="UPI">UPI</option>
+          <option value="Cheque">Cheque</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="min-width:130px;">
+        <label class="form-label">Receipt / Bill No</label>
+        <input type="text" id="pBillNo" class="form-control" placeholder="Receipt / Ref..." autocomplete="off" spellcheck="false" />
+      </div>
+
+      <div class="form-group" style="flex:1; min-width:160px;">
+        <label class="form-label">Search Party / Bill</label>
+        <input type="text" id="pSearch" class="form-control" placeholder="Search..." autocomplete="off" spellcheck="false" />
+      </div>
+
+      <div style="display:flex; align-items:flex-end;">
+        <button type="button" class="btn btn-secondary" onclick="DS_Payments.resetFilters()" title="Reset Filters" style="height:38px; padding:0 10px; font-size:12px; font-weight:700;">
+          ↺ Reset
+        </button>
+      </div>
+    </div>
+
+    <div class="ds-table-wrap">
+      <table class="ds-table">
+        <thead>
+          <tr>
+            <th>Receipt ID</th>
+            <th>Date & Time</th>
+            <th>Store / Party</th>
+            <th>Mode</th>
+            <th class="num">Amount</th>
+            <th>Collected By</th>
+            <th style="text-align:center; min-width:85px;">Action</th>
+          </tr>
+        </thead>
+        <tbody id="collectionsTableBody">
+          <!-- Populated via assets/js/payments.js -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+      <!-- Footer Component -->
+      <div data-component="footer"></div>
+    </main>
+  </div>
+  <div data-component="modal"></div>
+  <div data-component="notification"></div>
+
+
+
+  <!-- Scripts (core first, then page-specific) -->
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/app.js?v=4.0"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/whatsapp.js"></script>
+  <script src="../assets/js/payments.js"></script>
+</body>
+</html>

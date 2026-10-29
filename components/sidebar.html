@@ -1,0 +1,146 @@
+<!-- ==========================================================================
+     DS ENTERPRISES — REUSABLE SIDEBAR NAVIGATION COMPONENT (RBAC-ENABLED)
+     File: components/sidebar.html
+     ========================================================================== -->
+<aside class="ds-sidebar">
+  <!-- Mobile Drawer Top Bar with Brand and Close Button -->
+  <div class="ds-sidebar-top-bar" style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid var(--ds-border); background:var(--ds-surface-subtle);">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <img src="../assets/images/logo.png" alt="Logo" style="width:26px; height:26px; border-radius:6px; object-fit:contain;" />
+      <span style="font-weight:800; font-size:14px; color:var(--ds-primary-dark);">DS Enterprises</span>
+    </div>
+    <button type="button" class="btn btn-sm btn-secondary" onclick="DS_App.closeMobileSidebar()" aria-label="Close navigation" style="padding:4px 8px; font-size:16px; font-weight:800; border-radius:6px; min-height:auto;">✕</button>
+  </div>
+
+  <!-- Active Role Panel Badge Banner -->
+  <div id="dsSidebarRoleIndicator" class="ds-sidebar-role-badge">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span id="dsSidebarRoleIcon" style="font-size:16px;">👑</span>
+      <div>
+        <div id="dsSidebarRoleTitle" style="font-weight:800; font-size:12px; line-height:1.2;">Admin Panel</div>
+        <div id="dsSidebarRoleUser" style="font-size:10px; color:var(--ds-text-muted); line-height:1.1;">Administrator</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ds-nav-group">
+    <div class="ds-nav-heading">Overview</div>
+    <a href="dashboard.html" class="ds-nav-link" data-page="dashboard.html">
+      <span class="ds-nav-icon">📊</span>
+      <span>Dashboard</span>
+    </a>
+  </div>
+
+  <div class="ds-nav-group">
+    <div class="ds-nav-heading">Sales & Analytics</div>
+    <a href="sales-analysis.html" class="ds-nav-link" data-page="sales-analysis.html" data-permission="canViewAnalytics">
+      <span class="ds-nav-icon">📈</span>
+      <span>Sales Analysis</span>
+    </a>
+    <a href="party-wise.html" class="ds-nav-link" data-page="party-wise.html" data-permission="canViewAnalytics">
+      <span class="ds-nav-icon">🏪</span>
+      <span>Party-Wise Sale</span>
+    </a>
+    <a href="route-analysis.html" class="ds-nav-link" data-page="route-analysis.html" data-permission="canViewAnalytics">
+      <span class="ds-nav-icon">📍</span>
+      <span>Route & Beat</span>
+    </a>
+    <a href="item-brand-wise-sale.html" class="ds-nav-link" data-page="item-brand-wise-sale.html" data-permission="canViewAnalytics">
+      <span class="ds-nav-icon">📑</span>
+      <span>Item & Brand Matrix</span>
+    </a>
+  </div>
+
+  <div class="ds-nav-group">
+    <div class="ds-nav-heading">Receivables & Collections</div>
+    <a href="bill-management.html" class="ds-nav-link" data-page="bill-management.html" data-permission="canViewOutstanding">
+      <span class="ds-nav-icon">🧾</span>
+      <span>Bill Management</span>
+      <span class="badge" style="font-size:9px; margin-left:auto; background:#eff6ff; color:#1d4ed8; padding:1px 5px;">Views</span>
+    </a>
+    <a href="outstanding.html" class="ds-nav-link" data-page="outstanding.html" data-permission="canViewOutstanding">
+      <span class="ds-nav-icon">⏳</span>
+      <span>Outstanding & Receivables</span>
+      <span class="badge" style="font-size:9px; margin-left:auto; background:#dcfce7; color:#166534; padding:1px 5px;">Unified</span>
+    </a>
+    <a href="payment-collections.html" class="ds-nav-link" data-page="payment-collections.html" data-permission="canCollectPayments">
+      <span class="ds-nav-icon">💵</span>
+      <span>Payment Collections</span>
+    </a>
+  </div>
+
+  <div class="ds-nav-group">
+    <div class="ds-nav-heading">Inventory & Field Sales</div>
+    <a href="stock.html" class="ds-nav-link" data-page="stock.html" data-permission="canManageProducts">
+      <span class="ds-nav-icon">📦</span>
+      <span>IMS Stock & Products</span>
+    </a>
+    <a href="order-punching.html" class="ds-nav-link" data-page="order-punching.html" data-permission="canPunchOrders">
+      <span class="ds-nav-icon">🛒</span>
+      <span>Order Punching</span>
+    </a>
+    <a href="order-report.html" class="ds-nav-link" data-page="order-report.html" data-permission="canPunchOrders">
+      <span class="ds-nav-icon">📋</span>
+      <span>Order Reports</span>
+    </a>
+    <a href="sales-officers.html" class="ds-nav-link" data-page="sales-officers.html" data-permission="canManageStaff">
+      <span class="ds-nav-icon">👥</span>
+      <span>Staff, Roles & Permissions</span>
+      <span class="badge" style="font-size:9px; margin-left:auto; background:#fef3c7; color:#b45309; padding:1px 5px;">Admin</span>
+    </a>
+  </div>
+
+  <div class="ds-nav-group">
+    <div class="ds-nav-heading">Fulfillment & Logistics</div>
+    <a href="order-approval.html" class="ds-nav-link" data-page="order-approval.html" data-permission="canApproveOrders">
+      <span class="ds-nav-icon">⚡</span>
+      <span>Order Approval</span>
+    </a>
+    <a href="route-assignment.html" class="ds-nav-link" data-page="route-assignment.html" data-permission="canManageDispatch">
+      <span class="ds-nav-icon">🗺️</span>
+      <span>Route & Delivery Assignment</span>
+      <span class="badge" style="font-size:9px; margin-left:auto; background:#dbeafe; color:#1e40af; padding:1px 5px;">New</span>
+    </a>
+    <a href="dispatch.html" class="ds-nav-link" data-page="dispatch.html" data-permission="canManageDispatch">
+      <span class="ds-nav-icon">🚚</span>
+      <span>Dispatch & Loading Sheets</span>
+      <span class="badge" style="font-size:9px; margin-left:auto; background:#dcfce7; color:#166534; padding:1px 5px;">Unified</span>
+    </a>
+  </div>
+
+  <div class="ds-nav-group">
+    <div class="ds-nav-heading">Data & Settings</div>
+    <a href="upload-update.html" class="ds-nav-link" data-page="upload-update.html" data-permission="canImportData">
+      <span class="ds-nav-icon">📥</span>
+      <span>Excel Data Ingest</span>
+      <span class="badge" style="font-size:9px; margin-left:auto; background:#fef3c7; color:#b45309; padding:1px 5px;">Admin</span>
+    </a>
+    <a href="clear-old-data.html" class="ds-nav-link" data-page="clear-old-data.html" data-permission="canResetData">
+      <span class="ds-nav-icon">🧹</span>
+      <span>Data Management & Reset</span>
+      <span class="badge" style="font-size:9px; margin-left:auto; background:#fee2e2; color:#b91c1c; padding:1px 5px;">Admin</span>
+    </a>
+    <a href="../index.html" class="ds-nav-link">
+      <span class="ds-nav-icon">🏠</span>
+      <span>Master App Hub</span>
+    </a>
+  </div>
+
+  <!-- User & Session Footer -->
+  <div class="ds-sidebar-footer" style="padding:14px 12px; margin-top:auto; border-top:1px solid var(--ds-border); background:var(--ds-surface-subtle);">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+      <div style="min-width:0;">
+        <div id="dsSidebarFooterUser" style="font-weight:700; font-size:12px; color:var(--ds-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Administrator</div>
+        <div style="font-size:10px; color:var(--ds-text-muted); display:flex; align-items:center; gap:4px;">
+          <span style="width:6px; height:6px; border-radius:50%; background:#10b981; display:inline-block;"></span>
+          <span id="dsSidebarSessionStatus">Active • 15m idle lock</span>
+        </div>
+      </div>
+    </div>
+    <button type="button" id="dsSidebarLogoutBtn" class="btn btn-danger" onclick="DS_Auth.logout('manual')" style="width:100%; font-weight:700; font-size:12.5px; padding:9px; justify-content:center; display:flex; align-items:center; gap:6px;">
+      🚪 Sign Out / Logout
+    </button>
+  </div>
+</aside>
+<div class="ds-sidebar-backdrop"></div>
+

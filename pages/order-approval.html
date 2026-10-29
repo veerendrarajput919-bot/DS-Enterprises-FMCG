@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Approval — DS Enterprises FMCG System</title>
+  <meta name="description" content="DS Enterprises FMCG Distribution & Field Sales System — Order Approval — DS Enterprises FMCG System" />
+  <meta name="theme-color" content="#10213f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" />
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/dashboard.css" />
+  <link rel="stylesheet" href="../assets/css/responsive.css" />
+  <link rel="stylesheet" href="../assets/css/print.css" />
+
+  <!-- External CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) reg.unregister();
+      });
+    }
+  </script>
+</head>
+<body data-page="order-approval.html">
+
+  <!-- ── COMPONENTS (injected by DS_Components loader in app.js) ─────── -->
+  <div data-component="header"></div>
+  <div class="ds-container">
+    <div data-component="sidebar"></div>
+
+    <main class="ds-main-content">
+      <!-- Unified Order Workflow Navigation Bar -->
+      <div class="ds-tab-bar">
+        <a href="order-approval.html" class="ds-subnav-pill active">⚡ Order Approvals</a>
+        <a href="order-punching.html" class="ds-subnav-pill">🛒 Punch Field Order</a>
+        <a href="order-report.html" class="ds-subnav-pill">📋 All Orders & Reports</a>
+        <a href="route-assignment.html" class="ds-subnav-pill">🗺️ Route Delivery</a>
+        <a href="route-analysis.html" class="ds-subnav-pill">📍 Route & Beat Tracker</a>
+      </div>
+
+<div class="ds-panel">
+  <div class="ds-panel-header">
+    <div>
+      <h3 class="ds-panel-title">⚡ Order Fulfillment & Approval Pipeline</h3>
+      <p class="ds-panel-subtitle">Review booked orders, verify credit limits, approve and authorize warehouse dispatch</p>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <a href="loading-sheet.html" class="btn btn-secondary btn-sm">🚐 Van Loading Sheet</a>
+    </div>
+  </div>
+
+  <!-- Global Unified Filter Bar for Order Approval Pipeline -->
+  <div class="ds-filter-bar" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:14px; margin-bottom:18px; box-shadow:0 1px 3px rgba(0,0,0,0.04); flex-wrap:wrap; gap:12px;">
+    <!-- Sales Period -->
+    <div class="form-group" style="min-width:140px;">
+      <label class="form-label">Sales Period</label>
+      <select id="approvalPreset" class="form-control">
+        <option value="this_month">This Month</option>
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="7days">7 Days</option>
+        <option value="lastmonth">Last Month</option>
+        <option value="3months">3 Months</option>
+        <option value="6months">6 Months</option>
+        <option value="365days">365 Days</option>
+        <option value="all" selected>All Time</option>
+        <option value="custom">Custom Range</option>
+      </select>
+    </div>
+
+    <!-- From Date -->
+    <div class="form-group">
+      <label class="form-label">From Date</label>
+      <input type="date" id="approvalFrom" class="form-control" />
+    </div>
+
+    <!-- To Date -->
+    <div class="form-group">
+      <label class="form-label">To Date</label>
+      <input type="date" id="approvalTo" class="form-control" />
+    </div>
+
+    <!-- City -->
+    <div class="form-group">
+      <label class="form-label">City</label>
+      <select id="approvalCity" class="form-control"><option value="">All</option></select>
+    </div>
+
+    <!-- City_1 (Main) -->
+    <div class="form-group">
+      <label class="form-label">City_1 (Main)</label>
+      <select id="approvalCity1" class="form-control"><option value="">All</option></select>
+    </div>
+
+    <!-- Route / Beat -->
+    <div class="form-group">
+      <label class="form-label">Route / Beat</label>
+      <select id="approvalFilterRoute" class="form-control"><option value="">All</option></select>
+    </div>
+
+    <!-- Party Category -->
+    <div class="form-group">
+      <label class="form-label">Party Category</label>
+      <select id="approvalCategory" class="form-control"><option value="">All</option></select>
+    </div>
+
+    <!-- Sub Category -->
+    <div class="form-group">
+      <label class="form-label">Sub Category</label>
+      <select id="approvalSubCategory" class="form-control"><option value="">All</option></select>
+    </div>
+
+    <!-- Brand -->
+    <div class="form-group">
+      <label class="form-label">Brand</label>
+      <select id="approvalBrand" class="form-control"><option value="">All</option></select>
+    </div>
+
+    <!-- Bill / Inv No -->
+    <div class="form-group" style="min-width:130px;">
+      <label class="form-label">Bill / Inv No</label>
+      <input type="text" id="approvalBillNo" class="form-control" placeholder="BILL / INV No..." autocomplete="off" spellcheck="false" />
+    </div>
+
+    <!-- Payment -->
+    <div class="form-group" style="min-width:110px;">
+      <label class="form-label">Payment</label>
+      <select id="approvalPayment" class="form-control">
+        <option value="">All</option>
+        <option value="Paid">Paid</option>
+        <option value="Unpaid">Unpaid</option>
+      </select>
+    </div>
+
+    <!-- Order Status -->
+    <div class="form-group" style="min-width:170px;">
+      <label class="form-label">Order Status</label>
+      <select id="approvalFilterStatus" class="form-control">
+        <option value="">All Statuses (8 Levels)</option>
+        <option value="Pending">1. Pending</option>
+        <option value="Confirmed">2. Confirmed</option>
+        <option value="Processing">3. Processing</option>
+        <option value="Ready for Delivery">4. Ready for Delivery</option>
+        <option value="Dispatched">5. Dispatched</option>
+        <option value="Delivered">6. Delivered</option>
+        <option value="all_cancelled">❌ All Cancelled</option>
+        <option value="Cancelled by Customer">7. Cancelled by Customer</option>
+        <option value="Cancelled by Company/Admin">8. Cancelled by Company/Admin</option>
+      </select>
+    </div>
+
+    <!-- Search Party / Item / Bill -->
+    <div class="form-group" style="flex:1; min-width:200px;">
+      <label class="form-label">Search Party / Item / Bill</label>
+      <input type="text" id="approvalFilterSearch" class="form-control" placeholder="Search party, item, order, bill..." autocomplete="off" spellcheck="false" />
+    </div>
+
+    <!-- Reset Button -->
+    <div style="display:flex; align-items:flex-end;">
+      <button type="button" class="btn btn-secondary" onclick="DS_Dispatch.resetFilters()" title="Reset Filters" style="height:38px; padding:0 12px; font-size:12px; font-weight:700;">
+        ↺ Reset
+      </button>
+    </div>
+  </div>
+
+  <div class="ds-table-wrap">
+    <table class="ds-table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Invoice / Bill No.</th>
+          <th>Date</th>
+          <th>Store Name</th>
+          <th>Beat Route</th>
+          <th class="num">Net Total</th>
+          <th>Current Status</th>
+          <th>Update Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="orderApprovalTableBody">
+        <!-- Populated via assets/js/dispatch.js -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: Order Cancellation with Remarks & Note -->
+<div id="cancelOrderModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cancelOrderTitle">
+  <div class="modal-card" style="width:min(560px, 95%);">
+    <div class="modal-header" style="border-bottom:1px solid #fee2e2; background:#fff1f2;">
+      <div>
+        <h3 class="modal-title" id="cancelOrderTitle" style="color:#9f1239; display:flex; align-items:center; gap:6px;">
+          ❌ Order Cancellation & Remark
+        </h3>
+        <p style="margin:2px 0 0; font-size:12px; color:#be123c;">
+          Specify whether cancellation is by Party/Customer or Internal/Own, and record remark note.
+        </p>
+      </div>
+      <button type="button" class="modal-close" onclick="DS_Orders.closeCancelOrderModal()" aria-label="Close">×</button>
+    </div>
+
+    <form id="formCancelOrder" onsubmit="DS_Orders.confirmCancelOrder(event)" style="padding:16px; display:flex; flex-direction:column; gap:14px;">
+      <input type="hidden" id="cancelOrderId" value="" />
+
+      <!-- Order Summary Card -->
+      <div id="cancelOrderSummaryCard" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 14px; font-size:12px;">
+      </div>
+
+      <!-- Cancellation Type Radio Options (Customer vs Company/Admin) -->
+      <div>
+        <label class="form-label" style="font-weight:800; margin-bottom:8px; display:block;">Who Cancelled the Order? *</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <label style="border:2px solid #fecdd3; background:#fff1f2; border-radius:8px; padding:10px; cursor:pointer; display:flex; flex-direction:column; gap:4px;" id="lblCancelParty">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="radio" name="cancelTypeRadio" id="radioCancelParty" value="Cancelled by Customer" checked onchange="DS_Orders.handleCancelTypeChange(this.value)" />
+              <strong style="color:#9f1239; font-size:13px;">Cancelled by Customer</strong>
+            </div>
+            <div style="font-size:11px; color:#be123c; margin-left:24px;">
+              Grahak / Store retailer ne order lene se mana kar diya (Party Refused)
+            </div>
+          </label>
+
+          <label style="border:2px solid #ddd6fe; background:#f5f3ff; border-radius:8px; padding:10px; cursor:pointer; display:flex; flex-direction:column; gap:4px;" id="lblCancelOwn">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="radio" name="cancelTypeRadio" id="radioCancelOwn" value="Cancelled by Company/Admin" onchange="DS_Orders.handleCancelTypeChange(this.value)" />
+              <strong style="color:#5b21b6; font-size:13px;">Cancelled by Company/Admin</strong>
+            </div>
+            <div style="font-size:11px; color:#6d28d9; margin-left:24px;">
+              Internal / Company issue (Stock Shortage, Overdue Credit, Logistics)
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Preset Reasons Dropdown -->
+      <div class="form-group">
+        <label class="form-label" for="cancelPresetReason">Standard Reason Category *</label>
+        <select id="cancelPresetReason" class="form-control" onchange="DS_Orders.handlePresetReasonSelect(this.value)" style="font-weight:600;">
+          <!-- Dynamically populated based on Customer vs Company -->
+        </select>
+      </div>
+
+      <!-- Detailed Remark / Note Input -->
+      <div class="form-group">
+        <label class="form-label" for="cancelOrderRemark">Mandatory Cancellation Remarks / Note (विवरण / टिप्पणी) *</label>
+        <textarea id="cancelOrderRemark" class="form-control" rows="3" required placeholder="Grahak ya company ke cancel karne ka vishesh kaaran anivarya roop se likhein..." style="resize:vertical;"></textarea>
+      </div>
+
+      <!-- Stock Recovery Notice -->
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:8px 12px; font-size:11px; color:#1e40af;">
+        ℹ️ <strong>Stock Auto-Restoration:</strong> Cancelling this order will automatically restore the booked SKU quantities back into warehouse stock inventory.
+      </div>
+
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px; padding-top:6px;">
+        <button type="button" class="btn btn-secondary" onclick="DS_Orders.closeCancelOrderModal()">Close</button>
+        <button type="submit" class="btn btn-danger" style="font-weight:800; background:#be123c; border-color:#be123c; color:#fff;">
+          ✓ Confirm Order Cancellation
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Order Details & Item Manifest View -->
+<div id="orderDetailsModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="orderDetailsTitle">
+  <div class="modal-card" style="width:min(680px, 95%); max-height:90vh; display:flex; flex-direction:column;">
+    <div class="modal-header">
+      <div>
+        <h3 class="modal-title" id="orderDetailsTitle">📦 Order Manifest & Tracking Details</h3>
+        <p style="margin:2px 0 0; font-size:12px; color:var(--ds-text-muted);" id="orderDetailsSubtitle">Order Information</p>
+      </div>
+      <button type="button" class="modal-close" onclick="DS_Orders.closeOrderDetailsModal()" aria-label="Close">×</button>
+    </div>
+
+    <div id="orderDetailsBody" style="overflow-y:auto; padding:16px;">
+      <!-- Populated dynamically by assets/js/orders.js -->
+    </div>
+
+    <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-top:1px solid #e2e8f0;">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.closeOrderDetailsModal()">Close</button>
+      <div style="display:flex; gap:8px;" id="orderDetailsFooterActions">
+        <!-- Action buttons like Copy or Cancel injected here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+      <!-- Footer Component -->
+      <div data-component="footer"></div>
+    </main>
+  </div>
+  <div data-component="modal"></div>
+  <div data-component="notification"></div>
+
+
+
+  <!-- Scripts (core first, then page-specific) -->
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/app.js?v=4.0"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/whatsapp.js"></script>
+  <script src="../assets/js/filters.js"></script>
+  <script src="../assets/js/orders.js"></script>
+  <script src="../assets/js/dispatch.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+/backend/config/local.php
+/backend/database/*.sqlite
+/backend/database/*.sqlite-*
+/backend/database/*dump*.sql
+/backend/database/*backup*.sql
+/backend/database/ds_enterprises_data.json
+/data/DS_Enterprises_Clean_Starter_Backup.json
+/ds_enterprises_data.json

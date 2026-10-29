@@ -1,0 +1,32 @@
+<!-- ==========================================================================
+     DS ENTERPRISES — REUSABLE HEADER COMPONENT
+     File: components/header.html
+     ========================================================================== -->
+<header class="ds-header">
+  <div class="ds-header-inner">
+    <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+      <button type="button" class="ds-mobile-toggle ds-sidebar-toggle" id="dsSidebarToggleBtn" aria-label="Toggle Sidebar Navigation" onclick="if(window.DS_App) DS_App.toggleSidebar(event);">☰</button>
+      <a href="dashboard.html" class="ds-brand" style="text-decoration:none; display:flex; align-items:center; gap:8px; min-width:0;">
+        <img src="../assets/images/logo.png" alt="DS Enterprises Logo" 
+             style="width:34px; height:34px; border-radius:8px; object-fit:contain; background:#ffffff; padding:2px; box-shadow:0 2px 6px rgba(0,0,0,0.25); flex-shrink:0;" />
+        <div style="min-width:0;">
+          <h1 class="ds-brand-title" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">DS Enterprises</h1>
+          <p class="ds-brand-subtitle hide-mobile">FMCG Distribution & Sales System</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="ds-header-center">
+      <span id="dsHeaderRoleBadge" class="ds-role-badge admin">👑 Admin Mode</span>
+      <div id="dsHeaderUserName" class="ds-header-user hide-mobile">
+        Logged in as: <strong>Administrator</strong>
+      </div>
+    </div>
+
+    <div class="ds-header-actions">
+      <button type="button" id="dsHeaderLogoutBtn" class="btn btn-danger btn-sm" onclick="DS_Auth.logout('manual')" title="Logout of session">
+        🚪 Logout
+      </button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Excel Data Import — DS Enterprises FMCG System</title>
+  <meta name="description" content="DS Enterprises FMCG Distribution & Field Sales System — Excel Data Import — DS Enterprises FMCG System" />
+  <meta name="theme-color" content="#10213f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" />
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/dashboard.css" />
+  <link rel="stylesheet" href="../assets/css/responsive.css" />
+  <link rel="stylesheet" href="../assets/css/print.css" />
+
+  <!-- External CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) reg.unregister();
+      });
+    }
+  </script>
+</head>
+<body data-page="upload-update.html">
+
+  <!-- ── COMPONENTS (injected by DS_Components loader in app.js) ─────── -->
+  <div data-component="header"></div>
+  <div class="ds-container">
+    <div data-component="sidebar"></div>
+
+    <main class="ds-main-content">
+<div class="ds-panel" style="max-width:1100px; margin:0 auto;">
+  <div class="ds-panel-header" style="flex-wrap:wrap; gap:12px;">
+    <div>
+      <h3 class="ds-panel-title">📥 FMCG Data Ingestion & Bulk Update Hub</h3>
+      <p class="ds-panel-subtitle">Import & update 100+ bills in one upload, audit changes, preview diffs or load multi-file ledgers</p>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="DS_ExcelImport.download100BillsTemplate()" style="font-weight:700;">
+        ⬇ Download 100-Bill Template
+      </button>
+    </div>
+  </div>
+
+  <!-- Ingestion Mode Navigation Tabs -->
+  <div style="display:flex; gap:8px; border-bottom:2px solid #e2e8f0; margin-bottom:20px; padding-bottom:2px;">
+    <button type="button" id="tabBtnBulk" class="btn btn-sm" onclick="DS_ExcelImport.switchTab('bulk')" style="font-weight:800; border-radius:6px 6px 0 0; background:var(--ds-primary); color:#ffffff; padding:8px 18px;">
+      ⚡ Bulk Bill Ingestion (100+ Bills)
+    </button>
+    <button type="button" id="tabBtnHistory" class="btn btn-sm" onclick="DS_ExcelImport.switchTab('history')" style="font-weight:700; border-radius:6px 6px 0 0; background:transparent; color:#64748b; padding:8px 18px;">
+      📜 Import History & Audit Trail
+    </button>
+    <button type="button" id="tabBtnLegacy" class="btn btn-sm" onclick="DS_ExcelImport.switchTab('legacy')" style="font-weight:700; border-radius:6px 6px 0 0; background:transparent; color:#64748b; padding:8px 18px;">
+      📑 4-File Multi-Sheet Ledger
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <!-- TAB 1: BULK BILL & INVOICE INGESTION ENGINE (100+ Bills)          -->
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <div id="tabContentBulk">
+    <!-- Configuration & Ingestion Rules Bar -->
+    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:20px;">
+      <h4 style="margin:0 0 10px; font-size:14px; font-weight:800; color:#1e293b;">1. Configure Ingestion Mode & Protection Safeguards</h4>
+      
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+        <!-- Ingestion Mode Radios -->
+        <div>
+          <label class="form-label" style="font-weight:700; margin-bottom:6px; display:block;">Select Processing Mode *</label>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:8px 12px;">
+              <input type="radio" name="importModeRadio" value="insert_update" checked />
+              <div>
+                <strong style="color:#166534;">🟢 Insert New & Update Existing (Recommended)</strong>
+                <div style="font-size:11px; color:var(--ds-text-muted);">Matches stable ID (Bill/Inv No). Updates existing bills & inserts new ones.</div>
+              </div>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:8px 12px;">
+              <input type="radio" name="importModeRadio" value="insert" />
+              <div>
+                <strong style="color:#1d4ed8;">🔵 Insert New Only</strong>
+                <div style="font-size:11px; color:var(--ds-text-muted);">Only creates records that do not exist; existing matching bills are skipped.</div>
+              </div>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:8px 12px;">
+              <input type="radio" name="importModeRadio" value="update" />
+              <div>
+                <strong style="color:#b45309;">🟠 Update Existing Only</strong>
+                <div style="font-size:11px; color:var(--ds-text-muted);">Only modifies matching records; rows without an existing ID are flagged.</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Safeguard Flags -->
+        <div style="display:flex; flex-direction:column; gap:10px; justify-content:center;">
+          <label style="display:flex; align-items:flex-start; gap:8px; font-size:12.5px; cursor:pointer;">
+            <input type="checkbox" id="chkRecalcTaxes" checked style="margin-top:3px;" />
+            <div>
+              <strong>Recalculate Totals & Taxes Using FMCG Rules</strong>
+              <div style="font-size:11px; color:var(--ds-text-muted);">Automatically computes Rate × Qty and 5% GST if not specified in sheet.</div>
+            </div>
+          </label>
+          <label style="display:flex; align-items:flex-start; gap:8px; font-size:12.5px; cursor:pointer;">
+            <input type="checkbox" id="chkClearBlankFields" style="margin-top:3px;" />
+            <div>
+              <strong>Clear Existing Fields When Column is Blank</strong>
+              <div style="font-size:11px; color:#b91c1c;">⚠️ Warning: By default, blank cells in Excel preserve existing data to prevent accidental loss.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drag & Drop File Upload Box -->
+    <div style="border:2px dashed #93c5fd; background:#eff6ff; border-radius:12px; padding:24px; text-align:center; margin-bottom:20px;">
+      <input type="file" id="bulkBillFileInput" accept=".xlsx, .xls, .csv" style="display:none;" />
+      <div style="font-size:36px; margin-bottom:6px;">📊</div>
+      <h4 style="margin:0 0 6px; font-size:16px; font-weight:800; color:#1e40af;">Select or Drop Excel Workbook or CSV File (.xlsx, .xls, .csv)</h4>
+      <p style="margin:0 0 14px; font-size:12px; color:#3b82f6;">Supports 100+ bills in one batch. Auto-detects Bill No, Customer, SKU, Qty, Rate, Tax & Totals.</p>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button type="button" class="btn btn-primary" onclick="document.getElementById('bulkBillFileInput').click()" style="padding:9px 20px; font-weight:700;">
+          📁 Choose Excel / CSV File
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="DS_ExcelImport.download100BillsTemplate()" style="padding:9px 18px;">
+          ⬇ Download 100-Bill Sample Template
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Validation & Change Preview Section (Populated dynamically) -->
+    <div id="bulkPreviewSection" style="display:none; margin-bottom:24px;"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <!-- TAB 2: IMPORT HISTORY & AUDIT TRAIL                                -->
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <div id="tabContentHistory" style="display:none;">
+    <div class="ds-panel-header" style="margin-bottom:12px;">
+      <div>
+        <h4 class="ds-panel-title" style="font-size:14px;">📜 Excel Ingestion Log & Audit Trail</h4>
+        <p class="ds-panel-subtitle">History of uploaded filenames, admins, record counts, and execution status</p>
+      </div>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="DS_ExcelImport.loadImportHistory()">
+        ↺ Refresh Log
+      </button>
+    </div>
+
+    <div class="ds-table-wrap">
+      <table class="ds-table" id="importHistoryTable">
+        <thead>
+          <tr>
+            <th>Batch ID</th>
+            <th>Timestamp</th>
+            <th>Filename</th>
+            <th>Admin / User</th>
+            <th>Mode</th>
+            <th class="num">Total</th>
+            <th class="num">Inserted</th>
+            <th class="num">Updated</th>
+            <th class="num">Unchanged</th>
+            <th class="num">Failed</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="importHistoryTableBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <!-- TAB 3: LEGACY 4-FILE LEDGER INGESTION (Preserved)                  -->
+  <!-- ══════════════════════════════════════════════════════════════════ -->
+  <div id="tabContentLegacy" style="display:none;">
+    <div style="background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af; border-radius:10px; padding:12px 16px; margin-bottom:20px; font-size:13px; line-height:1.5;">
+      <strong>ℹ Ingestion Logic:</strong> Sales GST is the master item ledger (Column O = Total Amount). Sales Summary identifies all unpaid bills. Stock Summary links purchase cost & MRP for margin calculations. Party Mapping assigns route beats and cities.
+    </div>
+
+    <!-- 4-File Upload Grid -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:20px;">
+      <!-- 1. Sales GST -->
+      <div style="background:var(--ds-surface-subtle); border:2px dashed #cbd5e1; border-radius:12px; padding:16px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:6px; color:#1e293b;">1. Sales GST / Detail</div>
+        <div style="font-size:11px; color:var(--ds-text-muted); margin-bottom:10px;">Item-level sales ledger (reads Column O)</div>
+        <input type="file" id="fSales" accept=".xlsx, .xls, .csv" class="form-control" style="font-size:12px; padding:6px;" />
+        <div class="status" id="uSales" style="margin-top:8px; font-size:12px; color:var(--ds-text-muted);">Not uploaded</div>
+      </div>
+
+      <!-- 2. Sales Summary (Unpaid) -->
+      <div style="background:var(--ds-surface-subtle); border:2px dashed #cbd5e1; border-radius:12px; padding:16px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:6px; color:#1e293b;">2. Sales Summary</div>
+        <div style="font-size:11px; color:var(--ds-text-muted); margin-bottom:10px;">Identifies Invoice Status = Unpaid</div>
+        <input type="file" id="fUnpaid" accept=".xlsx, .xls, .csv" class="form-control" style="font-size:12px; padding:6px;" />
+        <div class="status" id="uUnpaid" style="margin-top:8px; font-size:12px; color:var(--ds-text-muted);">Not uploaded</div>
+      </div>
+
+      <!-- 3. Stock Summary -->
+      <div style="background:var(--ds-surface-subtle); border:2px dashed #cbd5e1; border-radius:12px; padding:16px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:6px; color:#1e293b;">3. Stock Summary</div>
+        <div style="font-size:11px; color:var(--ds-text-muted); margin-bottom:10px;">Item costs, selling price & stock value</div>
+        <input type="file" id="fStock" accept=".xlsx, .xls, .csv" class="form-control" style="font-size:12px; padding:6px;" />
+        <div class="status" id="uStock" style="margin-top:8px; font-size:12px; color:var(--ds-text-muted);">Not uploaded</div>
+      </div>
+
+      <!-- 4. Party / Route Mapping -->
+      <div style="background:var(--ds-surface-subtle); border:2px dashed #cbd5e1; border-radius:12px; padding:16px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:6px; color:#1e293b;">4. Party / Route Mapping</div>
+        <div style="font-size:11px; color:var(--ds-text-muted); margin-bottom:10px;">Store name, Route beat & City hierarchy</div>
+        <input type="file" id="fParty" accept=".xlsx, .xls, .csv" class="form-control" style="font-size:12px; padding:6px;" />
+        <div class="status" id="uParty" style="margin-top:8px; font-size:12px; color:var(--ds-text-muted);">Not uploaded</div>
+      </div>
+
+      <!-- 5. Staff Route Map (Beat Assignment) -->
+      <div style="background:var(--ds-surface-subtle); border:2px dashed #93c5fd; border-radius:12px; padding:16px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:6px; color:#1e40af;">5. Staff Route Map (Optional)</div>
+        <div style="font-size:11px; color:var(--ds-text-muted); margin-bottom:10px;">Assign Beat Routes to Sales Officers via Excel</div>
+        <input type="file" id="fRouteMap" accept=".xlsx, .xls, .csv" class="form-control" style="font-size:12px; padding:6px;" />
+        <div class="status" id="uRouteMap" style="margin-top:8px; font-size:12px; color:var(--ds-text-muted);">Optional (or assign in Staff tab)</div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+      <button type="button" class="btn btn-success" id="processIndependentBtn" style="padding:10px 20px; font-size:14px; font-weight:700;">
+        ✓ Process Uploaded Files
+      </button>
+      <button type="button" class="btn btn-secondary" id="clearIndependentBtn" style="padding:10px 18px; font-size:14px;">
+        🧹 Reset to Sample Seed
+      </button>
+    </div>
+    <div id="independentMsg" style="margin-bottom:16px; font-size:13px;"></div>
+
+    <div class="ds-panel" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
+      <div class="ds-panel-header" style="margin-bottom:6px;">
+        <h4 class="ds-panel-title" style="font-size:14px;">Current Dataset Status</h4>
+      </div>
+      <div id="independentDataStatus" style="font-size:13px; color:var(--ds-text-muted);">
+        Ready. Load your custom Excel files or use the pre-seeded FMCG dataset.
+      </div>
+    </div>
+  </div>
+</div>
+
+      <!-- Footer Component -->
+      <div data-component="footer"></div>
+    </main>
+  </div>
+  <div data-component="modal"></div>
+  <div data-component="notification"></div>
+
+
+
+  <!-- Scripts (core first, then page-specific) -->
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/app.js?v=4.0"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/whatsapp.js"></script>
+  <script src="../assets/js/excel-import.js"></script>
+</body>
+</html>

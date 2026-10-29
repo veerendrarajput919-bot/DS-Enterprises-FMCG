@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Punching — DS Enterprises FMCG System</title>
+  <meta name="description" content="DS Enterprises FMCG Distribution & Field Sales System — Order Punching — DS Enterprises FMCG System" />
+  <meta name="theme-color" content="#10213f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" />
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/dashboard.css" />
+  <link rel="stylesheet" href="../assets/css/responsive.css" />
+  <link rel="stylesheet" href="../assets/css/print.css" />
+
+  <!-- External CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) reg.unregister();
+      });
+    }
+  </script>
+</head>
+<body data-page="order-punching.html">
+
+  <!-- ── COMPONENTS (injected by DS_Components loader in app.js) ─────── -->
+  <div data-component="header"></div>
+  <div class="ds-container">
+    <div data-component="sidebar"></div>
+
+    <main class="ds-main-content">
+      <!-- Unified Order & Field Sales Navigation Bar -->
+      <div class="ds-tab-bar">
+        <a href="order-punching.html" class="ds-subnav-pill active">🛒 Punch Field Order</a>
+        <a href="route-analysis.html" class="ds-subnav-pill">📍 Route & Beat Tracker</a>
+        <a href="route-assignment.html" class="ds-subnav-pill">🗺️ Route Delivery</a>
+        <a href="order-report.html" class="ds-subnav-pill">📋 All Orders & Reports</a>
+        <a href="order-approval.html" class="ds-subnav-pill">⚡ Order Approvals</a>
+      </div>
+
+<div class="ds-grid-cart">
+  <!-- Left Column: Store Selection & Product Catalog -->
+  <div class="ds-panel">
+    <div class="ds-panel-header" style="flex-wrap:wrap; gap:10px;">
+      <div>
+        <h3 class="ds-panel-title">🛒 Field Sales Order Punching</h3>
+        <p class="ds-panel-subtitle">Select beat retailer and add FMCG items to booking cart</p>
+      </div>
+      <button type="button" class="btn btn-primary" onclick="DS_Orders.openAddProductModal()" style="font-weight:800; display:inline-flex; align-items:center; gap:6px;">
+        ➕ Add New Product (नया प्रोडक्ट जोड़ें)
+      </button>
+    </div>
+
+    <!-- Quick Guide Strip -->
+    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:8px 12px; margin-bottom:14px; font-size:12px; color:#1e40af; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+      <div><strong>💡 Order Guide:</strong> 1. Select Store → 2. Adjust qty (+ / −) in catalog → 3. Need unlisted item? Click <strong>➕ Add New Product</strong> → 4. Click Submit</div>
+    </div>
+
+    <!-- Store Selection -->
+    <div class="ds-filter-bar" style="margin-bottom:14px;">
+      <div class="form-group" style="width:200px;">
+        <label class="form-label">Filter Route</label>
+        <select id="orderRouteSelect" class="form-control">
+          <option value="">All Routes</option>
+        </select>
+      </div>
+      <div class="form-group" style="flex:1;">
+        <label class="form-label">Select Retail Store / Kirana</label>
+        <select id="orderStoreSelect" class="form-control">
+          <option value="">-- Choose Store --</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Store Info Card -->
+    <div id="orderStoreInfoCard" style="display:none; background:var(--ds-surface-subtle); padding:14px; border-radius:var(--ds-radius-md); margin-bottom:16px; border:1px solid var(--ds-border);">
+    </div>
+
+    <!-- Search in Catalog & Quick Add -->
+    <div style="display:flex; gap:10px; margin-bottom:14px;">
+      <div class="form-group" style="flex:1; margin-bottom:0;">
+        <input type="text" id="catalogSearchInput" class="form-control" placeholder="🔍 Search products by name or brand (e.g. Parle, Tide, Soap, Biscuit)..." autocomplete="off" spellcheck="false" style="padding:10px 14px;" />
+      </div>
+      <button type="button" class="btn btn-secondary" onclick="DS_Orders.openAddProductModal()" title="Add product not found in list" style="font-size:13px; font-weight:700; white-space:nowrap;">
+        ➕ New SKU
+      </button>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="orderCatalogList" class="store-grid">
+      <!-- Populated by assets/js/orders.js -->
+    </div>
+  </div>
+
+  <!-- Right Column: Live Order Cart -->
+  <div class="ds-panel" id="orderCartPanel" style="position:sticky; top:70px; max-height:calc(100vh - 90px); display:flex; flex-direction:column; justify-content:space-between;">
+    <div>
+      <div class="ds-panel-header" style="align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+        <div>
+          <h3 class="ds-panel-title">🛍️ Booking Cart</h3>
+          <p class="ds-panel-subtitle">Review items before final submission</p>
+        </div>
+        <button type="button" class="btn btn-sm" onclick="DS_Orders.clearCart()" style="border:1px solid #fca5a5; background:#fff1f2; color:#b91c1c; font-weight:700; font-size:12px; padding:4px 10px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;" title="Remove all items from cart (कार्ट खाली करें)">
+          🗑️ Clear Cart
+        </button>
+      </div>
+
+      <div id="cartItemsList" style="max-height:45vh; overflow-y:auto; padding-right:4px;">
+        <!-- Populated by assets/js/orders.js -->
+      </div>
+    </div>
+
+    <div style="border-top:2px solid var(--ds-border); padding-top:14px; margin-top:14px;">
+      <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;">
+        <span>Total Units:</span>
+        <strong id="cartTotalQty">0</strong>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;">
+        <span>Subtotal:</span>
+        <span id="cartSubtotal">₹ 0.00</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:17px; font-weight:800; color:var(--ds-primary); margin-bottom:14px;">
+        <span>Net Total:</span>
+        <span id="cartNetTotal">₹ 0.00</span>
+      </div>
+
+      <button type="button" class="btn btn-primary btn-lg" style="width:100%; font-weight:800; min-height:44px;" onclick="DS_Orders.submitOrder()">
+        ✓ Submit & Book Order
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Mobile Cart Dock (Visible on phones when cart has items) -->
+<div id="mobileCartFloatingBar" class="ds-mobile-cart-bar" style="display:none;" onclick="DS_Orders.scrollToCart()">
+  <div style="display:flex; align-items:center; gap:8px;">
+    <div style="background:#0284c7; color:#ffffff; border-radius:999px; padding:3px 10px; font-weight:800; font-size:12px; display:inline-flex; align-items:center; gap:4px;">
+      🛒 <span id="mCartUnits">0</span>
+    </div>
+    <div style="font-size:15px; font-weight:800; color:#10b981;" id="mCartTotal">
+      ₹ 0.00
+    </div>
+  </div>
+  <button type="button" class="btn btn-success btn-sm" style="font-weight:700; padding:6px 14px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.25);">
+    Review Cart →
+  </button>
+</div>
+
+<!-- Modal: Add New Product directly from Field Sales Order Punching -->
+<div id="addProductModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="addProductTitle">
+  <div class="modal-card" style="width:min(580px, 95%);">
+    <div class="modal-header">
+      <div>
+        <h3 class="modal-title" id="addProductTitle">➕ Add New FMCG Product</h3>
+        <p style="margin:2px 0 0; font-size:12px; color:var(--ds-text-muted);">Create a new item in stock catalog & book directly in this cart</p>
+      </div>
+      <button type="button" class="modal-close" onclick="DS_Orders.closeAddProductModal()" aria-label="Close">×</button>
+    </div>
+
+    <form id="formAddNewProduct" onsubmit="DS_Orders.saveNewProduct(event)" style="padding:16px; display:flex; flex-direction:column; gap:12px;">
+      <div class="form-group">
+        <label class="form-label" for="npName">Product / Item Name *</label>
+        <input type="text" id="npName" class="form-control" required placeholder="e.g. Parle-G Gold 250g or Dettol Soap 125g" />
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="form-group">
+          <label class="form-label" for="npBrand">Brand Name *</label>
+          <input type="text" id="npBrand" class="form-control" list="npBrandList" required placeholder="e.g. Parle, ITC, HUL..." />
+          <datalist id="npBrandList"></datalist>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="npCategory">Category</label>
+          <select id="npCategory" class="form-control">
+            <option value="Biscuits & Confectionery">Biscuits & Confectionery</option>
+            <option value="Soaps & Personal Care">Soaps & Personal Care</option>
+            <option value="Snacks & Namkeen">Snacks & Namkeen</option>
+            <option value="Beverages & Tea">Beverages & Tea</option>
+            <option value="Spices & Groceries">Spices & Groceries</option>
+            <option value="Detergents & Cleaners">Detergents & Cleaners</option>
+            <option value="Dairy & Confectionery">Dairy & Confectionery</option>
+            <option value="General FMCG" selected>General FMCG</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+        <div class="form-group">
+          <label class="form-label" for="npRate">Selling Rate (₹) *</label>
+          <input type="number" id="npRate" class="form-control" step="0.01" min="0" required placeholder="0.00" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="npMrp">MRP (₹) *</label>
+          <input type="number" id="npMrp" class="form-control" step="0.01" min="0" required placeholder="0.00" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="npUnit">Packaging Unit</label>
+          <select id="npUnit" class="form-control">
+            <option value="Pcs" selected>Pcs</option>
+            <option value="Box">Box</option>
+            <option value="Carton">Carton</option>
+            <option value="Pkt">Pkt</option>
+            <option value="Kg">Kg</option>
+            <option value="Ltr">Ltr</option>
+            <option value="Jar">Jar</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="form-group">
+          <label class="form-label" for="npStock">Warehouse Initial Stock</label>
+          <input type="number" id="npStock" class="form-control" min="0" value="100" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="npPurchasePrice">Purchase Rate (₹ - Optional)</label>
+          <input type="number" id="npPurchasePrice" class="form-control" step="0.01" min="0" placeholder="0.00" />
+        </div>
+      </div>
+
+      <!-- Add to Cart Checkbox -->
+      <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:700; color:#166534; font-size:13px; margin:0;">
+          <input type="checkbox" id="npAutoAddToCart" checked />
+          <span>✓ Turant is order cart me add karein</span>
+        </label>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <label for="npCartQty" style="font-size:12px; color:#166534; font-weight:600; margin:0;">Booking Qty:</label>
+          <input type="number" id="npCartQty" value="1" min="1" class="form-control" style="width:65px; padding:4px 6px; text-align:center; font-weight:800;" />
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px; padding-top:8px;">
+        <button type="button" class="btn btn-secondary" onclick="DS_Orders.closeAddProductModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" style="font-weight:700;">✓ Save Product & Add to Cart</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Today's Booked Orders Section -->
+<div class="ds-panel" style="margin-top:24px;">
+  <div class="ds-panel-header" style="flex-wrap:wrap; gap:10px;">
+    <div>
+      <h3 class="ds-panel-title">📋 Today's Booked Orders (आज बुक किए गए ऑर्डर्स)</h3>
+      <p class="ds-panel-subtitle">Review generated Invoice / Bill No & manage order lifecycle</p>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span id="recentPunchCountBadge" class="badge" style="background:#e0f2fe; color:#0369a1; font-weight:700;">0 Orders</span>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.renderRecentOrdersTable()" title="Refresh List">↺ Refresh</button>
+    </div>
+  </div>
+
+  <!-- Filter Bar for Recent Orders -->
+  <div class="ds-filter-panel" style="margin-bottom:14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 14px;">
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <div class="form-group" style="flex:1; min-width:240px; margin-bottom:0;">
+        <input type="text" id="recentPunchSearchInput" class="form-control" placeholder="🔍 Search by Order ID, Invoice/Bill No, Store or Beat Route..." autocomplete="off" spellcheck="false" oninput="DS_Orders.renderRecentOrdersTable()" />
+      </div>
+      <div class="form-group" style="min-width:200px; margin-bottom:0;">
+        <select id="recentPunchStatusFilter" class="form-control" onchange="DS_Orders.renderRecentOrdersTable()">
+          <option value="">All Statuses</option>
+          <option value="active">Active Orders (Non-Cancelled)</option>
+          <option value="all_cancelled">❌ All Cancelled</option>
+          <option value="Cancelled by Customer">❌ Cancelled by Customer</option>
+          <option value="Cancelled by Company/Admin">⚠️ Cancelled by Company/Admin</option>
+        </select>
+      </div>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('recentPunchSearchInput').value=''; document.getElementById('recentPunchStatusFilter').value=''; DS_Orders.renderRecentOrdersTable();" style="height:36px; padding:0 12px; font-weight:700;">
+        ↺ Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- Recent Orders Table -->
+  <div class="ds-table-wrap">
+    <table class="ds-table">
+      <thead>
+        <tr>
+          <th>Order ID & Date</th>
+          <th>Invoice / Bill No.</th>
+          <th>Store / Retailer</th>
+          <th>Beat Route</th>
+          <th class="num">Net Total</th>
+          <th>Status & Reason</th>
+          <th style="text-align:center;">Action</th>
+        </tr>
+      </thead>
+      <tbody id="recentPunchOrdersTableBody">
+        <!-- Rendered by DS_Orders.renderRecentOrdersTable() -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: Order Cancellation with Remarks & Note -->
+<div id="cancelOrderModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cancelOrderTitle">
+  <div class="modal-card" style="width:min(580px, 95%);">
+    <div class="modal-header" style="border-bottom:1px solid #fee2e2; background:#fff1f2;">
+      <div>
+        <h3 class="modal-title" id="cancelOrderTitle" style="color:#9f1239; display:flex; align-items:center; gap:6px;">
+          ❌ Order Cancellation & Mandatory Reason
+        </h3>
+        <p style="margin:2px 0 0; font-size:12px; color:#be123c;">
+          Specify whether cancellation was initiated by Customer or Company/Admin, and record mandatory remark notes.
+        </p>
+      </div>
+      <button type="button" class="modal-close" onclick="DS_Orders.closeCancelOrderModal()" aria-label="Close">×</button>
+    </div>
+
+    <form id="formCancelOrder" onsubmit="DS_Orders.confirmCancelOrder(event)" style="padding:16px; display:flex; flex-direction:column; gap:14px;">
+      <input type="hidden" id="cancelOrderId" value="" />
+
+      <!-- Order Summary Card -->
+      <div id="cancelOrderSummaryCard" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 14px; font-size:12px;">
+      </div>
+
+      <!-- Cancellation Type Radio Options (Customer vs Company/Admin) -->
+      <div>
+        <label class="form-label" style="font-weight:800; margin-bottom:8px; display:block;">Who Cancelled the Order? *</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <label style="border:2px solid #fecdd3; background:#fff1f2; border-radius:8px; padding:10px; cursor:pointer; display:flex; flex-direction:column; gap:4px;" id="lblCancelParty">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="radio" name="cancelTypeRadio" id="radioCancelParty" value="Cancelled by Customer" checked onchange="DS_Orders.handleCancelTypeChange(this.value)" />
+              <strong style="color:#9f1239; font-size:13px;">Cancelled by Customer</strong>
+            </div>
+            <div style="font-size:11px; color:#be123c; margin-left:24px;">
+              Grahak / Store retailer ne order lene se mana kar diya (Party Refused)
+            </div>
+          </label>
+
+          <label style="border:2px solid #ddd6fe; background:#f5f3ff; border-radius:8px; padding:10px; cursor:pointer; display:flex; flex-direction:column; gap:4px;" id="lblCancelOwn">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="radio" name="cancelTypeRadio" id="radioCancelOwn" value="Cancelled by Company/Admin" onchange="DS_Orders.handleCancelTypeChange(this.value)" />
+              <strong style="color:#5b21b6; font-size:13px;">Cancelled by Company/Admin</strong>
+            </div>
+            <div style="font-size:11px; color:#6d28d9; margin-left:24px;">
+              Internal / Company issue (Stock Shortage, Overdue Credit, Logistics)
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Preset Reasons Dropdown -->
+      <div class="form-group">
+        <label class="form-label" for="cancelPresetReason">Standard Reason Category *</label>
+        <select id="cancelPresetReason" class="form-control" onchange="DS_Orders.handlePresetReasonSelect(this.value)" style="font-weight:600;">
+          <!-- Dynamically populated based on Customer vs Company -->
+        </select>
+      </div>
+
+      <!-- Mandatory Detailed Remark / Note Input -->
+      <div class="form-group">
+        <label class="form-label" for="cancelOrderRemark">Mandatory Cancellation Remarks / Note (विवरण / टिप्पणी) *</label>
+        <textarea id="cancelOrderRemark" class="form-control" rows="3" required placeholder="Grahak ya company ke cancel karne ka vishesh kaaran anivarya roop se likhein..." style="resize:vertical;"></textarea>
+      </div>
+
+      <!-- Stock Recovery Notice -->
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:8px 12px; font-size:11px; color:#1e40af;">
+        ℹ️ <strong>Stock Auto-Restoration:</strong> Cancelling this order will automatically restore the booked SKU quantities back into warehouse stock inventory.
+      </div>
+
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px; padding-top:6px;">
+        <button type="button" class="btn btn-secondary" onclick="DS_Orders.closeCancelOrderModal()">Close</button>
+        <button type="submit" class="btn btn-danger" style="font-weight:800; background:#be123c; border-color:#be123c; color:#fff;">
+          ✓ Confirm Order Cancellation
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Order Details & Item Manifest View -->
+<div id="orderDetailsModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="orderDetailsTitle">
+  <div class="modal-card" style="width:min(680px, 95%); max-height:90vh; display:flex; flex-direction:column;">
+    <div class="modal-header">
+      <div>
+        <h3 class="modal-title" id="orderDetailsTitle">📦 Order Overview & Manifest</h3>
+        <p id="orderDetailsSubtitle" style="margin:2px 0 0; font-size:12px; color:var(--ds-text-muted);"></p>
+      </div>
+      <button type="button" class="modal-close" onclick="DS_Orders.closeOrderDetailsModal()" aria-label="Close">×</button>
+    </div>
+
+    <div id="orderDetailsBody" style="overflow-y:auto; padding:16px;">
+      <!-- Populated by assets/js/orders.js viewOrderDetails() -->
+    </div>
+
+    <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px;">
+      <div id="orderDetailsFooterActions" style="display:flex; gap:8px;"></div>
+      <button type="button" class="btn btn-secondary" onclick="DS_Orders.closeOrderDetailsModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+      <!-- Footer Component -->
+      <div data-component="footer"></div>
+    </main>
+  </div>
+  <div data-component="modal"></div>
+  <div data-component="notification"></div>
+
+
+
+  <!-- Scripts (core first, then page-specific) -->
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/app.js?v=4.0"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/whatsapp.js"></script>
+  <script src="../assets/js/orders.js"></script>
+</body>
+</html>

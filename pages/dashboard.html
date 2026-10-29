@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — DS Enterprises FMCG System</title>
+  <meta name="description" content="DS Enterprises FMCG Distribution & Field Sales System — Dashboard — DS Enterprises FMCG System" />
+  <meta name="theme-color" content="#10213f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" />
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/dashboard.css" />
+  <link rel="stylesheet" href="../assets/css/responsive.css" />
+  <link rel="stylesheet" href="../assets/css/print.css" />
+
+  <!-- External CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) reg.unregister();
+      });
+    }
+
+    (function () {
+      const loggedIn = sessionStorage.getItem('ds_auth_logged_in') === 'true' || localStorage.getItem('ds_auth_logged_in') === 'true';
+      if (!loggedIn) {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+</head>
+<body data-page="dashboard.html">
+
+  <!-- ── COMPONENTS (injected by DS_Components loader in app.js) ─────── -->
+  <div data-component="header"></div>
+  <div class="ds-container">
+    <div data-component="sidebar"></div>
+
+    <main class="ds-main-content">
+<!-- Sales Officer Beat Hero Card (Visible in SO mode) -->
+<div id="dsSoHeroSection" class="so-hero-card" style="display:none;">
+  <div class="so-hero-top">
+    <div class="so-hero-title">
+      <h2 id="soHeroName">Sales Officer</h2>
+      <p id="soHeroRoute">Assigned Beat: Civil Lines Beat</p>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <a href="order-punching.html" class="btn btn-warning">🛒 Punch Field Order</a>
+      <a href="payment-collections.html" class="btn btn-success">💵 Collect Payment</a>
+    </div>
+  </div>
+  <div class="so-target-section">
+    <div class="so-target-labels">
+      <span>Monthly Sales Target Progress</span>
+      <span id="soTargetText">₹ 0 of ₹ 3,50,000 (0%)</span>
+    </div>
+    <div class="so-target-track">
+      <div id="soTargetBarFill" class="so-target-fill" style="width: 0%;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Registration & Management Banner (Visible in Admin Mode) -->
+<div id="adminRegistrationBanner" style="display:none; background:linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border:1px solid #86efac; border-radius:var(--ds-radius-md); padding:14px 20px; margin-bottom:18px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div style="width:40px; height:40px; border-radius:10px; background:#16a34a; color:#ffffff; display:grid; place-items:center; font-size:20px; flex-shrink:0;">👑</div>
+      <div>
+        <h4 style="margin:0 0 2px; font-size:15px; color:#166534; font-weight:800;">Admin Panel: User & Staff Registration</h4>
+        <p style="margin:0; font-size:12px; color:#15803d;">Register new Sales Officers, IMS Warehouse Leads, or Cashiers with role-based access.</p>
+      </div>
+    </div>
+    <a href="sales-officers.html?action=register" class="btn btn-success btn-sm" style="font-weight:700; padding:8px 18px; border-radius:6px; box-shadow:0 2px 6px rgba(22,163,74,0.25);">
+      ➕ Register New Staff / User
+    </a>
+  </div>
+</div>
+
+<!-- Executive KPI Metrics — 14 Clickable Summary Cards -->
+<div class="kpi-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; margin-bottom:20px;">
+  <!-- 1. Total Bills -->
+  <div class="kpi-card indigo clickable-card" onclick="window.location.href='sales-analysis.html'" title="Click to view all generated bills">
+    <div class="kpi-header">
+      <span class="kpi-label">Total Bills</span>
+      <div class="kpi-icon-wrap" style="color:#6366f1;">📑</div>
+    </div>
+    <div class="kpi-value" id="kpiTotalBills">0 Bills</div>
+    <div class="kpi-subtext">Automatic unique bill records</div>
+  </div>
+
+  <!-- 2. Total Invoices -->
+  <div class="kpi-card blue clickable-card" onclick="window.location.href='sales-analysis.html'" title="Click to view sales invoice ledger">
+    <div class="kpi-header">
+      <span class="kpi-label">Total Invoices</span>
+      <div class="kpi-icon-wrap" style="color:#3b82f6;">🧾</div>
+    </div>
+    <div class="kpi-value" id="kpiTotalInvoices">0 Invoices</div>
+    <div class="kpi-subtext">Sales ledger invoices generated</div>
+  </div>
+
+  <!-- 3. Today's Orders -->
+  <div class="kpi-card emerald clickable-card" onclick="window.location.href='order-report.html?date_preset=today'" title="Click to view today's orders">
+    <div class="kpi-header">
+      <span class="kpi-label">Today's Orders</span>
+      <div class="kpi-icon-wrap" style="color:#10b981;">📅</div>
+    </div>
+    <div class="kpi-value" id="kpiTodayOrders">0 Orders</div>
+    <div class="kpi-subtext">Booked in field today</div>
+  </div>
+
+  <!-- 4. Pending Orders -->
+  <div class="kpi-card amber clickable-card" onclick="window.location.href='order-report.html?status=Pending'" title="Click to view pending orders">
+    <div class="kpi-header">
+      <span class="kpi-label">Pending Orders</span>
+      <div class="kpi-icon-wrap" style="color:#f59e0b;">🛒</div>
+    </div>
+    <div class="kpi-value" id="kpiPendingOrders">0 Orders</div>
+    <div class="kpi-subtext">Awaiting fulfillment / approval</div>
+  </div>
+
+  <!-- 5. Delivered Orders -->
+  <div class="kpi-card emerald clickable-card" onclick="window.location.href='order-report.html?status=Delivered'" title="Click to view delivered orders">
+    <div class="kpi-header">
+      <span class="kpi-label">Delivered Orders</span>
+      <div class="kpi-icon-wrap" style="color:#059669;">✅</div>
+    </div>
+    <div class="kpi-value" id="kpiDeliveredOrders">0 Orders</div>
+    <div class="kpi-subtext">Successfully fulfilled & closed</div>
+  </div>
+
+  <!-- 6. Cancelled by Customer -->
+  <div class="kpi-card rose clickable-card" onclick="window.location.href='order-report.html?status=Cancelled%20by%20Customer'" title="Click to view orders cancelled by customer">
+    <div class="kpi-header">
+      <span class="kpi-label">Cancelled by Customer</span>
+      <div class="kpi-icon-wrap" style="color:#f43f5e;">❌</div>
+    </div>
+    <div class="kpi-value" id="kpiCancelCustomer" style="color:#e11d48;">0 Orders</div>
+    <div class="kpi-subtext" id="kpiCancelCustomerSub">Customer denied delivery</div>
+  </div>
+
+  <!-- 7. Cancelled by Company/Admin -->
+  <div class="kpi-card purple clickable-card" onclick="window.location.href='order-report.html?status=Cancelled%20by%20Company/Admin'" title="Click to view orders cancelled by company/admin">
+    <div class="kpi-header">
+      <span class="kpi-label">Cancelled by Co/Admin</span>
+      <div class="kpi-icon-wrap" style="color:#a855f7;">⚠️</div>
+    </div>
+    <div class="kpi-value" id="kpiCancelCompany" style="color:#7c3aed;">0 Orders</div>
+    <div class="kpi-subtext" id="kpiCancelCompanySub">Stock/logistics issue</div>
+  </div>
+
+  <!-- 8. Total Sales Turnover -->
+  <div class="kpi-card emerald clickable-card" onclick="window.location.href='sales-analysis.html'" title="Click to view sales turnover analysis">
+    <div class="kpi-header">
+      <span class="kpi-label">Total Sales Turnover</span>
+      <div class="kpi-icon-wrap" style="color:var(--ds-emerald);">₹</div>
+    </div>
+    <div class="kpi-value" id="kpiTotalSales">₹ 0.00</div>
+    <div class="kpi-subtext" id="kpiTotalSalesSub">Gross market revenue billed</div>
+  </div>
+
+  <!-- 9. Pending Payments -->
+  <div class="kpi-card danger clickable-card" onclick="window.location.href='outstanding.html'" title="Click to view outstanding receivables">
+    <div class="kpi-header">
+      <span class="kpi-label">Pending Payments</span>
+      <div class="kpi-icon-wrap" style="color:var(--ds-danger);">⏳</div>
+    </div>
+    <div class="kpi-value" id="kpiOutstanding">₹ 0.00</div>
+    <div class="kpi-subtext">Total receivables from market</div>
+  </div>
+
+  <!-- 10. Total Delivery Routes -->
+  <div class="kpi-card cyan clickable-card" onclick="window.location.href='route-assignment.html'" title="Click to view delivery routes">
+    <div class="kpi-header">
+      <span class="kpi-label">Total Delivery Routes</span>
+      <div class="kpi-icon-wrap" style="color:#06b6d4;">🗺️</div>
+    </div>
+    <div class="kpi-value" id="kpiTotalRoutes">0 Routes</div>
+    <div class="kpi-subtext">Active beat delivery networks</div>
+  </div>
+
+  <!-- 11. Assigned Deliveries -->
+  <div class="kpi-card teal clickable-card" onclick="window.location.href='route-assignment.html?date=today'" title="Click to view today's route assignments">
+    <div class="kpi-header">
+      <span class="kpi-label">Assigned Deliveries</span>
+      <div class="kpi-icon-wrap" style="color:#0d9488;">🚚</div>
+    </div>
+    <div class="kpi-value" id="kpiAssignedDeliveries">0 Stops</div>
+    <div class="kpi-subtext">Allocated to delivery staff</div>
+  </div>
+
+  <!-- 12. Unassigned Deliveries -->
+  <div class="kpi-card orange clickable-card" onclick="window.location.href='order-approval.html'" title="Click to view unassigned orders awaiting dispatch">
+    <div class="kpi-header">
+      <span class="kpi-label">Unassigned Deliveries</span>
+      <div class="kpi-icon-wrap" style="color:#f97316;">📦</div>
+    </div>
+    <div class="kpi-value" id="kpiUnassignedDeliveries">0 Orders</div>
+    <div class="kpi-subtext">Approved orders pending van beat</div>
+  </div>
+
+  <!-- 13. Successful Excel Imports -->
+  <div class="kpi-card emerald clickable-card" onclick="window.location.href='upload-update.html?tab=history&status=Success'" title="Click to view successful Excel imports">
+    <div class="kpi-header">
+      <span class="kpi-label">Successful Imports</span>
+      <div class="kpi-icon-wrap" style="color:#10b981;">📥</div>
+    </div>
+    <div class="kpi-value" id="kpiImportSuccess">0 Batches</div>
+    <div class="kpi-subtext">Ingested bills & route workbooks</div>
+  </div>
+
+  <!-- 14. Failed Excel Imports -->
+  <div class="kpi-card rose clickable-card" onclick="window.location.href='upload-update.html?tab=history&status=Failed'" title="Click to view failed/partial Excel imports">
+    <div class="kpi-header">
+      <span class="kpi-label">Failed Excel Imports</span>
+      <div class="kpi-icon-wrap" style="color:#f43f5e;">⚠️</div>
+    </div>
+    <div class="kpi-value" id="kpiImportFailed">0 Batches</div>
+    <div class="kpi-subtext">Validation errors or partial logs</div>
+  </div>
+</div>
+
+<!-- Quick Action Shortcuts (Filtered by Role Permissions) -->
+<div class="quick-actions-bar">
+  <a href="sales-officers.html?action=register" class="quick-action-btn" data-permission="canManageStaff" style="background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; font-weight:700;">📝 Register Staff / User</a>
+  <a href="order-punching.html" class="quick-action-btn" data-permission="canPunchOrders">🛒 Punch New Order</a>
+  <a href="route-analysis.html" class="quick-action-btn" data-permission="canViewAnalytics">📍 Route & Beat Tracker</a>
+  <a href="route-assignment.html" class="quick-action-btn" data-permission="canManageDispatch">🗺️ Route Delivery</a>
+  <a href="payment-collections.html" class="quick-action-btn" data-permission="canCollectPayments">💵 Record Collection</a>
+  <a href="order-approval.html" class="quick-action-btn" data-permission="canApproveOrders">⚡ Order Fulfillment</a>
+  <a href="dispatch.html" class="quick-action-btn" data-permission="canManageDispatch">🚚 Dispatch & Loading Hub</a>
+  <a href="sales-analysis.html" class="quick-action-btn" data-permission="canViewAnalytics">📈 Sales Analysis</a>
+  <a href="upload-update.html" class="quick-action-btn" data-permission="canImportData">📥 Upload Excel Sheet</a>
+</div>
+
+<!-- Interactive Chart.js Visualizations Grid -->
+<div class="ds-grid-charts" style="margin-top:16px;">
+  <div class="ds-panel" style="margin-bottom:0;">
+    <div class="ds-panel-header">
+      <div>
+        <h3 class="ds-panel-title">📈 7-Day Sales Turnover Trend</h3>
+        <p class="ds-panel-subtitle">Daily billed value across all field routes</p>
+      </div>
+    </div>
+    <div style="height:260px; position:relative;">
+      <canvas id="dsSalesTrendChart"></canvas>
+    </div>
+  </div>
+
+  <div class="ds-panel" style="margin-bottom:0;">
+    <div class="ds-panel-header">
+      <div>
+        <h3 class="ds-panel-title">🥧 Brand Revenue Share</h3>
+        <p class="ds-panel-subtitle">Market turnover contribution by brand</p>
+      </div>
+    </div>
+    <div style="height:260px; position:relative;">
+      <canvas id="dsBrandShareChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Beat Retailers List (If SO) -->
+<div id="dsBeatStoresSection" class="ds-panel" style="margin-top:16px;">
+  <div class="ds-panel-header">
+    <div>
+      <h3 class="ds-panel-title">📍 Today's Assigned Beat Retailers</h3>
+      <p class="ds-panel-subtitle">Retail outlets scheduled for sales booking and collection visits</p>
+    </div>
+    <a href="route-analysis.html" class="btn btn-secondary btn-sm">Route Analysis</a>
+  </div>
+  <div class="store-grid" id="dsBeatStoresList">
+    <!-- Populated by DS_Dashboard.renderBeatStores() -->
+  </div>
+</div>
+
+<!-- Grid: Recent Orders & Top Brands -->
+<div class="ds-grid-2-1" style="margin-top:16px;">
+  <div class="ds-panel">
+    <div class="ds-panel-header">
+      <div>
+        <h3 class="ds-panel-title">📋 Recent Punched Orders</h3>
+        <p class="ds-panel-subtitle">Latest orders booked across field beats</p>
+      </div>
+      <a href="order-report.html" class="btn btn-secondary btn-sm">View All Orders</a>
+    </div>
+    <div class="ds-table-wrap">
+      <table class="ds-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Store / Party</th>
+            <th>Beat Route</th>
+            <th>Sales Officer</th>
+            <th class="num">Amount</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="dsRecentOrdersTableBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="ds-panel">
+    <div class="ds-panel-header">
+      <div>
+        <h3 class="ds-panel-title">🏆 Top Performing Brands</h3>
+        <p class="ds-panel-subtitle">Sales contribution breakdown</p>
+      </div>
+      <a href="item-brand-wise-sale.html" class="btn btn-secondary btn-sm">Full Matrix</a>
+    </div>
+    <div id="dsTopBrandsList" style="padding-top:6px;">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Low Stock Alert Warning Box -->
+<div class="ds-panel" style="margin-top:16px; border-left:4px solid var(--ds-danger);">
+  <div class="ds-panel-header">
+    <div>
+      <h3 class="ds-panel-title" style="color:var(--ds-danger-dark);">⚠️ Low Stock Warehouse Alerts</h3>
+      <p class="ds-panel-subtitle">SKUs reaching or breaching safety buffer threshold</p>
+    </div>
+    <a href="stock.html" class="btn btn-danger btn-sm">Manage Stock</a>
+  </div>
+  <div class="ds-table-wrap">
+    <table class="ds-table">
+      <thead>
+        <tr>
+          <th>SKU Code</th>
+          <th>Item Description</th>
+          <th>Brand</th>
+          <th class="num">Current Stock</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="dsLowStockTableBody">
+        <!-- Populated by JS -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+      <!-- Footer Component -->
+      <div data-component="footer"></div>
+    </main>
+  </div>
+  <div data-component="modal"></div>
+  <div data-component="notification"></div>
+
+
+
+  <!-- Scripts (core first, then page-specific) -->
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/app.js?v=4.0"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/filters.js"></script>
+  <script src="../assets/js/whatsapp.js"></script>
+  <script src="../assets/js/dashboard.js"></script>
+</body>
+</html>
