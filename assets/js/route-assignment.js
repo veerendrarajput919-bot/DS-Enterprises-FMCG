@@ -266,11 +266,11 @@
           a.delivery_status === 'Failed' ? 'badge-cancelled-by-customer' : 'badge-pending';
 
         return `
-          <tr data-id="${a.id}">
+          <tr data-id="${DS_App.escapeHtml(a.id)}">
             <td style="width:70px; text-align:center;">
               <input type="number" class="form-control" value="${a.sequence || 1}" min="1" max="999" 
                 style="width:55px; text-align:center; padding:4px; font-weight:800; font-size:12px; display:inline-block;"
-                onchange="DS_RouteAssignment.handleSequenceChange(${a.id}, this.value)" title="Change sequence order" />
+                onchange="DS_RouteAssignment.handleSequenceChange('${DS_App.escapeHtml(a.id)}', this.value)" title="Change sequence order" />
             </td>
             <td>
               <span class="badge" style="background:#f1f5f9; color:#475569; font-size:10px;">${DS_App.escapeHtml(a.route_id)}</span>
@@ -289,12 +289,12 @@
               <div style="display:flex; align-items:center; gap:6px;">
                 <input type="text" class="form-control" value="${DS_App.escapeHtml(a.delivery_person)}" 
                   style="font-size:12px; padding:4px 8px; max-width:180px;"
-                  onchange="DS_RouteAssignment.handleReassignSingle(${a.id}, this.value)" title="Edit to reassign delivery person" />
+                  onchange="DS_RouteAssignment.handleReassignSingle('${DS_App.escapeHtml(a.id)}', this.value)" title="Edit to reassign delivery person" />
               </div>
             </td>
             <td>
               <select class="form-control" style="font-size:11px; padding:4px 8px; font-weight:700;"
-                onchange="DS_RouteAssignment.handleStatusChange(${a.id}, this.value)">
+                onchange="DS_RouteAssignment.handleStatusChange('${DS_App.escapeHtml(a.id)}', this.value)">
                 <option value="Assigned" ${a.delivery_status === 'Assigned' ? 'selected' : ''}>Assigned (Pending)</option>
                 <option value="In Transit" ${a.delivery_status === 'In Transit' ? 'selected' : ''}>In Transit</option>
                 <option value="Delivered" ${a.delivery_status === 'Delivered' ? 'selected' : ''}>Delivered</option>

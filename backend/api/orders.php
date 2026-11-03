@@ -469,6 +469,8 @@ if ($method === 'PUT') {
     }
 }
 
+errorResponse("Method {$method} not allowed", 405);
+
 /**
  * ──────────────────────────────────────────────────────────────────────────
  * ORDER CANCELLATION HANDLER (Requirement 3)

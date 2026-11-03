@@ -21,26 +21,26 @@
   const pagePrefix = isPagesDir ? '' : 'pages/';
 
   const WIDGET_DEFINITIONS = {
-    // 10 Required Primary KPI Cards
-    'kpi-total-bills': { label: 'Total Bills', group: 'cards', default: true },
-    'kpi-total-invoices': { label: 'Total Invoices', group: 'cards', default: true },
-    'kpi-today-orders': { label: "Today's Orders", group: 'cards', default: true },
+    // 6 Priority Primary KPI Tiles in requested sequence
+    'kpi-total-sales': { label: 'Total Sales', group: 'primary', default: true },
+    'kpi-outstanding': { label: 'Total Receivable', group: 'primary', default: true },
+    'kpi-today-orders': { label: "Today's Orders", group: 'primary', default: true },
+    'kpi-total-bills': { label: 'Total Bills', group: 'primary', default: true },
+    'kpi-total-invoices': { label: 'Total Invoices', group: 'primary', default: true },
+    'kpi-total-routes': { label: 'Total Delivery Routes', group: 'primary', default: true },
+
+    // Remaining KPI Tiles
     'kpi-pending-orders': { label: 'Pending Orders', group: 'cards', default: true },
     'kpi-delivered-orders': { label: 'Delivered Orders', group: 'cards', default: true },
+    'kpi-assigned-deliveries': { label: 'Assigned Delivery Stops', group: 'cards', default: true },
+    'kpi-pending-dispatch': { label: 'Unassigned Delivery Orders', group: 'cards', default: true },
     'kpi-cancel-customer': { label: 'Cancelled by Customer', group: 'cards', default: true },
     'kpi-cancel-company': { label: 'Cancelled by Company/Own', group: 'cards', default: true },
-    'kpi-total-sales': { label: 'Total Sales Turnover', group: 'cards', default: true },
-    'kpi-outstanding': { label: 'Pending Payments / Outstanding', group: 'cards', default: true },
-    'kpi-total-routes': { label: 'Total Delivery Routes', group: 'cards', default: true },
-    // 4 Secondary Cards
-    'kpi-assigned-deliveries': { label: 'Assigned Delivery Stops', group: 'cards', default: true },
-    'kpi-unassigned-deliveries': { label: 'Unassigned Delivery Orders', group: 'cards', default: true },
-    'kpi-pending-dispatch': { label: 'Pending Dispatch', group: 'cards', default: true },
     'kpi-import-success': { label: 'Successful Excel Imports', group: 'cards', default: true },
     'kpi-import-failed': { label: 'Failed Excel Imports', group: 'cards', default: true },
 
     // Dashboard Sections
-    'section-admin-banner': { label: 'Admin Staff Registration Tile', group: 'sections', default: true },
+    'section-admin-banner': { label: 'Admin Staff Registration Banner', group: 'sections', default: true },
     'section-so-hero': { label: 'Sales Officer Target Hero Card', group: 'sections', default: true },
     'section-quick-actions': { label: 'Quick Action Shortcuts Bar', group: 'sections', default: true },
     'section-charts': { label: 'Sales Analytics & Visualizations (5 Charts)', group: 'sections', default: true },
@@ -953,6 +953,8 @@
           if (k === 'section-admin-banner') {
             const isAdmin = window.DS_Auth && (window.DS_Auth.isAdmin() || window.DS_Auth.getCurrentRole() === 'admin' || window.DS_Auth.hasPermission('canManageStaff'));
             el.style.display = (isAdmin && isVisible) ? 'flex' : 'none';
+            const textEl = document.getElementById('dsToggleAdminStripText');
+            if (textEl) textEl.textContent = (isAdmin && isVisible) ? 'Admin Profile ▴' : 'Admin Profile ▾';
           } else if (k === 'section-so-hero') {
             const isSo = window.DS_Auth ? window.DS_Auth.isSo() : false;
             el.style.display = (isSo && isVisible) ? 'block' : 'none';
@@ -963,11 +965,31 @@
       });
     },
 
+    toggleAdminBanner: function () {
+      const banner = document.getElementById('adminRegistrationBanner');
+      const textEl = document.getElementById('dsToggleAdminStripText');
+      if (!banner) return;
+      const isCurrentlyHidden = banner.style.display === 'none';
+      const prefs = this.getVisibilityPrefs();
+      if (isCurrentlyHidden) {
+        banner.style.display = 'flex';
+        prefs['section-admin-banner'] = true;
+        if (textEl) textEl.textContent = 'Admin Profile ▴';
+      } else {
+        banner.style.display = 'none';
+        prefs['section-admin-banner'] = false;
+        if (textEl) textEl.textContent = 'Admin Profile ▾';
+      }
+      this.saveVisibilityPrefs(prefs);
+    },
+
     dismissAdminTile: function () {
       const prefs = this.getVisibilityPrefs();
       prefs['section-admin-banner'] = false;
       this.saveVisibilityPrefs(prefs);
-      if (window.DS_App) DS_App.toast('Staff Registration tile dismissed. You can restore it via "Customize" anytime.', 'info', 3000);
+      const textEl = document.getElementById('dsToggleAdminStripText');
+      if (textEl) textEl.textContent = 'Admin Profile ▾';
+      if (window.DS_App) DS_App.toast('Admin Registration banner collapsed.', 'info', 2500);
     },
 
     openCustomizeModal: function () {
@@ -987,18 +1009,46 @@
       }
     },
 
+    showTop6Only: function () {
+      const prefs = this.getVisibilityPrefs();
+      Object.keys(WIDGET_DEFINITIONS).forEach(k => {
+        if (WIDGET_DEFINITIONS[k].group === 'primary') {
+          prefs[k] = true;
+        } else if (WIDGET_DEFINITIONS[k].group === 'cards') {
+          prefs[k] = false;
+        }
+      });
+      this.saveVisibilityPrefs(prefs);
+      this.renderCustomizeModal();
+      if (window.DS_App) DS_App.toast('Showing Top 6 Primary Tiles only! Screen space optimized.', 'info', 2500);
+    },
+
+    selectAllTiles: function (visible) {
+      const prefs = this.getVisibilityPrefs();
+      Object.keys(WIDGET_DEFINITIONS).forEach(k => {
+        if (WIDGET_DEFINITIONS[k].group === 'primary' || WIDGET_DEFINITIONS[k].group === 'cards') {
+          prefs[k] = !!visible;
+        }
+      });
+      this.saveVisibilityPrefs(prefs);
+      this.renderCustomizeModal();
+      if (window.DS_App) DS_App.toast(visible ? 'All KPI tiles are now visible!' : 'All tiles hidden.', 'info', 2500);
+    },
+
     renderCustomizeModal: function () {
+      const primaryContainer = document.getElementById('dsCustomizePrimaryCardsGrid');
       const cardsContainer = document.getElementById('dsCustomizeCardsGrid');
       const sectionsContainer = document.getElementById('dsCustomizeSectionsGrid');
       if (!cardsContainer || !sectionsContainer) return;
 
       const prefs = this.getVisibilityPrefs();
+      let primaryHtml = '';
       let cardsHtml = '';
       let sectionsHtml = '';
 
-      Object.entries(WIDGET_DEFINITIONS).forEach(([key, item]) => {
+      const makeRow = (key, item) => {
         const isChecked = prefs[key] !== false ? 'checked' : '';
-        const row = `
+        return `
           <div class="ds-customize-item">
             <span class="ds-customize-label">${item.label}</span>
             <label class="ds-toggle-switch">
@@ -1007,13 +1057,19 @@
             </label>
           </div>
         `;
-        if (item.group === 'cards') {
-          cardsHtml += row;
+      };
+
+      Object.entries(WIDGET_DEFINITIONS).forEach(([key, item]) => {
+        if (item.group === 'primary') {
+          primaryHtml += makeRow(key, item);
+        } else if (item.group === 'cards') {
+          cardsHtml += makeRow(key, item);
         } else {
-          sectionsHtml += row;
+          sectionsHtml += makeRow(key, item);
         }
       });
 
+      if (primaryContainer) primaryContainer.innerHTML = primaryHtml;
       cardsContainer.innerHTML = cardsHtml;
       sectionsContainer.innerHTML = sectionsHtml;
     },

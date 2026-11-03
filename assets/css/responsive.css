@@ -121,14 +121,14 @@
     position: sticky !important;
     top: 0 !important;
     z-index: 990 !important;
-    height: 46px !important;
+    height: 38px !important;
     background: #0f172a !important;
     box-shadow: 0 1px 4px rgba(0,0,0,0.2) !important;
   }
 
   .ds-header-inner {
-    padding: 0 10px !important;
-    height: 46px !important;
+    padding: 0 8px !important;
+    height: 38px !important;
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
@@ -388,21 +388,23 @@
   /* ── 3E. KPI SUMMARY CARDS ── */
   .kpi-grid, .r-kpi-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 4px !important;
+    gap: 5px !important;
     margin-bottom: 6px !important;
   }
 
   .kpi-card, .r-kpi-card {
     padding: 5px 8px !important;
-    min-height: 46px !important;
+    min-height: 48px !important;
+    max-height: 54px !important;
     border-radius: 6px !important;
-    gap: 3px !important;
+    gap: 2px !important;
+    justify-content: center !important;
   }
 
   .kpi-card-value, .kpi-value {
-    font-size: 14px !important;
+    font-size: 14.5px !important;
     font-weight: 800 !important;
-    line-height: 1.1 !important;
+    line-height: 1.15 !important;
   }
 
   .kpi-card-label, .kpi-label {
@@ -411,7 +413,8 @@
     letter-spacing: 0.2px !important;
   }
 
-  .kpi-card-icon, .kpi-icon-wrap, .qa-icon, .admin-action-icon {
+  .kpi-card-icon, .kpi-icon-wrap, .qa-icon, .admin-action-icon,
+  .kpi-card-sub, .kpi-sub-badge, .kpi-subtext {
     display: none !important;
   }
 
@@ -666,11 +669,11 @@
 /* ── 4. COMPACT PHONES & IPHONES (<= 480px) ────────────────────────────── */
 @media (max-width: 480px) {
   .ds-header {
-    height: 44px !important;
+    height: 38px !important;
   }
 
   .ds-header-inner {
-    height: 44px !important;
+    height: 38px !important;
     padding: 0 8px !important;
   }
 

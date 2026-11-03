@@ -49,15 +49,18 @@
       
       <!-- Top Dashboard Action Bar: Title, Live Status, Customize & Refresh -->
       <div class="ds-dashboard-toolbar">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <h2 class="ds-dashboard-title">Executive Dashboard</h2>
-          <span class="badge" style="background:#eff6ff; color:#1d4ed8; font-size:9.5px; padding:2px 7px;">Live</span>
-        </div>
         <div style="display:flex; align-items:center; gap:6px;">
-          <button type="button" class="btn btn-secondary btn-xs" onclick="DS_Dashboard.openCustomizeModal()" title="Customize Visible Cards & Widgets">
-            <span>Customize</span>
+          <h2 class="ds-dashboard-title">Executive Dashboard</h2>
+          <span class="badge" style="background:#eff6ff; color:#1d4ed8; font-size:9px; padding:1px 6px;">Live</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
+          <button type="button" id="dsToggleAdminStripBtn" class="btn btn-secondary btn-xs" onclick="DS_Dashboard.toggleAdminBanner()" title="Toggle Admin Profile & Registration Strip" style="padding:2px 7px; font-size:11px;">
+            <span id="dsToggleAdminStripText">Admin Profile ▾</span>
           </button>
-          <button type="button" class="btn btn-secondary btn-xs" onclick="DS_Dashboard.render()" title="Refresh Dashboard Data">
+          <button type="button" class="btn btn-primary btn-xs" onclick="DS_Dashboard.openCustomizeModal()" title="Show / Hide Individual Dashboard Tiles" style="padding:2px 8px; font-size:11px; background:#2563eb; border-color:#2563eb;">
+            <span>Show / Hide Tiles</span>
+          </button>
+          <button type="button" class="btn btn-secondary btn-xs" onclick="DS_Dashboard.render()" title="Refresh Dashboard Data" style="padding:2px 7px; font-size:11px;">
             <span>Refresh</span>
           </button>
         </div>
@@ -91,128 +94,129 @@
         <div class="admin-action-left admin-tile-content">
           <div class="admin-action-text" style="min-width:0;">
             <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+              <span class="badge" style="background:#dbeafe; color:#1e40af; font-size:9px; font-weight:800; padding:1px 5px;">Super Admin</span>
               <span class="admin-action-title admin-tile-title">Staff & User Registration</span>
               <span class="admin-action-desc admin-tile-desc hide-mobile">Create and assign Sales Officers, Dispatchers, or Cashiers</span>
             </div>
           </div>
         </div>
         <div class="admin-action-right admin-tile-actions">
-          <a href="sales-officers.html?action=register" class="btn btn-success btn-xs" style="padding:3px 8px; font-weight:700;">
+          <a href="sales-officers.html?action=register" class="btn btn-success btn-xs" style="padding:2px 7px; font-weight:700; font-size:11px;">
             Register Staff
           </a>
-          <button type="button" class="admin-action-dismiss admin-tile-dismiss" onclick="DS_Dashboard.dismissAdminTile()" title="Dismiss tile">✕</button>
+          <button type="button" class="admin-action-dismiss admin-tile-dismiss" onclick="DS_Dashboard.dismissAdminTile()" title="Collapse Admin Panel" aria-label="Collapse">✕</button>
         </div>
       </div>
 
-      <!-- Executive KPI Metrics — 14 Clean Compact Rectangular Tiles with Dynamic Supporting Info -->
+      <!-- Executive KPI Metrics — Clean Compact Rectangular Tiles in Priority Sequence -->
       <div class="kpi-grid">
         
-        <!-- 1. Total Bills -->
+        <!-- 1. Total Sales (Primary #1) -->
+        <div class="kpi-card emerald clickable-card" data-widget="kpi-total-sales" onclick="window.location.href='sales-analysis.html'" title="Click to view sales turnover analysis">
+          <div class="kpi-header">
+            <span class="kpi-label">Total Sales</span>
+          </div>
+          <div class="kpi-value" id="kpiTotalSales">₹ 0.00</div>
+          <span id="kpiTotalSalesSub" style="display:none;"></span>
+        </div>
+
+        <!-- 2. Total Receivable (Primary #2) -->
+        <div class="kpi-card danger clickable-card" data-widget="kpi-outstanding" onclick="window.location.href='outstanding.html'" title="Click to view outstanding receivables">
+          <div class="kpi-header">
+            <span class="kpi-label">Total Receivable</span>
+          </div>
+          <div class="kpi-value" id="kpiOutstanding">₹ 0.00</div>
+          <span id="kpiOutstandingSub" style="display:none;"></span>
+        </div>
+
+        <!-- 3. Today's Orders (Primary #3) -->
+        <div class="kpi-card blue clickable-card" data-widget="kpi-today-orders" onclick="window.location.href='order-report.html?date_preset=today'" title="Click to view today's orders">
+          <div class="kpi-header">
+            <span class="kpi-label">Today's Orders</span>
+          </div>
+          <div class="kpi-value" id="kpiTodayOrders">0 Orders</div>
+          <span id="kpiTodayOrdersSub" style="display:none;"></span>
+        </div>
+
+        <!-- 4. Total Bills (Primary #4) -->
         <div class="kpi-card indigo clickable-card" data-widget="kpi-total-bills" onclick="window.location.href='sales-analysis.html'" title="Click to view all generated bills">
           <div class="kpi-header">
             <span class="kpi-label">Total Bills</span>
           </div>
           <div class="kpi-value" id="kpiTotalBills">0 Bills</div>
-          <div class="kpi-sub-badge indigo" id="kpiTotalBillsSub">Active Ledger</div>
+          <span id="kpiTotalBillsSub" style="display:none;"></span>
         </div>
 
-        <!-- 2. Total Invoices -->
+        <!-- 5. Total Invoices (Primary #5) -->
         <div class="kpi-card blue clickable-card" data-widget="kpi-total-invoices" onclick="window.location.href='sales-analysis.html'" title="Click to view sales invoice ledger">
           <div class="kpi-header">
             <span class="kpi-label">Total Invoices</span>
           </div>
           <div class="kpi-value" id="kpiTotalInvoices">0 Invoices</div>
-          <div class="kpi-sub-badge blue" id="kpiTotalInvoicesSub">Sales Ledger</div>
+          <span id="kpiTotalInvoicesSub" style="display:none;"></span>
         </div>
 
-        <!-- 3. Today's Orders -->
-        <div class="kpi-card emerald clickable-card" data-widget="kpi-today-orders" onclick="window.location.href='order-report.html?date_preset=today'" title="Click to view today's orders">
-          <div class="kpi-header">
-            <span class="kpi-label">Today's Orders</span>
-          </div>
-          <div class="kpi-value" id="kpiTodayOrders">0 Orders</div>
-          <div class="kpi-sub-badge emerald" id="kpiTodayOrdersSub">Live Field Bookings</div>
-        </div>
-
-        <!-- 4. Pending Orders -->
-        <div class="kpi-card amber clickable-card" data-widget="kpi-pending-orders" onclick="window.location.href='order-report.html?status=Pending'" title="Click to view pending orders">
-          <div class="kpi-header">
-            <span class="kpi-label">Pending Orders</span>
-          </div>
-          <div class="kpi-value" id="kpiPendingOrders">0 Orders</div>
-          <div class="kpi-sub-badge amber" id="kpiPendingOrdersSub">Awaiting Fulfillment</div>
-        </div>
-
-        <!-- 5. Delivered Orders -->
-        <div class="kpi-card emerald clickable-card" data-widget="kpi-delivered-orders" onclick="window.location.href='order-report.html?status=Delivered'" title="Click to view delivered orders">
-          <div class="kpi-header">
-            <span class="kpi-label">Delivered Orders</span>
-          </div>
-          <div class="kpi-value" id="kpiDeliveredOrders">0 Orders</div>
-          <div class="kpi-sub-badge emerald" id="kpiDeliveredOrdersSub">Fulfilled & Closed</div>
-        </div>
-
-        <!-- 6. Cancelled by Customer -->
-        <div class="kpi-card rose clickable-card" data-widget="kpi-cancel-customer" onclick="window.location.href='order-report.html?status=Cancelled%20by%20Customer'" title="Click to view orders cancelled by customer">
-          <div class="kpi-header">
-            <span class="kpi-label">Cancelled by Customer</span>
-          </div>
-          <div class="kpi-value" id="kpiCancelCustomer" style="color:#e11d48;">0 Orders</div>
-          <div class="kpi-sub-badge rose" id="kpiCancelCustomerSub">Party Denied</div>
-        </div>
-
-        <!-- 7. Cancelled by Company/Own -->
-        <div class="kpi-card purple clickable-card" data-widget="kpi-cancel-company" onclick="window.location.href='order-report.html?status=Cancelled%20by%20Company/Admin'" title="Click to view orders cancelled by company/admin">
-          <div class="kpi-header">
-            <span class="kpi-label">Cancelled by Company/Own</span>
-          </div>
-          <div class="kpi-value" id="kpiCancelCompany" style="color:#7c3aed;">0 Orders</div>
-          <div class="kpi-sub-badge purple" id="kpiCancelCompanySub">Internal Reason</div>
-        </div>
-
-        <!-- 8. Total Sales Turnover -->
-        <div class="kpi-card emerald clickable-card" data-widget="kpi-total-sales" onclick="window.location.href='sales-analysis.html'" title="Click to view sales turnover analysis">
-          <div class="kpi-header">
-            <span class="kpi-label">Total Sales Turnover</span>
-          </div>
-          <div class="kpi-value" id="kpiTotalSales">₹ 0.00</div>
-          <div class="kpi-sub-badge emerald" id="kpiTotalSalesSub">Gross Billed Value</div>
-        </div>
-
-        <!-- 9. Pending Payments / Outstanding -->
-        <div class="kpi-card danger clickable-card" data-widget="kpi-outstanding" onclick="window.location.href='outstanding.html'" title="Click to view outstanding receivables">
-          <div class="kpi-header">
-            <span class="kpi-label">Pending Payments</span>
-          </div>
-          <div class="kpi-value" id="kpiOutstanding">₹ 0.00</div>
-          <div class="kpi-sub-badge danger" id="kpiOutstandingSub">Market Receivables</div>
-        </div>
-
-        <!-- 10. Total Delivery Routes -->
+        <!-- 6. Total Delivery Routes (Primary #6) -->
         <div class="kpi-card cyan clickable-card" data-widget="kpi-total-routes" onclick="window.location.href='route-assignment.html'" title="Click to view delivery routes">
           <div class="kpi-header">
             <span class="kpi-label">Total Delivery Routes</span>
           </div>
           <div class="kpi-value" id="kpiTotalRoutes">0 Routes</div>
-          <div class="kpi-sub-badge cyan" id="kpiTotalRoutesSub">Active Beat Coverage</div>
+          <span id="kpiTotalRoutesSub" style="display:none;"></span>
         </div>
 
-        <!-- 11. Assigned Delivery Stops -->
+        <!-- 7. Pending Orders -->
+        <div class="kpi-card amber clickable-card" data-widget="kpi-pending-orders" onclick="window.location.href='order-report.html?status=Pending'" title="Click to view pending orders">
+          <div class="kpi-header">
+            <span class="kpi-label">Pending Orders</span>
+          </div>
+          <div class="kpi-value" id="kpiPendingOrders">0 Orders</div>
+          <span id="kpiPendingOrdersSub" style="display:none;"></span>
+        </div>
+
+        <!-- 8. Delivered Orders -->
+        <div class="kpi-card emerald clickable-card" data-widget="kpi-delivered-orders" onclick="window.location.href='order-report.html?status=Delivered'" title="Click to view delivered orders">
+          <div class="kpi-header">
+            <span class="kpi-label">Delivered Orders</span>
+          </div>
+          <div class="kpi-value" id="kpiDeliveredOrders">0 Orders</div>
+          <span id="kpiDeliveredOrdersSub" style="display:none;"></span>
+        </div>
+
+        <!-- 9. Assigned Delivery Stops -->
         <div class="kpi-card teal clickable-card" data-widget="kpi-assigned-deliveries" onclick="window.location.href='route-assignment.html?date=today'" title="Click to view today's route assignments">
           <div class="kpi-header">
             <span class="kpi-label">Assigned Delivery Stops</span>
           </div>
           <div class="kpi-value" id="kpiAssignedDeliveries">0 Stops</div>
-          <div class="kpi-sub-badge teal" id="kpiAssignedDeliveriesSub">Driver Allocated</div>
+          <span id="kpiAssignedDeliveriesSub" style="display:none;"></span>
         </div>
 
-        <!-- 12. Unassigned Delivery Orders -->
+        <!-- 10. Unassigned Delivery Orders -->
         <div class="kpi-card orange clickable-card" data-widget="kpi-pending-dispatch" onclick="window.location.href='order-approval.html'" title="Click to view unassigned orders awaiting dispatch">
           <div class="kpi-header">
             <span class="kpi-label">Unassigned Delivery Orders</span>
           </div>
           <div class="kpi-value" id="kpiPendingDispatch">0 Orders</div>
-          <div class="kpi-sub-badge orange" id="kpiPendingDispatchSub">Awaiting Van Load</div>
+          <span id="kpiPendingDispatchSub" style="display:none;"></span>
+        </div>
+
+        <!-- 11. Cancelled by Customer -->
+        <div class="kpi-card rose clickable-card" data-widget="kpi-cancel-customer" onclick="window.location.href='order-report.html?status=Cancelled%20by%20Customer'" title="Click to view orders cancelled by customer">
+          <div class="kpi-header">
+            <span class="kpi-label">Cancelled by Customer</span>
+          </div>
+          <div class="kpi-value" id="kpiCancelCustomer" style="color:#e11d48;">0 Orders</div>
+          <span id="kpiCancelCustomerSub" style="display:none;"></span>
+        </div>
+
+        <!-- 12. Cancelled by Company/Own -->
+        <div class="kpi-card purple clickable-card" data-widget="kpi-cancel-company" onclick="window.location.href='order-report.html?status=Cancelled%20by%20Company/Admin'" title="Click to view orders cancelled by company/admin">
+          <div class="kpi-header">
+            <span class="kpi-label">Cancelled by Company/Own</span>
+          </div>
+          <div class="kpi-value" id="kpiCancelCompany" style="color:#7c3aed;">0 Orders</div>
+          <span id="kpiCancelCompanySub" style="display:none;"></span>
         </div>
 
         <!-- 13. Successful Excel Imports -->
@@ -221,7 +225,7 @@
             <span class="kpi-label">Successful Excel Imports</span>
           </div>
           <div class="kpi-value" id="kpiImportSuccess">0 Batches</div>
-          <div class="kpi-sub-badge emerald" id="kpiImportSuccessSub">Ingested & Synced</div>
+          <span id="kpiImportSuccessSub" style="display:none;"></span>
         </div>
 
         <!-- 14. Failed Excel Imports -->
@@ -230,7 +234,7 @@
             <span class="kpi-label">Failed Excel Imports</span>
           </div>
           <div class="kpi-value" id="kpiImportFailed">0 Batches</div>
-          <div class="kpi-sub-badge rose" id="kpiImportFailedSub">Validation Errors</div>
+          <span id="kpiImportFailedSub" style="display:none;"></span>
         </div>
 
       </div>
@@ -434,41 +438,62 @@
     </main>
   </div>
 
-  <!-- Customize Dashboard Modal -->
+  <!-- Customize Dashboard Modal: Show / Hide Dashboard Tiles -->
   <div id="dsCustomizeModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="customModalTitle">
-    <div class="modal-card" style="width:min(580px, 95%);">
+    <div class="modal-card" style="width:min(620px, 95%);">
       <div class="modal-header">
-        <h3 class="modal-title" id="customModalTitle" style="font-size:15px; font-weight:800;">
-          <span>Customize Dashboard Display</span>
+        <h3 class="modal-title" id="customModalTitle" style="font-size:14px; font-weight:800;">
+          <span>Show / Hide Dashboard Tiles & Customization</span>
         </h3>
         <button type="button" class="modal-close" aria-label="Close" onclick="DS_Dashboard.closeCustomizeModal()">×</button>
       </div>
-      <div class="modal-body" style="padding:14px 18px; max-height:75vh; overflow-y:auto;">
-        <p style="font-size:11.5px; color:var(--ds-text-muted); margin:0 0 14px;">
-          Toggle visibility of dashboard KPI cards and content sections. Preferences are automatically saved in local storage.
+      <div class="modal-body" style="padding:12px 16px; max-height:75vh; overflow-y:auto;">
+        <p style="font-size:11.5px; color:var(--ds-text-muted); margin:0 0 10px;">
+          Selectively show or hide dashboard KPI tiles and sections. Preferences are automatically saved in local storage. Hidden tiles occupy zero screen space.
         </p>
 
-        <!-- KPI Cards Visibility Group -->
-        <div style="font-weight:800; font-size:11px; text-transform:uppercase; color:var(--ds-text-light); letter-spacing:0.5px; margin-bottom:8px;">
-          KPI Cards Visibility
+        <!-- Quick Presets Toolbar -->
+        <div style="display:flex; align-items:center; gap:6px; margin-bottom:12px; flex-wrap:wrap; background:var(--ds-surface-subtle); padding:6px 10px; border-radius:6px; border:1px solid var(--ds-border);">
+          <span style="font-size:11px; font-weight:700; color:var(--ds-text-secondary); margin-right:4px;">Presets:</span>
+          <button type="button" class="btn btn-primary btn-xs" onclick="DS_Dashboard.showTop6Only()" style="font-size:11px; padding:3px 9px; background:#2563eb; border-color:#2563eb;">
+            Show Top 6 Only
+          </button>
+          <button type="button" class="btn btn-secondary btn-xs" onclick="DS_Dashboard.selectAllTiles(true)" style="font-size:11px; padding:3px 9px;">
+            Show All Tiles
+          </button>
+          <button type="button" class="btn btn-secondary btn-xs" onclick="DS_Dashboard.resetVisibilityDefaults()" style="font-size:11px; padding:3px 9px;">
+            Reset Defaults
+          </button>
         </div>
-        <div class="ds-customize-grid" id="dsCustomizeCardsGrid">
+
+        <!-- Primary KPI Tiles (Top 6) -->
+        <div style="font-weight:800; font-size:11px; text-transform:uppercase; color:var(--ds-text-light); letter-spacing:0.5px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+          <span>Primary KPI Tiles (Top 6 Priority)</span>
+          <span class="badge" style="background:#eff6ff; color:#1d4ed8; font-size:9.5px; padding:1px 6px;">Top Priority</span>
+        </div>
+        <div class="ds-customize-grid" id="dsCustomizePrimaryCardsGrid" style="margin-bottom:12px;">
+          <!-- Populated dynamically by DS_Dashboard.renderCustomizeModal() -->
+        </div>
+
+        <!-- Remaining KPI Tiles -->
+        <div style="font-weight:800; font-size:11px; text-transform:uppercase; color:var(--ds-text-light); letter-spacing:0.5px; margin:12px 0 6px;">
+          <span>Additional KPI Tiles</span>
+        </div>
+        <div class="ds-customize-grid" id="dsCustomizeCardsGrid" style="margin-bottom:12px;">
           <!-- Populated dynamically by DS_Dashboard.renderCustomizeModal() -->
         </div>
 
         <!-- Dashboard Sections Visibility Group -->
-        <div style="font-weight:800; font-size:11px; text-transform:uppercase; color:var(--ds-text-light); letter-spacing:0.5px; margin:16px 0 8px;">
-          Dashboard Sections Visibility
+        <div style="font-weight:800; font-size:11px; text-transform:uppercase; color:var(--ds-text-light); letter-spacing:0.5px; margin:14px 0 6px;">
+          <span>Dashboard Content Sections</span>
         </div>
         <div class="ds-customize-grid" id="dsCustomizeSectionsGrid">
           <!-- Populated dynamically by DS_Dashboard.renderCustomizeModal() -->
         </div>
       </div>
-      <div class="modal-footer" style="padding:10px 18px; display:flex; justify-content:space-between; align-items:center;">
-        <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Dashboard.resetVisibilityDefaults()">
-          Reset to Defaults
-        </button>
-        <button type="button" class="btn btn-primary btn-sm" onclick="DS_Dashboard.closeCustomizeModal()">
+      <div class="modal-footer" style="padding:8px 16px; border-top:1px solid var(--ds-border); display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:11px; color:var(--ds-text-muted);">Changes apply instantly</span>
+        <button type="button" class="btn btn-primary btn-sm" onclick="DS_Dashboard.closeCustomizeModal()" style="padding:4px 14px; font-weight:700;">
           Done
         </button>
       </div>

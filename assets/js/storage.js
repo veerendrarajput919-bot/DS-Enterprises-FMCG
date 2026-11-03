@@ -540,7 +540,7 @@
           const raw = localStorage.getItem(STORAGE_KEYS.DB);
           if (raw) {
             const parsed = JSON.parse(raw);
-            if (parsed && Array.isArray(parsed.sales) && parsed.sales.length > 0) {
+            if (parsed && typeof parsed === 'object' && Array.isArray(parsed.stock) && parsed.stock.length > 0) {
               this._migrateStockImages(parsed);
               this._memoryDB = parsed;
               window.DB = parsed;
@@ -551,20 +551,20 @@
 
       // 2. Asynchronously load from IndexedDB (Unlimited quota)
       idbGet(IDB_KEY_MAIN).then(idbData => {
-        if (idbData && Array.isArray(idbData.sales) && idbData.sales.length > 0) {
+        if (idbData && typeof idbData === 'object' && Array.isArray(idbData.stock) && idbData.stock.length > 0) {
           const updated = this._migrateStockImages(idbData);
           this._memoryDB = idbData;
           window.DB = idbData;
           if (updated) this.saveDB(idbData);
           window.dispatchEvent(new CustomEvent('ds:db-updated', { detail: idbData }));
-        } else if (!this._memoryDB || !Array.isArray(this._memoryDB.sales) || this._memoryDB.sales.length === 0) {
+        } else if (!this._memoryDB || !Array.isArray(this._memoryDB.stock) || this._memoryDB.stock.length === 0) {
           this.seedSampleData();
           window.dispatchEvent(new CustomEvent('ds:db-updated', { detail: this._memoryDB }));
         }
       });
 
-      // 3. Fallback to seed if still empty
-      if (!this._memoryDB || !Array.isArray(this._memoryDB.sales) || this._memoryDB.sales.length === 0) {
+      // 3. Fallback to seed only if still completely unseeded
+      if (!this._memoryDB || !Array.isArray(this._memoryDB.stock) || this._memoryDB.stock.length === 0) {
         this.seedSampleData();
       } else {
         this._migrateStockImages(this._memoryDB);
@@ -710,7 +710,7 @@
     },
 
     getDB: function () {
-      if (this._memoryDB && Array.isArray(this._memoryDB.sales) && this._memoryDB.sales.length > 0) {
+      if (this._memoryDB && typeof this._memoryDB === 'object' && Array.isArray(this._memoryDB.stock) && this._memoryDB.stock.length > 0) {
         this._migrateStockImages(this._memoryDB);
         return this._memoryDB;
       }
@@ -718,7 +718,7 @@
         const raw = localStorage.getItem(STORAGE_KEYS.DB);
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (parsed && Array.isArray(parsed.sales) && parsed.sales.length > 0) {
+          if (parsed && typeof parsed === 'object' && Array.isArray(parsed.stock) && parsed.stock.length > 0) {
             this._migrateStockImages(parsed);
             this._memoryDB = parsed;
             window.DB = parsed;
@@ -1108,10 +1108,6 @@
       };
     },
 
-    clearAll: function () {
-      return this.purgeAllDemoData();
-    },
-
     adjustStock: function (code, qtyChange, reason) {
       const db = this.getDB();
       const stock = Array.isArray(db.stock) ? db.stock : [];
@@ -1394,8 +1390,8 @@
       };
       this._memoryDB = emptyDB;
       window.DB = emptyDB;
-      try { localStorage.removeItem(STORAGE_KEYS.DB); } catch (e) {}
-      await idbRemove(IDB_KEY_MAIN);
+      this.saveDB(emptyDB);
+      try { await idbSet(IDB_KEY_MAIN, emptyDB); } catch (e) {}
       this.saveOrders([]);
       this.saveCollections([]);
       window.dispatchEvent(new CustomEvent('ds:db-updated', { detail: emptyDB }));

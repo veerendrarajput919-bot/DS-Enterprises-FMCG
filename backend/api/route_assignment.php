@@ -611,7 +611,7 @@ if ($method === 'POST') {
     // 2C. REASSIGN DELIVERY PERSON OR REORDER SEQUENCE
     if ($subAction === 'reassign') {
         $routeId = $input['route_id'] ?? '';
-        $assignmentId = $input['assignment_id'] ?? '';
+        $assignmentId = $input['assignment_id'] ?? $input['id'] ?? '';
         $newPerson = trim($input['delivery_person'] ?? '');
         $date = $input['date'] ?? date('Y-m-d');
         $adminUser = $input['admin_user'] ?? 'Admin';
