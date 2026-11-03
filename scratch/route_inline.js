@@ -1,0 +1,1447 @@
+
+    /**
+     * ========================================================================
+     * BEAT ROUTE & PARTY COVERAGE ANALYSIS CONTROLLER
+     * ========================================================================
+     */
+    (function(window){
+      'use strict';
+
+      let C1_CHART = null, ROUTE_CHART = null;
+
+      function esc(s){
+        return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      }
+
+      function rDateRange(preset, fromVal, toVal) {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        let start = null, end = today;
+
+        if (preset === 'today') {
+          start = today;
+          end = today;
+        } else if (preset === 'yesterday') {
+          start = new Date(today);
+          start.setDate(start.getDate() - 1);
+          end = start;
+        } else if (preset === 'this_week') {
+          const day = today.getDay(); // 0 is Sun
+          const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+          start = new Date(today.setDate(diff));
+          end = new Date();
+        } else if (preset === 'month') {
+          start = new Date(today.getFullYear(), today.getMonth(), 1);
+        } else if (preset === 'lastmonth') {
+          start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+          end = new Date(today.getFullYear(), today.getMonth(), 0);
+        } else if (preset === 'all') {
+          start = null;
+          end = null;
+        } else if (preset === 'custom') {
+          start = fromVal ? new Date(fromVal + 'T00:00:00') : null;
+          end = toVal ? new Date(toVal + 'T23:59:59') : today;
+        }
+        return { start, end };
+      }
+
+      function rYmd(d) {
+        if (!d || isNaN(d.getTime())) return '';
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      }
+
+      const DS_Route = {
+        drilldown: {
+          level: 1, // 1: City_1, 2: City, 3: Route, 4: Category, 5: Retailer
+          city1: '',
+          city: '',
+          route: '',
+          category: ''
+        },
+
+        init: function(){
+          this.populateFilters();
+          this.checkUrlParams();
+          this.bindEvents();
+          this.update();
+        },
+
+        checkUrlParams: function(){
+          const params = new URLSearchParams(window.location.search);
+          const c1Param = params.get('city1');
+          if (c1Param) {
+            const el = document.getElementById('rCity1');
+            if (el) el.value = c1Param;
+            this.drilldown.city1 = c1Param;
+            this.drilldown.level = 2;
+          }
+          const cParam = params.get('city');
+          if (cParam) {
+            const el = document.getElementById('rCity');
+            if (el) el.value = cParam;
+            this.drilldown.city = cParam;
+            this.drilldown.level = 3;
+          }
+          const rParam = params.get('route') || params.get('route_id');
+          if (rParam) {
+            const el = document.getElementById('rRoute');
+            if (el) el.value = rParam;
+            this.drilldown.route = rParam;
+            this.drilldown.level = 4;
+          }
+          const catParam = params.get('category') || params.get('cat');
+          if (catParam) {
+            const el = document.getElementById('rCat');
+            if (el) el.value = catParam;
+            this.drilldown.category = catParam;
+            this.drilldown.level = 5;
+          }
+          const dParam = params.get('date');
+          if (dParam) {
+            const dEl = document.getElementById('rFrom');
+            if (dEl) dEl.value = dParam;
+            const toEl = document.getElementById('rTo');
+            if (toEl) toEl.value = dParam;
+            const pEl = document.getElementById('rPreset');
+            if (pEl) pEl.value = 'custom';
+          }
+        },
+
+        getVisitDate: function(){
+          const fromVal = document.getElementById('rFrom')?.value;
+          if (fromVal) return fromVal;
+          return new Date().toISOString().slice(0, 10);
+        },
+
+        getAllVisits: function(){
+          try {
+            const raw = localStorage.getItem('ds_route_visits_v1');
+            return raw ? JSON.parse(raw) : {};
+          } catch(e) {
+            return {};
+          }
+        },
+
+        getVisitsForDate: function(dateStr){
+          const d = dateStr || this.getVisitDate();
+          const all = this.getAllVisits();
+          const manualVisits = all[d] || {};
+
+          // Cross-module integration: also check if orders or collections exist for today
+          const merged = { ...manualVisits };
+
+          try {
+            if (window.DS_Storage) {
+              const orders = window.DS_Storage.getOrders() || [];
+              orders.forEach(o => {
+                const oDate = o.date || (o.createdAt ? String(o.createdAt).slice(0, 10) : '');
+                if (oDate === d) {
+                  const pName = String(o.party || o.storeName || '').trim();
+                  if (pName && !merged[pName]) {
+                    merged[pName] = {
+                      visited: true,
+                      time: o.time || '11:00 AM',
+                      user: o.salesPerson || 'Sales Officer',
+                      reason: '🛍️ Order Placed',
+                      remark: `Order #${o.orderId || o.id || ''} placed in field`,
+                      updatedAt: new Date().toISOString()
+                    };
+                  }
+                }
+              });
+
+              const colls = window.DS_Storage.getCollections() || [];
+              colls.forEach(c => {
+                const cDate = c.date || (c.createdAt ? String(c.createdAt).slice(0, 10) : '');
+                if (cDate === d) {
+                  const pName = String(c.party || c.partyName || '').trim();
+                  if (pName && !merged[pName]) {
+                    merged[pName] = {
+                      visited: true,
+                      time: c.time || '12:30 PM',
+                      user: c.collectedBy || 'Sales Officer',
+                      reason: '💵 Payment Collected',
+                      remark: `Collected ${DS_App ? DS_App.money(c.amount) : c.amount} (${c.paymentMode || 'Cash'})`,
+                      updatedAt: new Date().toISOString()
+                    };
+                  }
+                }
+              });
+            }
+          } catch (e) {
+            console.warn('Error reading cross-module visits:', e);
+          }
+
+          return merged;
+        },
+
+        setVisitStatus: function(partyName, isVisited, reason, remark){
+          try {
+            const d = this.getVisitDate();
+            const all = this.getAllVisits();
+            if (!all[d]) all[d] = {};
+
+            let user = 'Administrator';
+            try {
+              if (window.DS_Auth && typeof window.DS_Auth.getActiveSo === 'function') {
+                const so = window.DS_Auth.getActiveSo();
+                if (so && so.name) user = so.name;
+              } else if (window.DS_Auth && typeof window.DS_Auth.getSalesPerson === 'function') {
+                user = window.DS_Auth.getSalesPerson();
+              }
+            } catch (eu) {
+              user = 'Administrator';
+            }
+
+            const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const existing = all[d][partyName] || {};
+
+            all[d][partyName] = {
+              visited: !!isVisited,
+              time: isVisited ? (existing.time || nowTime) : null,
+              user: user,
+              reason: reason !== undefined ? reason : (isVisited ? (existing.reason || 'Visited Outlet') : (existing.reason || 'Not Visited')),
+              remark: remark !== undefined ? remark : (existing.remark || ''),
+              updatedAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('ds_route_visits_v1', JSON.stringify(all));
+
+            if (window.DS_App && DS_App.toast) {
+              if (isVisited) {
+                const extra = (reason && reason !== 'Visited Outlet') ? ` • ${reason}` : '';
+                DS_App.toast(`✓ "${partyName}" marked as VISITED (${nowTime}${extra})`, 'success');
+              } else {
+                const extra = (reason && reason !== 'Not Visited') ? ` • ${reason}` : '';
+                DS_App.toast(`✕ "${partyName}" marked as NOT VISITED${extra}`, 'info');
+              }
+            }
+
+            this.update();
+            return true;
+          } catch(err) {
+            console.error('Failed to set visit status:', err);
+            if (window.DS_App && DS_App.toast) {
+              DS_App.toast(`Error saving visit: ${err.message}`, 'error');
+            }
+            return false;
+          }
+        },
+
+        setVisitChoice: function(partyName, targetStatus){
+          try {
+            const d = this.getVisitDate();
+            const all = this.getAllVisits();
+            if (!all[d]) all[d] = {};
+
+            const existing = all[d][partyName];
+            // If user clicks the currently active choice, toggle back to pending
+            if (existing && existing.visited === targetStatus) {
+              delete all[d][partyName];
+              localStorage.setItem('ds_route_visits_v1', JSON.stringify(all));
+              if (window.DS_App && DS_App.toast) {
+                DS_App.toast(`"${partyName}" reset to Pending (अनमार्क किया)`, 'info');
+              }
+              this.update();
+              return;
+            }
+
+            let user = 'Administrator';
+            try {
+              if (window.DS_Auth && typeof window.DS_Auth.getActiveSo === 'function') {
+                const so = window.DS_Auth.getActiveSo();
+                if (so && so.name) user = so.name;
+              } else if (window.DS_Auth && typeof window.DS_Auth.getSalesPerson === 'function') {
+                user = window.DS_Auth.getSalesPerson();
+              }
+            } catch(eu) {
+              user = 'Administrator';
+            }
+
+            const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            all[d][partyName] = {
+              visited: targetStatus,
+              time: targetStatus ? ((existing && existing.time) || nowTime) : null,
+              user: user,
+              reason: (existing && existing.reason) ? existing.reason : (targetStatus ? 'Visited Outlet' : 'Not Visited'),
+              remark: (existing && existing.remark) ? existing.remark : '',
+              updatedAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('ds_route_visits_v1', JSON.stringify(all));
+
+            if (window.DS_App && DS_App.toast) {
+              if (targetStatus) {
+                DS_App.toast(`✓ "${partyName}" marked as VISITED (${nowTime})`, 'success');
+              } else {
+                DS_App.toast(`✕ "${partyName}" marked as NOT VISITED`, 'info');
+              }
+            }
+
+            this.update();
+          } catch(err) {
+            console.error('Failed to set visit choice:', err);
+            if (window.DS_App && DS_App.toast) {
+              DS_App.toast(`Error: ${err.message}`, 'error');
+            }
+          }
+        },
+
+        openVisitModal: function(partyName){
+          const d = this.getVisitDate();
+          const visits = this.getVisitsForDate(d);
+          const current = visits[partyName] || {};
+          const isNotVisited = current.visited === false;
+
+          const pInp = document.getElementById('vmPartyName');
+          if (pInp) pInp.value = partyName;
+
+          const subTitle = document.getElementById('routeVisitStoreSubtitle');
+          if (subTitle) subTitle.textContent = `Outlet: ${partyName} (Date: ${d})`;
+
+          const rYes = document.getElementById('vmVisitYes');
+          const rNo = document.getElementById('vmVisitNo');
+          if (isNotVisited) {
+            if (rNo) rNo.checked = true;
+          } else {
+            if (rYes) rYes.checked = true;
+          }
+
+          const selReason = document.getElementById('vmReasonSelect');
+          if (selReason && current.reason) {
+            selReason.value = current.reason;
+          } else if (selReason) {
+            selReason.value = isNotVisited ? '🔒 Shop Closed' : 'Visited Outlet';
+          }
+
+          const remInp = document.getElementById('vmRemarkInput');
+          if (remInp) remInp.value = current.remark || '';
+
+          this.updateModalRadioStyles();
+          const modal = document.getElementById('routeVisitModal');
+          if (modal) modal.style.display = 'flex';
+        },
+
+        closeVisitModal: function(){
+          const modal = document.getElementById('routeVisitModal');
+          if (modal) modal.style.display = 'none';
+        },
+
+        updateModalRadioStyles: function(){
+          const isYes = document.getElementById('vmVisitYes') ? document.getElementById('vmVisitYes').checked : true;
+          const lblYes = document.getElementById('lblVisitYes');
+          const lblNo = document.getElementById('lblVisitNo');
+          const selReason = document.getElementById('vmReasonSelect');
+
+          if (lblYes && lblNo) {
+            if (isYes) {
+              lblYes.style.borderColor = '#16a34a';
+              lblYes.style.background = '#f0fdf4';
+              lblYes.style.color = '#166534';
+              lblNo.style.borderColor = '#cbd5e1';
+              lblNo.style.background = '#f8fafc';
+              lblNo.style.color = '#64748b';
+              if (selReason && (selReason.value === '🔒 Shop Closed' || selReason.value === '👤 Owner Not Available')) {
+                selReason.value = 'Visited Outlet';
+              }
+            } else {
+              lblNo.style.borderColor = '#dc2626';
+              lblNo.style.background = '#fef2f2';
+              lblNo.style.color = '#991b1b';
+              lblYes.style.borderColor = '#cbd5e1';
+              lblYes.style.background = '#f8fafc';
+              lblYes.style.color = '#64748b';
+              if (selReason && selReason.value === 'Visited Outlet') {
+                selReason.value = '🔒 Shop Closed';
+              }
+            }
+          }
+        },
+
+        saveVisitModal: function(){
+          try {
+            const partyName = document.getElementById('vmPartyName')?.value;
+            if (!partyName) {
+              this.closeVisitModal();
+              return;
+            }
+            const isVisited = document.getElementById('vmVisitYes') ? document.getElementById('vmVisitYes').checked : true;
+            const reason = document.getElementById('vmReasonSelect')?.value || (isVisited ? 'Visited Outlet' : 'Not Visited');
+            const remark = document.getElementById('vmRemarkInput')?.value || '';
+
+            this.setVisitStatus(partyName, isVisited, reason, remark);
+            this.closeVisitModal();
+          } catch(err) {
+            console.error('Error saving visit modal:', err);
+            if (window.DS_App && DS_App.toast) DS_App.toast('Error saving: ' + err.message, 'error');
+          }
+        },
+
+        getPartyOutstanding: function(partyName, storeObj){
+          const db = window.DS_Storage ? window.DS_Storage.getDB() : {};
+          const targetName = String(partyName || storeObj?.name || storeObj?.Name || '').trim().toLowerCase();
+          if (!targetName) return 0;
+
+          // 1. Calculate from dedicated db.unpaid ledger
+          const unpaid = db.unpaid || [];
+          let unpaidSum = 0;
+          let foundUnpaid = false;
+          unpaid.forEach(u => {
+            const p = String(u.party || u.party_name || u.customer_name || '').trim().toLowerCase();
+            if (p === targetName) {
+              const b = Number(u.balanceAmount ?? u.balance ?? u.amount ?? u.totalAmount);
+              if (!isNaN(b) && b > 0) {
+                unpaidSum += b;
+                foundUnpaid = true;
+              }
+            }
+          });
+          if (foundUnpaid && unpaidSum > 0) return unpaidSum;
+
+          // 2. Check unpaid sales transactions
+          const sales = db.sales || [];
+          let salesSum = 0;
+          let foundSales = false;
+          sales.forEach(s => {
+            const p = String(s['Party Name'] || s.party || s.party_name || '').trim().toLowerCase();
+            if (p === targetName) {
+              const st = String(s.status || s.payment_status || s.payment || '').trim().toLowerCase();
+              if (st === 'unpaid') {
+                const a = Number(s.AmountNum ?? s.amount ?? s.total);
+                if (!isNaN(a) && a > 0) {
+                  salesSum += a;
+                  foundSales = true;
+                }
+              }
+            }
+          });
+          if (foundSales && salesSum > 0) return salesSum;
+
+          // 3. Fallback to store object's own outstanding field
+          if (storeObj) {
+            const o = Number(storeObj.outstanding ?? storeObj.Outstanding ?? storeObj.balance ?? storeObj.dueAmount);
+            if (!isNaN(o) && o > 0) return o;
+          }
+
+          // 4. Search party master in db.party
+          const parties = db.party || [];
+          const matched = parties.find(p => String(p.name || p.Name || '').trim().toLowerCase() === targetName);
+          if (matched) {
+            const o = Number(matched.outstanding ?? matched.Outstanding ?? matched.balance);
+            if (!isNaN(o) && o > 0) return o;
+          }
+
+          return 0;
+        },
+
+        getPartySalesMetrics: function(partyName){
+          const db = window.DS_Storage ? window.DS_Storage.getDB() : {};
+          const sales = db.sales || [];
+          const orders = (window.DS_Storage && typeof window.DS_Storage.getOrders === 'function') ? window.DS_Storage.getOrders() : [];
+          const targetName = String(partyName || '').trim().toLowerCase();
+
+          let totalSales = 0;
+          let paidAmount = 0;
+          let lastSaleDate = '';
+          let lastOrderDate = '';
+
+          sales.forEach(s => {
+            const p = String(s['Party Name'] || s.party || s.party_name || '').trim().toLowerCase();
+            if (p === targetName) {
+              const amt = Number(s.AmountNum ?? s.amount ?? s.total ?? 0);
+              if (!isNaN(amt)) totalSales += amt;
+
+              const st = String(s.status || s.payment_status || '').toLowerCase();
+              if (st === 'paid') {
+                paidAmount += amt;
+              }
+
+              const d = s.Date || s.date || '';
+              if (d && (!lastSaleDate || d > lastSaleDate)) {
+                lastSaleDate = d;
+              }
+            }
+          });
+
+          orders.forEach(o => {
+            const p = String(o.party || o.storeName || '').trim().toLowerCase();
+            if (p === targetName) {
+              const d = o.date || (o.createdAt ? String(o.createdAt).slice(0, 10) : '');
+              if (d && (!lastOrderDate || d > lastOrderDate)) {
+                lastOrderDate = d;
+              }
+            }
+          });
+
+          return {
+            totalSales,
+            paidAmount,
+            lastOrderDate: lastOrderDate || lastSaleDate || '-'
+          };
+        },
+
+        getLastVisitDateForParty: function(partyName){
+          const all = this.getAllVisits();
+          const target = String(partyName || '').trim();
+          let latest = '';
+
+          Object.keys(all).sort().reverse().forEach(dateKey => {
+            if (!latest && all[dateKey] && all[dateKey][target] && all[dateKey][target].visited === true) {
+              latest = dateKey;
+            }
+          });
+
+          return latest || '-';
+        },
+
+        bindEvents: function(){
+          document.getElementById('rPreset')?.addEventListener('change', () => this.applyPreset());
+          ['rFrom', 'rTo'].forEach(id => {
+            document.getElementById(id)?.addEventListener('change', () => {
+              const p = document.getElementById('rPreset');
+              if (p) p.value = 'custom';
+              this.update();
+            });
+          });
+
+          // Dynamic Cascading dropdown dependencies
+          document.getElementById('rCity1')?.addEventListener('change', (e) => {
+            this.handleCity1Change(e.target.value);
+          });
+
+          document.getElementById('rCity')?.addEventListener('change', (e) => {
+            this.handleCityChange(e.target.value);
+          });
+
+          document.getElementById('rCat')?.addEventListener('change', (e) => {
+            this.handleCatChange(e.target.value);
+          });
+
+          ['rRoute', 'rSubCat', 'rBrand', 'rBillNo', 'rStatus', 'rVisitFilter', 'rSearch'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+              el.addEventListener('change', () => this.update());
+              if (el.tagName === 'INPUT') el.addEventListener('input', () => this.update());
+            }
+          });
+        },
+
+        handleCity1Change: function(selectedCity1){
+          this.drilldown.city1 = selectedCity1;
+          this.drilldown.level = selectedCity1 ? 2 : 1;
+          this.cascadeCityDropdown(selectedCity1);
+          this.cascadeRouteDropdown(selectedCity1, '');
+          this.update();
+        },
+
+        handleCityChange: function(selectedCity){
+          this.drilldown.city = selectedCity;
+          if (selectedCity) this.drilldown.level = 3;
+          const c1 = document.getElementById('rCity1')?.value || '';
+          this.cascadeRouteDropdown(c1, selectedCity);
+          this.update();
+        },
+
+        handleCatChange: function(selectedCat){
+          this.drilldown.category = selectedCat;
+          if (selectedCat) this.drilldown.level = 5;
+          this.cascadeSubCatDropdown(selectedCat);
+          this.update();
+        },
+
+        cascadeCityDropdown: function(selectedCity1){
+          const db = window.DS_Storage ? window.DS_Storage.getDB() : {};
+          const p = db.party || [];
+          const s = db.sales || [];
+          const allParties = [...p, ...s];
+
+          let matchingCities = allParties
+            .filter(x => !selectedCity1 || String(x.City_1 || x.city1 || 'Kanpur') === selectedCity1)
+            .map(x => x.City || x.city)
+            .filter(Boolean);
+
+          const el = document.getElementById('rCity');
+          if (!el) return;
+          const cur = el.value;
+          const uniq = [...new Set(matchingCities.map(String))].sort();
+          el.innerHTML = '<option value="">All Cities</option>' + uniq.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+          if (uniq.includes(cur)) el.value = cur;
+          else el.value = '';
+        },
+
+        cascadeRouteDropdown: function(selectedCity1, selectedCity){
+          const db = window.DS_Storage ? window.DS_Storage.getDB() : {};
+          const p = db.party || [];
+          const s = db.sales || [];
+          const allParties = [...p, ...s];
+
+          let matchingRoutes = allParties
+            .filter(x => {
+              if (selectedCity1 && String(x.City_1 || x.city1 || 'Kanpur') !== selectedCity1) return false;
+              if (selectedCity && String(x.City || x.city || 'Kanpur') !== selectedCity) return false;
+              return true;
+            })
+            .map(x => x.Route || x.route)
+            .filter(Boolean);
+
+          const el = document.getElementById('rRoute');
+          if (!el) return;
+          const cur = el.value;
+          const uniq = [...new Set(matchingRoutes.map(String))].sort();
+          el.innerHTML = '<option value="">All Routes</option>' + uniq.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+          if (uniq.includes(cur)) el.value = cur;
+          else el.value = '';
+        },
+
+        cascadeSubCatDropdown: function(selectedCat){
+          const db = window.DS_Storage ? window.DS_Storage.getDB() : {};
+          const p = db.party || [];
+          const s = db.sales || [];
+          const allParties = [...p, ...s];
+
+          let matchingSubs = allParties
+            .filter(x => !selectedCat || String(x['Party Category'] || x.category || '') === selectedCat)
+            .map(x => x.subCategory || x['Sub Category'] || x.partySubCategory)
+            .filter(Boolean);
+
+          const el = document.getElementById('rSubCat');
+          if (!el) return;
+          const cur = el.value;
+          const uniq = [...new Set(matchingSubs.map(String))].sort();
+          el.innerHTML = '<option value="">All Subcategories</option>' + uniq.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+          if (uniq.includes(cur)) el.value = cur;
+          else el.value = '';
+        },
+
+        applyPreset: function(){
+          const p = document.getElementById('rPreset')?.value || 'all';
+          const fromEl = document.getElementById('rFrom');
+          const toEl = document.getElementById('rTo');
+          const { start, end } = rDateRange(p, fromEl?.value, toEl?.value);
+          if (p !== 'custom' && fromEl && toEl) {
+            fromEl.value = start ? rYmd(start) : '';
+            toEl.value = end ? rYmd(end) : '';
+          }
+          this.update();
+        },
+
+        resetFilters: function(){
+          const p = document.getElementById('rPreset'); if (p) p.value = 'all';
+          const f = document.getElementById('rFrom'); if (f) f.value = '';
+          const t = document.getElementById('rTo'); if (t) t.value = '';
+          ['rCity', 'rCity1', 'rRoute', 'rCat', 'rSubCat', 'rBrand', 'rBillNo', 'rStatus', 'rVisitFilter', 'rSearch'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.value = '';
+          });
+          this.drilldown = { level: 1, city1: '', city: '', route: '', category: '' };
+          this.populateFilters();
+          this.update();
+          if (window.DS_App && DS_App.toast) DS_App.toast('All filters reset', 'info');
+        },
+
+        selectCity1: function(c1Name){
+          const el = document.getElementById('rCity1');
+          if (el) el.value = c1Name;
+          this.handleCity1Change(c1Name);
+        },
+
+        selectCity: function(cityName){
+          const el = document.getElementById('rCity');
+          if (el) el.value = cityName;
+          this.handleCityChange(cityName);
+        },
+
+        selectRoute: function(routeName){
+          const el = document.getElementById('rRoute');
+          if (el) el.value = routeName;
+          this.drilldown.route = routeName;
+          this.drilldown.level = 4;
+          this.update();
+        },
+
+        selectCategory: function(catName){
+          const el = document.getElementById('rCat');
+          if (el) el.value = catName;
+          this.handleCatChange(catName);
+        },
+
+        setDrilldownLevel: function(level){
+          this.drilldown.level = level;
+          if (level <= 1) {
+            this.drilldown.city1 = '';
+            this.drilldown.city = '';
+            this.drilldown.route = '';
+            this.drilldown.category = '';
+            const c1 = document.getElementById('rCity1'); if (c1) c1.value = '';
+            const c = document.getElementById('rCity'); if (c) c.value = '';
+            const r = document.getElementById('rRoute'); if (r) r.value = '';
+            const cat = document.getElementById('rCat'); if (cat) cat.value = '';
+          } else if (level === 2) {
+            this.drilldown.city = '';
+            this.drilldown.route = '';
+            this.drilldown.category = '';
+            const c = document.getElementById('rCity'); if (c) c.value = '';
+            const r = document.getElementById('rRoute'); if (r) r.value = '';
+            const cat = document.getElementById('rCat'); if (cat) cat.value = '';
+          } else if (level === 3) {
+            this.drilldown.route = '';
+            this.drilldown.category = '';
+            const r = document.getElementById('rRoute'); if (r) r.value = '';
+            const cat = document.getElementById('rCat'); if (cat) cat.value = '';
+          } else if (level === 4) {
+            this.drilldown.category = '';
+            const cat = document.getElementById('rCat'); if (cat) cat.value = '';
+          }
+          this.cascadeCityDropdown(this.drilldown.city1);
+          this.cascadeRouteDropdown(this.drilldown.city1, this.drilldown.city);
+          this.cascadeSubCatDropdown(this.drilldown.category);
+          this.update();
+        },
+
+        stepBackDrilldown: function(){
+          if (this.drilldown.level > 1) {
+            this.setDrilldownLevel(this.drilldown.level - 1);
+          }
+        },
+
+        populateFilters: function(){
+          const db = window.DS_Storage ? window.DS_Storage.getDB() : {};
+          const p = db.party || [];
+          const s = db.sales || [];
+
+          const fill = (id, vals) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const cur = el.value;
+            const uniq = [...new Set((vals || []).filter(Boolean).map(String))].sort();
+            el.innerHTML = '<option value="">All</option>' + uniq.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+            if (uniq.includes(cur)) el.value = cur;
+          };
+
+          fill('rCity1', [...p.map(x => x.City_1 || x.city1 || 'Kanpur'), ...s.map(x => x.City_1 || x.city1 || 'Kanpur')]);
+          fill('rCity', [...p.map(x => x.City || x.city || 'Kanpur'), ...s.map(x => x.City || x.city || 'Kanpur')]);
+          
+          const delivRoutes = (window.DS_Storage && typeof window.DS_Storage.getDeliveryRoutes === 'function') 
+            ? window.DS_Storage.getDeliveryRoutes().map(r => r.name || r.id) 
+            : [];
+          fill('rRoute', [...p.map(x => x.Route || x.route), ...s.map(x => x.Route || x.route), ...delivRoutes]);
+          fill('rCat', [...p.map(x => x['Party Category'] || x.category), ...s.map(x => x['Party Category'] || x.category)]);
+          fill('rSubCat', [...p.map(x => x.subCategory || x['Sub Category']), ...s.map(x => x.subCategory || x['Sub Category'] || x.partySubCategory || x.itemSubCategory)]);
+          fill('rBrand', [...p.map(x => x.brand), ...s.map(x => x.Brand || x.brand)]);
+        },
+
+        getFilteredParties: function(){
+          const db = window.DS_Storage ? window.DS_Storage.getDB() : {};
+          const p = db.party || [];
+          const s = db.sales || [];
+          const u = new Set((db.unpaid || []).map(x => String(x.invoice || x.billNo || x.invoiceNo || x.bill_no || '').trim()).filter(Boolean));
+
+          const c1 = document.getElementById('rCity1')?.value || '';
+          const city = document.getElementById('rCity')?.value || '';
+          const route = document.getElementById('rRoute')?.value || '';
+          const cat = document.getElementById('rCat')?.value || '';
+          const subCat = document.getElementById('rSubCat')?.value || '';
+          const brand = document.getElementById('rBrand')?.value || '';
+          const billNo = String(document.getElementById('rBillNo')?.value || '').trim().toLowerCase();
+          const status = String(document.getElementById('rStatus')?.value || '').trim().toLowerCase();
+          const visitFilter = document.getElementById('rVisitFilter')?.value || '';
+          const search = String(document.getElementById('rSearch')?.value || '').trim().toLowerCase();
+
+          const preset = document.getElementById('rPreset')?.value || 'all';
+          const fromVal = document.getElementById('rFrom')?.value || '';
+          const toVal = document.getElementById('rTo')?.value || '';
+          const { start, end } = rDateRange(preset, fromVal, toVal);
+
+          const dayVisits = this.getVisitsForDate();
+
+          // Sales transaction filtering
+          const hasSalesFilters = Boolean(start || end || brand || billNo || (status && status !== 'outstanding'));
+          let qualifyingSalesParties = null;
+          if (hasSalesFilters) {
+            qualifyingSalesParties = new Set(
+              s.filter(row => {
+                const d = new Date((row.Date || row.date || '') + 'T00:00:00');
+                if (start && (!isNaN(d.getTime()) && d < start)) return false;
+                if (end && (!isNaN(d.getTime()) && d > end)) return false;
+                if (brand && String(row.Brand || row.brand || '') !== brand) return false;
+
+                const inv = String(row['Invoice No.'] || row.invoiceNo || row.invoice_no || '');
+                const bill = String(row.bill_no || row.billNo || row['Bill No.'] || '');
+                if (billNo && !inv.toLowerCase().includes(billNo) && !bill.toLowerCase().includes(billNo)) return false;
+
+                if (status && status !== 'outstanding') {
+                  const isUnpaid = u.has(inv) || u.has(bill) || String(row.status || row.payment_status || '').toLowerCase() === 'unpaid';
+                  if (status === 'unpaid' && !isUnpaid) return false;
+                  if (status === 'paid' && isUnpaid) return false;
+                }
+                return true;
+              }).map(row => String(row['Party Name'] || row.party || row.party_name || '').trim()).filter(Boolean)
+            );
+          }
+
+          return p.filter(x => {
+            const storeName = String(x.Name || x.name || '').trim();
+            const partyCode = String(x.id || x.code || x.PartyCode || '').trim();
+            const xC1 = String(x.City_1 || x.city1 || 'Kanpur').trim();
+            const xCity = String(x.City || x.city || 'Kanpur').trim();
+            const xRoute = String(x.Route || x.route || 'General Route').trim();
+            const xCat = String(x['Party Category'] || x.category || '').trim();
+            const xSubCat = String(x.subCategory || x['Sub Category'] || '').trim();
+            const phone = String(x['Mob No.'] || x.phone || '').trim();
+            const contact = String(x.contact || x.Contact || '').trim();
+
+            if (c1 && xC1 !== c1) return false;
+            if (city && xCity !== city) return false;
+            if (route && xRoute !== route) return false;
+            if (cat && xCat !== cat) return false;
+            if (subCat && xSubCat !== subCat) return false;
+
+            if (qualifyingSalesParties && !qualifyingSalesParties.has(storeName)) {
+              return false;
+            }
+
+            const outAmt = this.getPartyOutstanding(storeName, x);
+            if (status === 'outstanding' && outAmt <= 0) return false;
+
+            if (visitFilter) {
+              const vr = dayVisits[storeName];
+              if (visitFilter === 'visited' && (!vr || vr.visited !== true)) return false;
+              if (visitFilter === 'not_visited' && (!vr || vr.visited !== false)) return false;
+              if (visitFilter === 'pending' && vr && (vr.visited === true || vr.visited === false)) return false;
+            }
+
+            if (search) {
+              const combined = [storeName, partyCode, xC1, xCity, xRoute, xCat, xSubCat, phone, contact].join(' ').toLowerCase();
+              if (!combined.includes(search)) return false;
+            }
+
+            return true;
+          });
+        },
+
+        renderBreadcrumbs: function(){
+          const bEl = document.getElementById('rDrilldownBreadcrumb');
+          if (!bEl) return;
+
+          const c1 = document.getElementById('rCity1')?.value || '';
+          const city = document.getElementById('rCity')?.value || '';
+          const route = document.getElementById('rRoute')?.value || '';
+          const cat = document.getElementById('rCat')?.value || '';
+
+          let html = `
+            <a href="javascript:void(0)" onclick="DS_Route.setDrilldownLevel(1)" class="breadcrumb-pill ${!c1 ? 'active' : ''}">
+              🏠 All City_1 Hubs
+            </a>
+          `;
+
+          if (c1) {
+            html += `
+              <span style="color:#cbd5e1; font-weight:800;">›</span>
+              <a href="javascript:void(0)" onclick="DS_Route.setDrilldownLevel(2)" class="breadcrumb-pill ${c1 && !city ? 'active' : ''}">
+                🏙️ ${esc(c1)}
+              </a>
+            `;
+          }
+
+          if (city) {
+            html += `
+              <span style="color:#cbd5e1; font-weight:800;">›</span>
+              <a href="javascript:void(0)" onclick="DS_Route.setDrilldownLevel(3)" class="breadcrumb-pill ${city && !route ? 'active' : ''}">
+                📍 ${esc(city)}
+              </a>
+            `;
+          }
+
+          if (route) {
+            html += `
+              <span style="color:#cbd5e1; font-weight:800;">›</span>
+              <a href="javascript:void(0)" onclick="DS_Route.setDrilldownLevel(4)" class="breadcrumb-pill ${route && !cat ? 'active' : ''}">
+                🛣️ ${esc(route)}
+              </a>
+            `;
+          }
+
+          if (cat) {
+            html += `
+              <span style="color:#cbd5e1; font-weight:800;">›</span>
+              <a href="javascript:void(0)" onclick="DS_Route.setDrilldownLevel(5)" class="breadcrumb-pill active">
+                🏷️ ${esc(cat)}
+              </a>
+            `;
+          }
+
+          if (c1 || city || route || cat) {
+            html += `
+              <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Route.stepBackDrilldown()" style="margin-left:auto; font-size:11px; padding:3px 8px; border-radius:6px; font-weight:700;">
+                ⬅ Back Level
+              </button>
+            `;
+          }
+
+          bEl.innerHTML = html;
+        },
+
+        update: function(){
+          const db = window.DS_Storage ? window.DS_Storage.getDB() : {};
+          const allParties = db.party || [];
+          const filtered = this.getFilteredParties();
+          const dayVisits = this.getVisitsForDate();
+
+          this.renderBreadcrumbs();
+
+          // Calculate visit and outstanding stats for filtered stores
+          let totalOut = 0;
+          let visitedCount = 0;
+          let notVisitedCount = 0;
+          let pendingCount = 0;
+
+          filtered.forEach(x => {
+            const sName = String(x.Name || x.name || '').trim();
+            const outAmt = this.getPartyOutstanding(sName, x);
+            totalOut += outAmt;
+            const vr = dayVisits[sName];
+            if (vr && vr.visited === true) {
+              visitedCount++;
+            } else if (vr && vr.visited === false) {
+              notVisitedCount++;
+            } else {
+              pendingCount++;
+            }
+          });
+
+          const totalFiltered = filtered.length;
+          const visitedPct = totalFiltered > 0 ? Math.round((visitedCount / totalFiltered) * 100) : 0;
+
+          // 1. Update KPI Summary Cards
+          const elTotalStores = document.getElementById('kpiTotalStores');
+          if (elTotalStores) elTotalStores.textContent = `${totalFiltered} Stores`;
+
+          const elVisited = document.getElementById('kpiVisitedStores');
+          if (elVisited) elVisited.textContent = `${visitedCount} Visited (${visitedPct}%)`;
+
+          const elVisitedSub = document.getElementById('kpiVisitedSub');
+          if (elVisitedSub) elVisitedSub.textContent = `${visitedCount} of ${totalFiltered} covered`;
+
+          const elPending = document.getElementById('kpiPendingStores');
+          if (elPending) elPending.textContent = `${pendingCount} Pending • ${notVisitedCount} Not Visited`;
+
+          const elNotVisitedSub = document.getElementById('kpiNotVisitedSub');
+          if (elNotVisitedSub) elNotVisitedSub.textContent = `${notVisitedCount} stores not visited`;
+
+          const elTotalOut = document.getElementById('kpiTotalOutstanding');
+          if (elTotalOut) elTotalOut.textContent = DS_App.money(totalOut);
+
+          // Update badges in table header
+          const badgeVisits = document.getElementById('rVisitSummaryBadge');
+          if (badgeVisits) badgeVisits.textContent = `${visitedCount} Visited / ${notVisitedCount} Not Visited / ${pendingCount} Pending`;
+
+          const badgeOut = document.getElementById('rTotalOutstandingBadge');
+          if (badgeOut) badgeOut.textContent = `Total Due: ${DS_App.money(totalOut)}`;
+
+          const ctxEl = document.getElementById('rStoreContext');
+          if (ctxEl) {
+            const dateStr = this.getVisitDate();
+            ctxEl.textContent = `Visit Date: ${dateStr} • ${totalFiltered} Outlets matching active filters`;
+          }
+
+          // 2. City_1 Store Coverage Cards
+          const activeCity1 = document.getElementById('rCity1')?.value || '';
+          const resetBtnC1 = document.getElementById('rCity1ResetBtnContainer');
+          if (resetBtnC1) resetBtnC1.style.display = activeCity1 ? 'block' : 'none';
+
+          const c1Stats = new Map();
+          allParties.forEach(x => {
+            const c1 = String(x.City_1 || x.city1 || 'Kanpur').trim();
+            const city = String(x.City || x.city || 'Kanpur').trim();
+            const route = String(x.Route || x.route || 'General Beat').trim();
+            const sName = String(x.Name || x.name || '').trim();
+            const out = this.getPartyOutstanding(sName, x);
+            const vr = dayVisits[sName];
+
+            if (!c1Stats.has(c1)) {
+              c1Stats.set(c1, {
+                name: c1,
+                cities: new Set(),
+                routes: new Set(),
+                stores: 0,
+                visited: 0,
+                pending: 0,
+                notVisited: 0,
+                outstanding: 0
+              });
+            }
+
+            const item = c1Stats.get(c1);
+            item.cities.add(city);
+            item.routes.add(route);
+            item.stores++;
+            item.outstanding += out;
+            if (vr && vr.visited === true) {
+              item.visited++;
+            } else if (vr && vr.visited === false) {
+              item.notVisited++;
+            } else {
+              item.pending++;
+            }
+          });
+
+          const c1Grid = document.getElementById('rCity1CardsGrid');
+          if (c1Grid) {
+            c1Grid.innerHTML = [...c1Stats.values()].map(st => {
+              const pct = st.stores > 0 ? Math.round((st.visited / st.stores) * 100) : 0;
+              const isActive = activeCity1 === st.name;
+              return `
+                <div class="r-c1-card ${isActive ? 'active-c1' : ''}" onclick="DS_Route.selectCity1('${esc(st.name)}')">
+                  <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+                    <div>
+                      <h4 style="margin:0; font-size:16px; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:6px;">
+                        <span>🏙️ ${esc(st.name)}</span>
+                        ${isActive ? '<span class="badge" style="background:#0284c7; color:#ffffff; font-size:10px;">Selected</span>' : ''}
+                      </h4>
+                      <div style="font-size:11.5px; color:#64748b; margin-top:2px; font-weight:600;">
+                        ${st.cities.size} Cities • ${st.routes.size} Beat Routes
+                      </div>
+                    </div>
+                    <span class="badge" style="background:#f1f5f9; color:#0f172a; font-size:12px; font-weight:800; padding:4px 8px;">
+                      ${st.stores} Stores
+                    </span>
+                  </div>
+
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0; background:#f8fafc; border-radius:8px; padding:8px 10px;">
+                    <div>
+                      <div style="font-size:10px; text-transform:uppercase; color:#15803d; font-weight:700;">Visited</div>
+                      <div style="font-size:13px; font-weight:800; color:#16a34a;">${st.visited} (${pct}%)</div>
+                    </div>
+                    <div>
+                      <div style="font-size:10px; text-transform:uppercase; color:#be123c; font-weight:700;">Pending</div>
+                      <div style="font-size:13px; font-weight:800; color:#e11d48;">${st.pending + st.notVisited} Stores</div>
+                    </div>
+                    <div style="grid-column:1 / -1; border-top:1px dashed #e2e8f0; padding-top:6px; margin-top:2px;">
+                      <div style="font-size:10px; text-transform:uppercase; color:#9a3412; font-weight:700;">Total Outstanding</div>
+                      <div style="font-size:13.5px; font-weight:800; color:#dc2626;">${DS_App.money(st.outstanding)}</div>
+                    </div>
+                  </div>
+
+                  <!-- Progress Bar -->
+                  <div>
+                    <div style="display:flex; justify-content:space-between; font-size:10.5px; font-weight:700; color:#475569; margin-bottom:3px;">
+                      <span>Visit Coverage</span>
+                      <span>${pct}%</span>
+                    </div>
+                    <div style="height:6px; background:#e2e8f0; border-radius:4px; overflow:hidden;">
+                      <div style="height:100%; width:${pct}%; background:#10b981; border-radius:4px;"></div>
+                    </div>
+                  </div>
+
+                  <div style="margin-top:12px; text-align:right;">
+                    <span style="font-size:11.5px; font-weight:700; color:#0284c7; display:inline-flex; align-items:center; gap:4px;">
+                      Drill Down Into City →
+                    </span>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+
+          // 3. Charts
+          const rm = new Map();
+          filtered.forEach(x => {
+            const r = String(x.Route || x.route || 'General Route').trim();
+            rm.set(r, (rm.get(r) || 0) + 1);
+          });
+
+          const c1Canvas = document.getElementById('routeCity1Chart');
+          if (c1Canvas && typeof Chart !== 'undefined') {
+            if (C1_CHART) C1_CHART.destroy();
+            C1_CHART = new Chart(c1Canvas, {
+              type: 'bar',
+              data: {
+                labels: [...c1Stats.keys()],
+                datasets: [{ label: 'Stores', data: [...c1Stats.values()].map(v => v.stores), backgroundColor: '#0284c7', borderRadius: 6 }]
+              },
+              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+          }
+
+          const routeCanvas = document.getElementById('routeRouteChart');
+          if (routeCanvas && typeof Chart !== 'undefined') {
+            if (ROUTE_CHART) ROUTE_CHART.destroy();
+            ROUTE_CHART = new Chart(routeCanvas, {
+              type: 'bar',
+              data: {
+                labels: [...rm.keys()],
+                datasets: [{ label: 'Stores', data: [...rm.values()], backgroundColor: '#0d9488', borderRadius: 6 }]
+              },
+              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+          }
+
+          // 4. Detailed Retailer Coverage Table
+          const storeBody = document.getElementById('rStoreTable')?.querySelector('tbody');
+          if (storeBody) {
+            storeBody.innerHTML = filtered.map(x => {
+              const partyName = String(x.Name || x.name || 'Store').trim();
+              const partyCode = String(x.id || x.code || x.PartyCode || 'P-000').trim();
+              const partyAddress = x.address || x.Address || '';
+              const contactPerson = x.contact || x.Contact || '-';
+              const phone = x['Mob No.'] || x.phone || '';
+              const city1 = String(x.City_1 || x.city1 || 'Kanpur').trim();
+              const city = String(x.City || x.city || 'Kanpur').trim();
+              const route = String(x.Route || x.route || 'General Beat').trim();
+              const category = x['Party Category'] || x.category || 'B - Retail Kirana';
+              const subCategory = x.subCategory || x['Sub Category'] || 'General Provision';
+              
+              const outAmt = this.getPartyOutstanding(partyName, x);
+              const salesMetrics = this.getPartySalesMetrics(partyName);
+              const lastVisitDate = this.getLastVisitDateForParty(partyName);
+              
+              const visitRecord = dayVisits[partyName];
+              const isVisited = !!(visitRecord && visitRecord.visited === true);
+              const isNotVisited = !!(visitRecord && visitRecord.visited === false);
+              const visitTime = visitRecord?.time || '';
+              const visitReason = visitRecord?.reason || '';
+
+              let visitBtnStyle = '';
+              let notVisitBtnStyle = '';
+
+              if (isVisited) {
+                visitBtnStyle = 'background:#16a34a; color:#ffffff; border:1px solid #15803d; font-weight:800;';
+                notVisitBtnStyle = 'background:transparent; color:#94a3b8; border:1px solid transparent; font-weight:600; opacity:0.6;';
+              } else if (isNotVisited) {
+                visitBtnStyle = 'background:transparent; color:#94a3b8; border:1px solid transparent; font-weight:600; opacity:0.6;';
+                notVisitBtnStyle = 'background:#dc2626; color:#ffffff; border:1px solid #b91c1c; font-weight:800;';
+              } else {
+                visitBtnStyle = 'background:#f0fdf4; color:#15803d; border:1.5px solid #86efac; font-weight:700;';
+                notVisitBtnStyle = 'background:#fef2f2; color:#b91c1c; border:1.5px solid #fca5a5; font-weight:700;';
+              }
+
+              const visitPicker = `
+                <div style="display:inline-flex; align-items:center; background:#f8fafc; padding:3px; border-radius:8px; border:1px solid #cbd5e1; gap:3px;">
+                  <button type="button" 
+                          data-party="${esc(partyName)}"
+                          onclick="DS_Route.setVisitChoice(this.getAttribute('data-party'), true)" 
+                          title="Click to Choose Visit / Click again to unmark (विज़िट चुनें)"
+                          style="padding:5px 8px; font-size:11px; border-radius:6px; cursor:pointer; transition:all 0.15s ease; ${visitBtnStyle}">
+                    ✓ Visit ${isVisited && visitTime ? `<span style="font-size:9px; opacity:0.9;">(${esc(visitTime)})</span>` : ''}
+                  </button>
+                  <button type="button" 
+                          data-party="${esc(partyName)}"
+                          onclick="DS_Route.setVisitChoice(this.getAttribute('data-party'), false)" 
+                          title="Click to Choose Not Visit / Click again to unmark (नॉट विज़िट चुनें)"
+                          style="padding:5px 8px; font-size:11px; border-radius:6px; cursor:pointer; transition:all 0.15s ease; ${notVisitBtnStyle}">
+                    ✕ Not Visit
+                  </button>
+                  <button type="button" 
+                          data-party="${esc(partyName)}"
+                          onclick="DS_Route.openVisitModal(this.getAttribute('data-party'))" 
+                          title="Choose with Reason / Remarks (कारण या टिप्पणी दर्ज करें)"
+                          style="padding:4px 6px; font-size:11px; border-radius:6px; border:1px solid #cbd5e1; background:#ffffff; color:#475569; cursor:pointer;"
+                          onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#ffffff'">
+                    📝
+                  </button>
+                </div>
+                ${visitReason && visitReason !== 'Visited Outlet' && visitReason !== 'Not Visited' ? `<div style="font-size:10px; color:${isVisited ? '#15803d' : '#991b1b'}; margin-top:3px; font-weight:700;">• ${esc(visitReason)}</div>` : ''}
+              `;
+
+              const actionsHtml = `
+                <div style="display:inline-flex; gap:4px; align-items:center; flex-wrap:wrap; justify-content:center;">
+                  <button type="button" onclick="DS_Route.openRetailerModal('${esc(partyCode)}')" class="table-action-btn" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;" title="View Store Profile">
+                    👁️ Details
+                  </button>
+                  <a href="order-punching.html?party=${encodeURIComponent(partyName)}&route=${encodeURIComponent(route)}" class="table-action-btn" style="background:#0284c7; color:#ffffff;" title="Punch Order">
+                    🛒 Punch
+                  </a>
+                  <a href="payment-collections.html?party=${encodeURIComponent(partyName)}" class="table-action-btn" style="background:#10b981; color:#ffffff;" title="Collect Payment">
+                    💵 Collect
+                  </a>
+                  <a href="sales-analysis.html?party=${encodeURIComponent(partyName)}" class="table-action-btn" style="background:#f1f5f9; color:#334155; border-color:#cbd5e1;" title="Sales Analytics">
+                    📈 Sales
+                  </a>
+                </div>
+              `;
+
+              return `
+                <tr>
+                  <td>
+                    <strong style="color:#0f172a; font-size:12.5px;">${esc(partyName)}</strong>
+                    ${partyAddress ? `<div style="font-size:10.5px; color:#64748b;">${esc(partyAddress)}</div>` : ''}
+                  </td>
+                  <td>
+                    <span style="font-family:monospace; font-weight:700; color:#475569; font-size:11px;">${esc(partyCode)}</span>
+                  </td>
+                  <td>
+                    <span style="font-weight:600; color:#334155; font-size:11.5px;">${esc(contactPerson)}</span>
+                  </td>
+                  <td>
+                    ${phone ? `
+                      <a href="tel:${esc(phone)}" style="color:#0284c7; text-decoration:none; font-weight:700; font-size:11.5px; display:inline-flex; align-items:center; gap:3px;">
+                        📞 ${esc(phone)}
+                      </a>
+                    ` : '<span style="color:#94a3b8; font-size:11px;">-</span>'}
+                  </td>
+                  <td><span class="badge" style="background:#f1f5f9; color:#0369a1; font-weight:700; font-size:10.5px;">${esc(city1)}</span></td>
+                  <td>${esc(city)}</td>
+                  <td><span style="font-weight:600; color:#334155;">${esc(route)}</span></td>
+                  <td><span class="badge" style="background:#e0f2fe; color:#0369a1; font-size:10px;">${esc(category)}</span></td>
+                  <td><span style="font-size:11px; color:#64748b;">${esc(subCategory)}</span></td>
+                  <td><span style="font-size:11px; font-weight:600; color:${lastVisitDate !== '-' ? '#15803d' : '#94a3b8'};">${esc(lastVisitDate)}</span></td>
+                  <td><span style="font-size:11px; font-weight:600; color:#475569;">${esc(salesMetrics.lastOrderDate)}</span></td>
+                  <td class="num font-bold" style="text-align:right; font-size:12px; color:#1e40af;">
+                    ${DS_App.money(salesMetrics.totalSales)}
+                  </td>
+                  <td class="num font-bold" style="text-align:right; font-size:12px; color:#059669;">
+                    ${DS_App.money(salesMetrics.paidAmount)}
+                  </td>
+                  <td class="num font-bold" style="text-align:right; font-size:12.5px; color:${outAmt > 0 ? '#dc2626' : '#16a34a'};">
+                    ${DS_App.money(outAmt)}
+                  </td>
+                  <td style="text-align:center;">${visitPicker}</td>
+                  <td style="text-align:center;">${actionsHtml}</td>
+                </tr>
+              `;
+            }).join('') || '<tr><td colspan="16" class="muted text-center" style="padding:28px; font-weight:600;">No stores found matching active filters</td></tr>';
+          }
+
+          // 5. Route Table
+          const routeBody = document.getElementById('rRouteTable')?.querySelector('tbody');
+          if (routeBody) {
+            routeBody.innerHTML = [...rm.entries()].sort((a,b)=>b[1]-a[1]).map(([r, count]) => `
+              <tr style="cursor:pointer;" onclick="DS_Route.selectRoute('${esc(r)}')">
+                <td><strong style="color:#0284c7;">${esc(r)}</strong></td>
+                <td class="num font-bold">${count}</td>
+              </tr>
+            `).join('');
+          }
+
+          // 6. Category Table
+          const catMap = new Map();
+          filtered.forEach(x => {
+            const c = String(x['Party Category'] || x.category || 'B - Retail Kirana').trim();
+            catMap.set(c, (catMap.get(c) || 0) + 1);
+          });
+          const catBody = document.getElementById('rCatTable')?.querySelector('tbody');
+          if (catBody) {
+            catBody.innerHTML = [...catMap.entries()].sort((a,b)=>b[1]-a[1]).map(([c, count]) => `
+              <tr style="cursor:pointer;" onclick="DS_Route.selectCategory('${esc(c)}')">
+                <td><strong style="color:#0284c7;">${esc(c)}</strong></td>
+                <td class="num font-bold">${count}</td>
+              </tr>
+            `).join('');
+          }
+
+          // 7. ABC Matrix Table
+          const abc = new Map();
+          filtered.forEach(x => {
+            const city = String(x.City || x.city || 'Kanpur').trim();
+            const route = String(x.Route || x.route || 'General Route').trim();
+            const pc = String(x['Party Category'] || x.category || 'B').trim();
+            const k = city + '|' + route;
+            const o = abc.get(k) || { a: 0, b: 0, c: 0 };
+            if (/A/i.test(pc)) o.a++;
+            else if (/B/i.test(pc)) o.b++;
+            else if (/C/i.test(pc)) o.c++;
+            else o.b++;
+            abc.set(k, o);
+          });
+
+          const abcBody = document.getElementById('rABCTable')?.querySelector('tbody');
+          if (abcBody) {
+            abcBody.innerHTML = [...abc.entries()].map(([k, o]) => {
+              const z = k.split('|');
+              return `
+                <tr>
+                  <td><strong>${esc(z[0])}</strong></td>
+                  <td>${esc(z[1])}</td>
+                  <td class="num font-bold" style="color:#1e40af;">${o.a}</td>
+                  <td class="num font-bold" style="color:#059669;">${o.b}</td>
+                  <td class="num font-bold" style="color:#d97706;">${o.c}</td>
+                </tr>
+              `;
+            }).join('');
+          }
+        },
+
+        openRetailerModal: function(partyCode){
+          const db = window.DS_Storage ? window.DS_Storage.getDB() : {};
+          const pList = db.party || [];
+          const store = pList.find(x => String(x.id || x.code || x.PartyCode || '') === String(partyCode));
+          if (!store) {
+            if (window.DS_App && DS_App.toast) DS_App.toast('Store details not found', 'error');
+            return;
+          }
+
+          const partyName = String(store.name || store.Name || '');
+          const sNameEl = document.getElementById('rdmStoreName');
+          if (sNameEl) sNameEl.textContent = partyName;
+
+          const pCodeBadge = document.getElementById('rdmPartyCodeBadge');
+          if (pCodeBadge) pCodeBadge.textContent = partyCode;
+
+          const catBadge = document.getElementById('rdmCategoryBadge');
+          if (catBadge) {
+            catBadge.textContent = store['Party Category'] || store.category || 'B - Retail Kirana';
+            catBadge.className = 'badge';
+            catBadge.style.background = '#e0f2fe';
+            catBadge.style.color = '#0369a1';
+          }
+
+          const routeSub = document.getElementById('rdmRouteSubtitle');
+          if (routeSub) {
+            routeSub.textContent = `Route: ${store.route || store.Route || '-'} • City: ${store.city || store.City || 'Kanpur'} (City_1: ${store.city1 || store.City_1 || 'Kanpur'})`;
+          }
+
+          const cpEl = document.getElementById('rdmContactPerson');
+          if (cpEl) cpEl.textContent = store.contact || store.Contact || '-';
+
+          const phEl = document.getElementById('rdmPhone');
+          if (phEl) {
+            const ph = store['Mob No.'] || store.phone || '';
+            phEl.innerHTML = ph ? `<a href="tel:${esc(ph)}" style="color:#0284c7; text-decoration:none;">📞 ${esc(ph)}</a>` : '-';
+          }
+
+          const cInfo = document.getElementById('rdmCityInfo');
+          if (cInfo) cInfo.textContent = `${store.city1 || store.City_1 || 'Kanpur'} → ${store.city || store.City || 'Kanpur'}`;
+
+          const subCat = document.getElementById('rdmSubCat');
+          if (subCat) subCat.textContent = store.subCategory || store['Sub Category'] || '-';
+
+          const addr = document.getElementById('rdmAddress');
+          if (addr) addr.textContent = store.address || store.Address || '-';
+
+          const outAmt = this.getPartyOutstanding(partyName, store);
+          const metrics = this.getPartySalesMetrics(partyName);
+
+          const clEl = document.getElementById('rdmCreditLimit');
+          if (clEl) clEl.textContent = DS_App.money(store.creditLimit || 50000);
+
+          const tsEl = document.getElementById('rdmTotalSales');
+          if (tsEl) tsEl.textContent = DS_App.money(metrics.totalSales);
+
+          const paEl = document.getElementById('rdmPaidAmount');
+          if (paEl) paEl.textContent = DS_App.money(metrics.paidAmount);
+
+          const outEl = document.getElementById('rdmOutstanding');
+          if (outEl) outEl.textContent = DS_App.money(outAmt);
+
+          // Populated recent orders
+          const orders = (window.DS_Storage && typeof window.DS_Storage.getOrders === 'function') ? window.DS_Storage.getOrders() : [];
+          const sSales = db.sales || [];
+          const partySales = sSales.filter(s => String(s['Party Name'] || s.party || '').trim().toLowerCase() === partyName.toLowerCase());
+          
+          const tbody = document.getElementById('rdmOrdersTable')?.querySelector('tbody');
+          if (tbody) {
+            tbody.innerHTML = partySales.slice(0, 8).map(s => `
+              <tr>
+                <td>${esc(s.Date || s.date || '-')}</td>
+                <td><strong>${esc(s['Bill No.'] || s['Invoice No.'] || s.billNo || s.invoiceNo || '-')}</strong></td>
+                <td>${esc(s['Item Name'] || s.item || 'FMCG Goods')}</td>
+                <td class="num font-bold">${DS_App.money(s.amount || s.AmountNum || 0)}</td>
+                <td><span class="badge" style="background:#ecfdf5; color:#15803d; font-size:10px;">${esc(s.status || s.payment_status || 'Paid')}</span></td>
+              </tr>
+            `).join('') || '<tr><td colspan="5" class="muted text-center" style="padding:12px;">No sales records found</td></tr>';
+          }
+
+          // Populate Action Buttons
+          const actContainer = document.getElementById('rdmActionBtns');
+          if (actContainer) {
+            actContainer.innerHTML = `
+              <a href="order-punching.html?party=${encodeURIComponent(partyName)}&route=${encodeURIComponent(store.route || '')}" class="btn btn-primary btn-sm" style="font-weight:700;">
+                🛒 Punch Order
+              </a>
+              <a href="payment-collections.html?party=${encodeURIComponent(partyName)}" class="btn btn-secondary btn-sm" style="font-weight:700; background:#ecfdf5; color:#15803d; border-color:#86efac;">
+                💵 Collect Payment
+              </a>
+              <a href="sales-analysis.html?party=${encodeURIComponent(partyName)}" class="btn btn-secondary btn-sm" style="font-weight:700;">
+                📈 Sales Analysis
+              </a>
+            `;
+          }
+
+          const modal = document.getElementById('retailerDetailsModal');
+          if (modal) modal.style.display = 'flex';
+        },
+
+        closeRetailerModal: function(){
+          const modal = document.getElementById('retailerDetailsModal');
+          if (modal) modal.style.display = 'none';
+        },
+
+        exportPDF: function(){
+          if (typeof window.jspdf === 'undefined') {
+            if (window.DS_App && DS_App.toast) DS_App.toast('jsPDF library not available', 'error');
+            return;
+          }
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF('l', 'pt', 'a4');
+
+          const c1 = document.getElementById('rCity1')?.value || 'All City_1 Hubs';
+          const city = document.getElementById('rCity')?.value || 'All Cities';
+          const route = document.getElementById('rRoute')?.value || 'All Routes';
+          const cat = document.getElementById('rCat')?.value || 'All Categories';
+          const from = document.getElementById('rFrom')?.value || 'Start';
+          const to = document.getElementById('rTo')?.value || 'Present';
+          const visitFilter = document.getElementById('rVisitFilter')?.value || 'All Statuses';
+
+          // Report Header
+          doc.setFontSize(16);
+          doc.setTextColor(15, 23, 42);
+          doc.text('DS ENTERPRISES — BEAT ROUTE & PARTY COVERAGE ANALYSIS', 30, 32);
+
+          doc.setFontSize(10);
+          doc.setTextColor(100, 116, 139);
+          doc.text('Distribution Hierarchy: City_1 → City → Beat Route → Category', 30, 48);
+
+          // Metadata Info Box
+          doc.setFontSize(9);
+          doc.setTextColor(51, 65, 85);
+          doc.setFillColor(248, 250, 252);
+          doc.roundedRect(30, 56, 782, 38, 4, 4, 'F');
+
+          doc.text(`Date Range: ${from} to ${to}   |   City_1: ${c1}   |   City: ${city}   |   Route: ${route}   |   Category: ${cat}   |   Visit Filter: ${visitFilter}`, 40, 78);
+
+          // Metrics Banner
+          const totalStoresText = document.getElementById('kpiTotalStores')?.textContent || '0 Stores';
+          const visitedText = document.getElementById('kpiVisitedStores')?.textContent || '0 Visited';
+          const pendingText = document.getElementById('kpiPendingStores')?.textContent || '0 Pending';
+          const outText = document.getElementById('kpiTotalOutstanding')?.textContent || '₹ 0.00';
+
+          doc.setFontSize(9);
+          doc.setTextColor(15, 23, 42);
+          doc.text(`Summary: ${totalStoresText}   |   ${visitedText}   |   ${pendingText}   |   Total Route Outstanding: ${outText}`, 40, 110);
+
+          const table = document.getElementById('rStoreTable');
+          if (table && doc.autoTable) {
+            doc.autoTable({
+              html: table,
+              startY: 120,
+              styles: { fontSize: 7, cellPadding: 3 },
+              headStyles: { fillColor: [16, 33, 63], textColor: [255, 255, 255], fontStyle: 'bold' },
+              didParseCell: function(data) {
+                // Column 14 is Beat Visit Status
+                if (data.column.index === 14 && data.section === 'body') {
+                  const raw = (data.cell.raw && data.cell.raw.innerText) ? data.cell.raw.innerText : '';
+                  if (raw.includes('✓ Visit') && (raw.includes('(') || raw.includes('VISITED'))) {
+                    data.cell.text = ['Visited'];
+                  } else if (raw.includes('✕ Not Visit') && !raw.includes('Pending')) {
+                    data.cell.text = ['Not Visited'];
+                  } else {
+                    data.cell.text = ['Pending'];
+                  }
+                }
+                // Column 15 is Actions: drop from print
+                if (data.column.index === 15 && data.section === 'body') {
+                  data.cell.text = [''];
+                }
+              }
+            });
+
+            doc.save(`DS_Enterprises_Beat_Coverage_${new Date().toISOString().slice(0, 10)}.pdf`);
+            if (window.DS_App && DS_App.toast) DS_App.toast('Downloaded Beat Route Coverage PDF', 'success');
+          }
+        }
+      };
+
+      window.DS_Route = DS_Route;
+      document.addEventListener('DOMContentLoaded', () => DS_Route.init());
+    })(window);
+  
