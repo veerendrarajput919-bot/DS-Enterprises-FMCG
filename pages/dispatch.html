@@ -33,13 +33,13 @@
       <div class="ds-panel no-print" style="margin-bottom:12px;">
         <div class="ds-panel-header" style="margin-bottom:0;">
           <div>
-            <h3 class="ds-panel-title">🚚 Dispatch & Delivery Logistics Hub</h3>
+            <h3 class="ds-panel-title">Dispatch & Delivery Logistics Hub</h3>
             <p class="ds-panel-subtitle">Official dispatch challans, van manifests, carton aggregations & vehicle gate passes</p>
           </div>
           <div style="display:flex; gap:8px;">
-            <a href="route-assignment.html" class="btn btn-warning btn-sm">🗺️ Route Assignment</a>
-            <a href="route-analysis.html" class="btn btn-secondary btn-sm">📍 Route & Beat Tracker</a>
-            <a href="order-approval.html" class="btn btn-secondary btn-sm">⚡ Order Approval</a>
+            <a href="route-assignment.html" class="btn btn-warning btn-sm">Route Assignment</a>
+            <a href="route-analysis.html" class="btn btn-secondary btn-sm">Route & Beat Tracker</a>
+            <a href="order-approval.html" class="btn btn-secondary btn-sm">Order Approval</a>
           </div>
         </div>
       </div>
@@ -47,10 +47,10 @@
       <!-- Unified Sub-Navigation Tabs: Challan vs Loading Sheet -->
       <div class="ds-tab-bar no-print">
         <button type="button" class="ds-tab-btn active" id="btnTabChallan" onclick="switchDispatchTab('challan')">
-          🚚 Official Dispatch Challan (Delivery Slip & Gate Pass)
+          Dispatch Challan
         </button>
         <button type="button" class="ds-tab-btn" id="btnTabLoading" onclick="switchDispatchTab('loading')">
-          🚐 Van Loading Sheet (Route SKU Aggregation Manifest)
+          Van Loading Sheet
         </button>
       </div>
 
@@ -61,12 +61,12 @@
         <div class="ds-panel no-print">
           <div class="ds-panel-header">
             <div>
-              <h4 class="ds-panel-title">🚚 Official Dispatch Challan Generator</h4>
+              <h4 class="ds-panel-title">Official Dispatch Challan Generator</h4>
               <p class="ds-panel-subtitle">Generate printable packing slips and delivery challans for field delivery</p>
             </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Dispatch.copyChallanText(document.getElementById('challanOrderSelect').value)">📋 Copy Alert Text</button>
-              <button type="button" class="btn btn-primary btn-sm" onclick="DS_Dispatch.printChallan()">🖨️ Print Challan (A4)</button>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Dispatch.copyChallanText(document.getElementById('challanOrderSelect').value)">Copy Alert Text</button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="DS_Dispatch.printChallan()">Print Challan (A4)</button>
             </div>
           </div>
 
@@ -93,11 +93,11 @@
         <div class="ds-panel no-print">
           <div class="ds-panel-header">
             <div>
-              <h4 class="ds-panel-title">🚐 Consolidated Van / Tempo Loading Manifest</h4>
+              <h4 class="ds-panel-title">Consolidated Van / Tempo Loading Manifest</h4>
               <p class="ds-panel-subtitle">Aggregated item carton and crate counts for warehouse loading dispatch</p>
             </div>
             <div style="display:flex; gap:8px;">
-              <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">🖨️ Print Loading Sheet</button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">Print Loading Sheet</button>
             </div>
           </div>
 
@@ -105,19 +105,19 @@
           <div class="ds-filter-panel" style="margin-bottom:16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px 16px;">
             <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
               <div class="form-group" style="flex:1; min-width:200px; margin-bottom:0;">
-                <label class="form-label" style="font-size:11px; margin-bottom:3px; font-weight:700;">🔍 Search Product / Brand</label>
+                <label class="form-label" style="font-size:11px; margin-bottom:3px; font-weight:700;">Search Product / Brand</label>
                 <input type="text" id="loadingSheetSearchInput" class="form-control" placeholder="Search item name or brand..." autocomplete="off" spellcheck="false" oninput="DS_Dispatch.renderLoadingSheet()" />
               </div>
 
               <div class="form-group" style="min-width:180px; margin-bottom:0;">
-                <label class="form-label" style="font-size:11px; margin-bottom:3px; font-weight:700;">📍 Filter by Beat Route</label>
+                <label class="form-label" style="font-size:11px; margin-bottom:3px; font-weight:700;">Filter by Beat Route</label>
                 <select id="loadingSheetRouteSelect" class="form-control" onchange="DS_Dispatch.renderLoadingSheet()">
                   <option value="">All Routes (Consolidated)</option>
                 </select>
               </div>
 
               <div class="form-group" style="min-width:180px; margin-bottom:0;">
-                <label class="form-label" style="font-size:11px; margin-bottom:3px; font-weight:700;">📊 Order Status</label>
+                <label class="form-label" style="font-size:11px; margin-bottom:3px; font-weight:700;">Order Status</label>
                 <select id="loadingSheetStatusSelect" class="form-control" onchange="DS_Dispatch.renderLoadingSheet()">
                   <option value="active" selected>Active Pipeline (Confirmed / Ready / Dispatched)</option>
                   <option value="all">All Orders (Including Pending)</option>
@@ -128,13 +128,13 @@
               </div>
 
               <div class="form-group" style="min-width:140px; margin-bottom:0;">
-                <label class="form-label" style="font-size:11px; margin-bottom:3px; font-weight:700;">📅 Date</label>
+                <label class="form-label" style="font-size:11px; margin-bottom:3px; font-weight:700;">Date</label>
                 <input type="date" id="loadingSheetDateInput" class="form-control" onchange="DS_Dispatch.renderLoadingSheet()" />
               </div>
 
               <div style="align-self:flex-end;">
                 <button type="button" class="btn btn-secondary" onclick="DS_Dispatch.resetLoadingFilters()" style="height:38px; padding:0 14px; font-weight:700;" title="Reset Loading Sheet Filters">
-                  ↺ Reset
+                  Reset
                 </button>
               </div>
             </div>

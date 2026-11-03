@@ -326,14 +326,14 @@
 
         if (st === 'Cancelled by Customer' || st === 'Cancelled by Party' || o.cancelType === 'party') {
           badgeClass = 'badge-cancelled-by-party';
-          badgeText = '❌ Cancelled (Customer)';
+          badgeText = 'Cancelled (Customer)';
           const r = o.cancelReason || o.cancelRemark || 'Customer Refused';
-          noteHtml = `<div class="cancel-reason-note" title="${DS_App.escapeHtml(r)}">📝 ${DS_App.escapeHtml(r)}</div>`;
+          noteHtml = `<div class="cancel-reason-note" title="${DS_App.escapeHtml(r)}">${DS_App.escapeHtml(r)}</div>`;
         } else if (st === 'Cancelled by Company/Admin' || st === 'Cancelled by Own' || o.cancelType === 'own') {
           badgeClass = 'badge-cancelled-by-own';
-          badgeText = '⚠️ Cancelled (Company)';
+          badgeText = 'Cancelled (Company)';
           const r = o.cancelReason || o.cancelRemark || 'Company / Stock Issue';
-          noteHtml = `<div class="cancel-reason-note own" title="${DS_App.escapeHtml(r)}">📝 ${DS_App.escapeHtml(r)}</div>`;
+          noteHtml = `<div class="cancel-reason-note own" title="${DS_App.escapeHtml(r)}">${DS_App.escapeHtml(r)}</div>`;
         } else if (st === 'Delivered') {
           badgeClass = 'badge-delivered';
           badgeText = 'Delivered';
@@ -359,19 +359,19 @@
         return `
           <tr>
             <td>
-              <button type="button" class="btn btn-link" onclick="if (window.DS_Orders) DS_Orders.viewOrderDetails('${o.id}')" style="padding:0; font-weight:800; font-size:13px; color:var(--ds-primary); text-decoration:none;" title="Click to view full order manifest">
+              <button type="button" class="btn btn-link" onclick="if (window.DS_Orders) DS_Orders.viewOrderDetails('${o.id}')" style="padding:0; font-weight:800; font-size:12.5px; color:var(--ds-primary); text-decoration:none;" title="Click to view full order manifest">
                 ${o.id}
               </button>
             </td>
             <td>
-              <span class="badge" style="background:#eff6ff; color:#1d4ed8; font-size:11.5px; font-weight:700; font-family:monospace; padding:3px 8px; border-radius:6px;" title="Invoice / Bill No.">
-                🧾 ${DS_App.escapeHtml(o.invoice_no || o.bill_no || o.invoiceNo || o.billNo || 'Pending')}
+              <span class="badge" style="background:#eff6ff; color:#1d4ed8; font-size:11px; font-weight:700; font-family:monospace; padding:2px 6px; border-radius:4px;" title="Invoice / Bill No.">
+                ${DS_App.escapeHtml(o.invoice_no || o.bill_no || o.invoiceNo || o.billNo || 'Pending')}
               </span>
             </td>
             <td>${DS_App.formatDate(o.date)}</td>
             <td>
               <strong>${DS_App.escapeHtml(o.storeName || o.party)}</strong>
-              ${o.location ? `<div style="font-size:11px; color:var(--ds-text-muted);">${DS_App.escapeHtml(o.location)}</div>` : ''}
+              ${o.location ? `<div style="font-size:10.5px; color:var(--ds-text-muted);">${DS_App.escapeHtml(o.location)}</div>` : ''}
             </td>
             <td>${DS_App.escapeHtml(o.route || '-')}</td>
             <td class="num"><strong>${DS_App.money(o.total)}</strong></td>
@@ -381,7 +381,7 @@
             </td>
             <td>
               ${canApprove ? `
-                <select id="statusSelect_${o.id}" onchange="DS_Dispatch.changeStatus('${o.id}', this.value)" style="padding:4px 8px; border-radius:6px; font-size:12px; font-weight:700;">
+                <select id="statusSelect_${o.id}" onchange="DS_Dispatch.changeStatus('${o.id}', this.value)" style="padding:3px 6px; border-radius:4px; font-size:11.5px; font-weight:700;">
                   <option value="Pending" ${(st==='Pending'||st==='Submitted')?'selected':''}>1. Pending</option>
                   <option value="Confirmed" ${(st==='Confirmed'||st==='Approved')?'selected':''}>2. Confirmed</option>
                   <option value="Processing" ${st==='Processing'?'selected':''}>3. Processing</option>
@@ -394,19 +394,19 @@
               ` : `<span style="font-size:11px; color:var(--ds-text-muted);">Read-Only</span>`}
             </td>
             <td>
-              <div style="display:flex; gap:4px; flex-wrap:wrap;">
-                <a href="dispatch-challan.html?order=${encodeURIComponent(o.id)}" class="btn btn-secondary btn-sm" style="font-size:11px; padding:3px 7px;">Challan</a>
+              <div style="display:flex; gap:3px; flex-wrap:wrap;">
+                <a href="dispatch-challan.html?order=${encodeURIComponent(o.id)}" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 6px;">Challan</a>
                 ${!isCancelled && canApprove ? `
-                  <button type="button" class="btn btn-danger btn-sm" onclick="if (window.DS_Orders) DS_Orders.openCancelOrderModal('${o.id}')" style="font-size:11px; padding:3px 7px; background:#fff1f2; color:#be123c; border:1px solid #fecdd3;" title="Cancel with reason remark">
-                    ❌ Cancel
+                  <button type="button" class="btn btn-danger btn-sm" onclick="if (window.DS_Orders) DS_Orders.openCancelOrderModal('${o.id}')" style="font-size:11px; padding:2px 6px; background:#fff1f2; color:#be123c; border:1px solid #fecdd3;" title="Cancel with reason remark">
+                    Cancel
                   </button>
                 ` : isCancelled ? `
-                  <button type="button" class="btn btn-secondary btn-sm" onclick="if (window.DS_Orders) DS_Orders.viewOrderDetails('${o.id}')" style="font-size:11px; padding:3px 7px;" title="View cancellation note">
-                    📝 Note
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="if (window.DS_Orders) DS_Orders.viewOrderDetails('${o.id}')" style="font-size:11px; padding:2px 6px;" title="View cancellation note">
+                    Note
                   </button>
                   ${(window.DS_Auth && window.DS_Auth.isAdmin()) ? `
-                    <button type="button" class="btn btn-success btn-sm" onclick="if (window.DS_Orders) DS_Orders.reopenOrder('${o.id}')" style="font-size:11px; padding:3px 7px; background:#dcfce7; color:#15803d; border:1px solid #86efac;" title="Reopen Cancelled Order">
-                      ↺ Reopen
+                    <button type="button" class="btn btn-success btn-sm" onclick="if (window.DS_Orders) DS_Orders.reopenOrder('${o.id}')" style="font-size:11px; padding:2px 6px; background:#dcfce7; color:#15803d; border:1px solid #86efac;" title="Reopen Cancelled Order">
+                      Reopen
                     </button>
                   ` : ''}
                 ` : ''}
@@ -432,7 +432,7 @@
 
       // Prevent cancelled orders from being dispatched or delivered without explicit admin reopening
       if (isCurrentlyCancelled && (newStatus === 'Dispatched' || newStatus === 'Delivered' || newStatus === 'Ready for Delivery')) {
-        alert('❌ Cannot dispatch or deliver a cancelled order! An authorized admin must explicitly reopen the order first.');
+        alert('Cannot dispatch or deliver a cancelled order! An authorized admin must explicitly reopen the order first.');
         this.renderApprovalTable();
         return;
       }

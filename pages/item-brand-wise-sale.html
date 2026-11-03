@@ -40,22 +40,22 @@
     <main class="ds-main-content">
       <!-- Unified Sales Analytics Navigation Bar -->
       <div class="ds-tab-bar">
-        <a href="item-brand-wise-sale.html" class="ds-subnav-pill active">📑 Item & Brand Matrix</a>
-        <a href="sales-analysis.html" class="ds-subnav-pill">📈 Overview & Trends</a>
-        <a href="party-wise.html" class="ds-subnav-pill">🏪 Party-Wise Sale</a>
-        <a href="route-analysis.html" class="ds-subnav-pill">📍 Route & Beat Analysis</a>
-        <a href="order-punching.html" class="ds-subnav-pill">🛒 Field Order Punching</a>
+        <a href="item-brand-wise-sale.html" class="ds-subnav-pill active">Item & Brand Matrix</a>
+        <a href="sales-analysis.html" class="ds-subnav-pill">Overview & Trends</a>
+        <a href="party-wise.html" class="ds-subnav-pill">Party-Wise Sale</a>
+        <a href="route-analysis.html" class="ds-subnav-pill">Route & Beat Analysis</a>
+        <a href="order-punching.html" class="ds-subnav-pill">Field Order Punching</a>
       </div>
 
       <div class="ds-panel">
         <div class="ds-panel-header">
           <div>
-            <h3 class="ds-panel-title">📑 Item & Brand Cross-Tab Performance Matrix</h3>
+            <h3 class="ds-panel-title">Item & Brand Cross-Tab Performance Matrix</h3>
             <p class="ds-panel-subtitle">Comprehensive product performance, volume distribution and revenue contribution across brand catalogs</p>
           </div>
-          <div style="display:flex; gap:8px;">
-            <button type="button" class="btn btn-success btn-sm" onclick="exportMatrixExcel()">📊 Export Excel</button>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print Report</button>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-success btn-sm" onclick="exportMatrixExcel()">Export Excel</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">Print Report</button>
           </div>
         </div>
 
@@ -148,17 +148,17 @@
         <!-- KPI Metrics -->
         <div class="kpi-grid" style="margin-bottom:18px;">
           <div class="kpi-card emerald">
-            <div class="kpi-header"><span class="kpi-label">Total Matrix Turnover</span><span style="color:var(--ds-emerald);">₹</span></div>
+            <div class="kpi-header"><span class="kpi-label">Total Matrix Turnover</span></div>
             <div class="kpi-value" id="matTotalTurnover">₹ 0.00</div>
             <div class="kpi-subtext">Sum of sales revenue</div>
           </div>
           <div class="kpi-card teal">
-            <div class="kpi-header"><span class="kpi-label">Units / Cartons Sold</span><span style="color:var(--ds-teal);">📦</span></div>
+            <div class="kpi-header"><span class="kpi-label">Units / Cartons Sold</span></div>
             <div class="kpi-value" id="matTotalQty">0</div>
             <div class="kpi-subtext">Volume moved across beats</div>
           </div>
           <div class="kpi-card gold">
-            <div class="kpi-header"><span class="kpi-label">Distinct SKUs</span><span style="color:var(--ds-gold);">📑</span></div>
+            <div class="kpi-header"><span class="kpi-label">Distinct SKUs</span></div>
             <div class="kpi-value" id="matTotalSkus">0</div>
             <div class="kpi-subtext">Active catalog items</div>
           </div>

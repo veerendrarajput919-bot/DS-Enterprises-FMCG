@@ -38,68 +38,68 @@
     <div data-component="sidebar"></div>
 
     <main class="ds-main-content">
-<div class="ds-panel" style="max-width:750px; margin:0 auto;">
-  <div class="ds-panel-header">
+<div class="ds-panel" style="max-width:750px; margin:0 auto; padding:10px 12px;">
+  <div class="ds-panel-header" style="margin-bottom:8px;">
     <div>
-      <h3 class="ds-panel-title">🧹 System Data Management & Reset</h3>
+      <h3 class="ds-panel-title">System Data Management & Reset</h3>
       <p class="ds-panel-subtitle">Backup database, seed clean FMCG demo records or clear transactional logs</p>
     </div>
   </div>
 
-  <div style="display:flex; flex-direction:column; gap:16px;">
+  <div style="display:flex; flex-direction:column; gap:8px;">
     <!-- Backup Export Card -->
-    <div style="border:1px solid var(--ds-border); border-radius:var(--ds-radius-md); padding:16px; background:var(--ds-surface);">
-      <h4 style="margin:0 0 6px; font-size:15px; font-weight:700;">💾 Export Complete Backup (JSON)</h4>
-      <p style="font-size:12px; color:var(--ds-text-muted); margin:0 0 12px;">
+    <div style="border:1px solid var(--ds-border); border-radius:6px; padding:10px 12px; background:var(--ds-surface);">
+      <h4 style="margin:0 0 4px; font-size:13.5px; font-weight:700;">Export Complete Backup (JSON)</h4>
+      <p style="font-size:11.5px; color:var(--ds-text-muted); margin:0 0 8px;">
         Download the entire state including sales ledger, stock catalog, parties, orders, and payment collections.
       </p>
-      <button type="button" class="btn btn-primary" onclick="downloadBackup()">Download JSON Backup</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="downloadBackup()">Download JSON Backup</button>
     </div>
 
     <!-- Restore Card -->
-    <div style="border:1px solid var(--ds-border); border-radius:var(--ds-radius-md); padding:16px; background:var(--ds-surface);">
-      <h4 style="margin:0 0 6px; font-size:15px; font-weight:700;">📥 Restore Database from Backup File</h4>
-      <p style="font-size:12px; color:var(--ds-text-muted); margin:0 0 12px;">
+    <div style="border:1px solid var(--ds-border); border-radius:6px; padding:10px 12px; background:var(--ds-surface);">
+      <h4 style="margin:0 0 4px; font-size:13.5px; font-weight:700;">Restore Database from Backup File</h4>
+      <p style="font-size:11.5px; color:var(--ds-text-muted); margin:0 0 8px;">
         Upload a previously exported backup file to restore system records.
       </p>
-      <input type="file" id="restoreFileInput" accept=".json" class="form-control" onchange="restoreBackupFile(event)" />
+      <input type="file" id="restoreFileInput" accept=".json" class="form-control" style="font-size:12px; padding:4px;" onchange="restoreBackupFile(event)" />
     </div>
 
     <!-- Seed Demo Sample Data -->
-    <div style="border:1px solid var(--ds-border); border-radius:var(--ds-radius-md); padding:16px; background:var(--ds-surface);">
-      <h4 style="margin:0 0 6px; font-size:15px; font-weight:700;">🌱 Restore FMCG Sample Dataset</h4>
-      <p style="font-size:12px; color:var(--ds-text-muted); margin:0 0 12px;">
+    <div style="border:1px solid var(--ds-border); border-radius:6px; padding:10px 12px; background:var(--ds-surface);">
+      <h4 style="margin:0 0 4px; font-size:13.5px; font-weight:700;">Restore FMCG Sample Dataset</h4>
+      <p style="font-size:11.5px; color:var(--ds-text-muted); margin:0 0 8px;">
         Populates standard FMCG records (Parle, Britannia, Tata Consumer, HUL, ITC, Fortune) with 10 parties and realistic orders.
       </p>
-      <button type="button" id="btnRestoreSampleDataset" class="btn btn-warning" onclick="resetSampleData()">Restore Clean Sample Dataset</button>
+      <button type="button" id="btnRestoreSampleDataset" class="btn btn-warning btn-sm" onclick="resetSampleData()">Restore Clean Sample Dataset</button>
     </div>
 
     <!-- Clean Up Unnecessary Items & Stale Records -->
-    <div style="border:1px solid #bfdbfe; border-radius:var(--ds-radius-md); padding:16px; background:#f0f9ff;">
-      <h4 style="margin:0 0 6px; font-size:15px; font-weight:700; color:#0369a1;">🧹 Clean Up Unnecessary Items (अनावश्यक आइटम्स हटाएं)</h4>
-      <p style="font-size:12px; color:var(--ds-text-secondary); margin:0 0 12px;">
-        Remove obsolete zero-stock products or purge old cancelled orders to keep the FMCG database lean, fast, and clutter-free.
+    <div style="border:1px solid #bfdbfe; border-radius:6px; padding:10px 12px; background:#f0f9ff;">
+      <h4 style="margin:0 0 4px; font-size:13.5px; font-weight:700; color:#0369a1;">Clean Up Unnecessary Items</h4>
+      <p style="font-size:11.5px; color:var(--ds-text-secondary); margin:0 0 8px;">
+        Remove obsolete zero-stock products or purge old cancelled orders to keep the database lean and clutter-free.
       </p>
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button type="button" class="btn btn-primary btn-sm" onclick="purgeAllDemoDataPrompt()" style="font-weight:700; background:#0284c7; border-color:#0284c7;">
-          ✨ Purge All Demo & Test Data (Clean Database)
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button type="button" class="btn btn-primary btn-sm" onclick="purgeAllDemoDataPrompt()" style="font-weight:700; background:#0284c7; border-color:#0284c7; padding:4px 10px; font-size:11.5px;">
+          Purge All Demo & Test Data
         </button>
-        <button type="button" class="btn btn-secondary btn-sm" onclick="purgeZeroStockItems()" style="font-weight:700;">
-          🗑️ Remove 0-Stock Items
+        <button type="button" class="btn btn-secondary btn-sm" onclick="purgeZeroStockItems()" style="font-weight:700; padding:4px 10px; font-size:11.5px;">
+          Remove 0-Stock Items
         </button>
-        <button type="button" class="btn btn-secondary btn-sm" onclick="purgeCancelledOrders()" style="font-weight:700;">
-          🗑️ Remove Cancelled Orders
+        <button type="button" class="btn btn-secondary btn-sm" onclick="purgeCancelledOrders()" style="font-weight:700; padding:4px 10px; font-size:11.5px;">
+          Remove Cancelled Orders
         </button>
       </div>
     </div>
 
     <!-- Wipe Transactions Danger Zone -->
-    <div style="border:1px solid var(--ds-danger); border-radius:var(--ds-radius-md); padding:16px; background:#fff1f2;">
-      <h4 style="margin:0 0 6px; font-size:15px; font-weight:700; color:var(--ds-danger-dark);">⚠️ Wipe Transactions (Clear All Orders & Sales)</h4>
-      <p style="font-size:12px; color:var(--ds-text-secondary); margin:0 0 12px;">
+    <div style="border:1px solid var(--ds-danger); border-radius:6px; padding:10px 12px; background:#fff1f2;">
+      <h4 style="margin:0 0 4px; font-size:13.5px; font-weight:700; color:var(--ds-danger-dark);">Wipe Transactions (Clear All Orders & Sales)</h4>
+      <p style="font-size:11.5px; color:var(--ds-text-secondary); margin:0 0 8px;">
         Clears all sales entries, punched orders and payment collections while preserving catalog and registered sales officers. Requires Admin confirmation.
       </p>
-      <button type="button" class="btn btn-danger" onclick="wipeTransactions()">Clear All Transactions</button>
+      <button type="button" class="btn btn-danger btn-sm" onclick="wipeTransactions()">Clear All Transactions</button>
     </div>
   </div>
 </div>

@@ -613,29 +613,29 @@
       const validCount = toInsert + toUpdate + unchanged;
 
       const modeLabels = {
-        'insert_update': '🟢 Insert New & Update Existing',
-        'insert': '🔵 Insert New Only',
-        'update': '🟠 Update Existing Only'
+        'insert_update': 'Insert New & Update Existing',
+        'insert': 'Insert New Only',
+        'update': 'Update Existing Only'
       };
 
       let html = `
-        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:20px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom:20px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px; border-bottom:1px solid #f1f5f9; padding-bottom:12px;">
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:12px; box-shadow:0 2px 4px -1px rgba(0,0,0,0.03); margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px; border-bottom:1px solid #f1f5f9; padding-bottom:8px;">
             <div>
-              <h4 style="margin:0 0 4px; font-size:16px; font-weight:800; color:#1e293b;">📋 Ingestion Preview: ${filename}</h4>
-              <div style="font-size:12px; color:#64748b;">
+              <h4 style="margin:0 0 2px; font-size:14px; font-weight:800; color:#1e293b;">Ingestion Preview: ${filename}</h4>
+              <div style="font-size:11.5px; color:#64748b;">
                 Selected Mode: <strong>${modeLabels[mode] || mode}</strong> • Target Rows: <strong>${total}</strong>
               </div>
             </div>
-            <div style="display:flex; gap:8px;">
+            <div style="display:flex; gap:6px;">
               ${failed > 0 ? `
-                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_ExcelImport.downloadErrorReport()" style="color:#b91c1c; border-color:#fca5a5; font-weight:700;">
-                  ⚠️ Download Error Report (${failed} rows)
+                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_ExcelImport.downloadErrorReport()" style="color:#b91c1c; border-color:#fca5a5; font-weight:700; padding:4px 8px; font-size:11.5px;">
+                  Download Error Report (${failed} rows)
                 </button>
               ` : ''}
               ${validCount > 0 ? `
-                <button type="button" class="btn btn-success btn-sm" id="btnConfirmBulkExecute" onclick="DS_ExcelImport.confirmAndExecute()" style="font-weight:800; padding:8px 16px;">
-                  🚀 Confirm & Execute Import (${validCount} Records)
+                <button type="button" class="btn btn-success btn-sm" id="btnConfirmBulkExecute" onclick="DS_ExcelImport.confirmAndExecute()" style="font-weight:700; padding:5px 12px; font-size:11.5px;">
+                  Confirm & Execute Import (${validCount} Records)
                 </button>
               ` : ''}
             </div>
@@ -833,16 +833,15 @@
         const previewSec = document.getElementById('bulkPreviewSection');
         if (previewSec) {
           previewSec.innerHTML = `
-            <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:12px; padding:24px; text-align:center; color:#166534;">
-              <div style="font-size:36px; margin-bottom:8px;">✅</div>
-              <h4 style="margin:0 0 6px; font-size:18px; font-weight:800;">Bulk Import Successfully Executed!</h4>
-              <p style="margin:0 0 16px; font-size:14px;">${successMsg}</p>
-              <div style="display:flex; gap:10px; justify-content:center;">
-                <button type="button" class="btn btn-primary" onclick="DS_ExcelImport.switchTab('history')">
-                  📜 View Import History & Audit Trail
+            <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:8px; padding:16px; text-align:center; color:#166534;">
+              <h4 style="margin:0 0 4px; font-size:16px; font-weight:800;">Bulk Import Successfully Executed!</h4>
+              <p style="margin:0 0 12px; font-size:13px;">${successMsg}</p>
+              <div style="display:flex; gap:8px; justify-content:center;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="DS_ExcelImport.switchTab('history')">
+                  View Import History & Audit Trail
                 </button>
-                <a href="sales-analysis.html" class="btn btn-secondary">
-                  📊 View Updated Sales Records
+                <a href="sales-analysis.html" class="btn btn-secondary btn-sm">
+                  View Updated Sales Records
                 </a>
               </div>
             </div>
@@ -858,7 +857,7 @@
         if (window.DS_App && DS_App.toast) DS_App.toast('Execution failed: ' + err.message, 'error');
         if (btn) {
           btn.disabled = false;
-          btn.textContent = '🚀 Retry Import Execution';
+          btn.textContent = 'Retry Import Execution';
         }
       }
     },

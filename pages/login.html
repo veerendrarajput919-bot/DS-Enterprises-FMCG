@@ -52,65 +52,65 @@
       </div>
 
       <!-- Role Selection Tabs (Only Administrator & Staff Login) -->
-      <div style="display:flex; gap:8px; margin-bottom:22px; background:#f1f5f9; padding:5px; border-radius:10px;">
-        <button type="button" id="tabBtnAdmin" class="btn btn-primary" style="flex:1; padding:10px 12px; font-size:13px; font-weight:700;" onclick="switchLoginTab('admin')">
-          👑 Administrator
+      <div style="display:flex; gap:6px; margin-bottom:16px; background:#f1f5f9; padding:4px; border-radius:6px;">
+        <button type="button" id="tabBtnAdmin" class="btn btn-primary" style="flex:1; padding:7px 10px; font-size:12.5px; font-weight:700;" onclick="switchLoginTab('admin')">
+          Administrator
         </button>
-        <button type="button" id="tabBtnSo" class="btn btn-secondary" style="flex:1; padding:10px 12px; font-size:13px; font-weight:700;" onclick="switchLoginTab('so')">
-          👥 Staff / Field Login
+        <button type="button" id="tabBtnSo" class="btn btn-secondary" style="flex:1; padding:7px 10px; font-size:12.5px; font-weight:700;" onclick="switchLoginTab('so')">
+          Staff / Field Login
         </button>
       </div>
 
       <!-- 1. Administrator Login Form -->
       <form id="adminLoginForm" onsubmit="handleAdminLoginSubmit(event)">
-        <div class="form-group" style="margin-bottom:14px;">
+        <div class="form-group" style="margin-bottom:10px;">
           <label class="form-label" for="adminUsernameInput">Administrator Username</label>
-          <input type="text" id="adminUsernameInput" class="form-control" value="admin" required
-            placeholder="Enter username (e.g. admin)" style="font-weight:600; padding:11px 13px;" />
+          <input type="text" id="adminUsernameInput" class="form-control" required
+            placeholder="Enter admin username" style="font-weight:600; padding:8px 10px;" />
         </div>
 
-        <div class="form-group" style="margin-bottom:20px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <div class="form-group" style="margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
             <label class="form-label" for="adminPasswordInput" style="margin-bottom:0;">Admin Master Password / PIN</label>
-            <button type="button" onclick="togglePasswordVisibility('adminPasswordInput')" style="background:none; border:none; color:var(--ds-accent); font-size:12px; cursor:pointer;">👁 Show</button>
+            <button type="button" onclick="togglePasswordVisibility('adminPasswordInput')" style="background:none; border:none; color:var(--ds-accent); font-size:11.5px; cursor:pointer;">Show</button>
           </div>
-          <input type="password" id="adminPasswordInput" class="form-control" value="Admin@919" required
-            placeholder="Enter Admin Password (Admin@919)" style="font-weight:700; font-size:16px; padding:11px 13px;" />
+          <input type="password" id="adminPasswordInput" class="form-control" required
+            placeholder="Enter Admin Password" style="font-weight:700; font-size:14px; padding:8px 10px;" />
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width:100%; padding:12px; font-size:15px; font-weight:700;">
-          🔐 Sign In as Administrator
+        <button type="submit" class="btn btn-primary" style="width:100%; padding:9px; font-size:13.5px; font-weight:700;">
+          Sign In as Administrator
         </button>
       </form>
 
       <!-- 2. Staff / Field Login Form (User ID & Password) -->
       <form id="soLoginForm" onsubmit="handleSoLoginSubmit(event)" style="display:none;">
-        <div class="form-group" style="margin-bottom:14px;">
+        <div class="form-group" style="margin-bottom:10px;">
           <label class="form-label" for="soUserIdInput">Staff User ID or Phone</label>
           <input type="text" id="soUserIdInput" class="form-control" required
-            placeholder="e.g. manoj (IMS), priya (Accounts), or rahul (SO)" style="font-weight:600; padding:11px 13px;" />
+            placeholder="Enter Staff User ID (e.g. manoj, priya, rahul)" style="font-weight:600; padding:8px 10px;" />
         </div>
 
-        <div class="form-group" style="margin-bottom:20px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <div class="form-group" style="margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
             <label class="form-label" for="soPasswordInput" style="margin-bottom:0;">Staff Password</label>
-            <button type="button" onclick="togglePasswordVisibility('soPasswordInput')" style="background:none; border:none; color:var(--ds-accent); font-size:12px; cursor:pointer;">👁 Show</button>
+            <button type="button" onclick="togglePasswordVisibility('soPasswordInput')" style="background:none; border:none; color:var(--ds-accent); font-size:11.5px; cursor:pointer;">Show</button>
           </div>
           <input type="password" id="soPasswordInput" class="form-control" required
-            placeholder="Enter password (default: 1234)" style="font-weight:700; font-size:16px; padding:11px 13px;" />
+            placeholder="Enter Staff Password" style="font-weight:700; font-size:14px; padding:8px 10px;" />
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width:100%; padding:12px; font-size:15px; font-weight:700; background:var(--ds-emerald); border-color:var(--ds-emerald);">
-          💼 Sign In to Staff Portal
+        <button type="submit" class="btn btn-primary" style="width:100%; padding:9px; font-size:13.5px; font-weight:700; background:var(--ds-emerald); border-color:var(--ds-emerald);">
+          Sign In to Staff Portal
         </button>
       </form>
 
       <!-- Admin New Staff Registration Trigger -->
-      <div style="margin-top:22px; padding-top:16px; border-top:1px dashed #cbd5e1; text-align:center;">
-        <button type="button" class="btn btn-sm" onclick="openAdminRegisterModal()" style="font-weight:700; font-size:12.5px; border-radius:8px; display:inline-flex; align-items:center; gap:6px; background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; padding:8px 16px; cursor:pointer;" title="Admin authorization se naya staff / field user register karein">
-          ➕ Register New Staff / User by Admin (नया रजिस्ट्रेशन)
+      <div style="margin-top:14px; padding-top:10px; border-top:1px dashed #cbd5e1; text-align:center;">
+        <button type="button" class="btn btn-sm" onclick="openAdminRegisterModal()" style="font-weight:700; font-size:11.5px; border-radius:6px; display:inline-flex; align-items:center; gap:4px; background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; padding:6px 12px; cursor:pointer;" title="Admin authorization se naya staff / field user register karein">
+          Register New Staff / User by Admin
         </button>
-        <div style="font-size:11px; color:#64748b; margin-top:6px;">
+        <div style="font-size:10.5px; color:#64748b; margin-top:4px;">
           Admin authorization required to create and assign staff accounts.
         </div>
       </div>
@@ -130,7 +130,7 @@
     <div class="modal-card" style="width:min(520px, 95%); max-height:92vh; display:flex; flex-direction:column; background:#ffffff; border-radius:14px; box-shadow:0 20px 40px rgba(0,0,0,0.3);">
       <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid #e2e8f0;">
         <div>
-          <h3 class="modal-title" id="adminRegisterTitle" style="margin:0; font-size:17px; font-weight:800; color:#0f172a;">👥 New Staff Registration (Admin Authorization)</h3>
+          <h3 class="modal-title" id="adminRegisterTitle" style="margin:0; font-size:17px; font-weight:800; color:#0f172a;">New Staff Registration (Admin Authorization)</h3>
           <p style="margin:2px 0 0; font-size:12px; color:#64748b;">Create new user credentials and assign enterprise FMCG roles</p>
         </div>
         <button type="button" class="modal-close" onclick="closeAdminRegisterModal()" style="background:none; border:none; font-size:22px; cursor:pointer; color:#64748b;">×</button>
@@ -151,47 +151,47 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="regPassword" style="font-size:12px; font-weight:700;">Login Password *</label>
-            <input type="password" id="regPassword" class="form-control" required placeholder="Min 4 digits" value="1234" style="padding:10px; font-family:monospace; font-weight:700;" />
+            <input type="password" id="regPassword" class="form-control" required placeholder="Min 4 characters" style="padding:10px; font-family:monospace; font-weight:700;" />
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label" for="regRole" style="font-size:12px; font-weight:700;">Assigned Enterprise Role *</label>
-          <select id="regRole" class="form-control" required style="padding:10px; font-weight:700;">
-            <option value="so" selected>👤 Sales Officer (Beat Operations & Field Orders)</option>
-            <option value="ims_manager">📦 IMS / Warehouse Lead (Stock Inward & Catalog)</option>
-            <option value="dispatcher">🚚 Dispatch & Logistics Lead (Challan & Loading)</option>
-            <option value="accounts">💰 Accounts & Recovery (Payment Collections)</option>
-            <option value="billing_operator">🧾 Billing Desk (Order Punching & Invoicing)</option>
-            <option value="admin">👑 Administrator (Full Master Control)</option>
-            <option value="viewer">👁️ Auditor / Viewer Mode (Read-Only Review)</option>
+          <select id="regRole" class="form-control" required style="padding:8px 10px; font-weight:700;">
+            <option value="so" selected>Sales Officer (Beat Operations & Field Orders)</option>
+            <option value="ims_manager">IMS / Warehouse Lead (Stock Inward & Catalog)</option>
+            <option value="dispatcher">Dispatch & Logistics Lead (Challan & Loading)</option>
+            <option value="accounts">Accounts & Recovery (Payment Collections)</option>
+            <option value="billing_operator">Billing Desk (Order Punching & Invoicing)</option>
+            <option value="admin">Administrator (Full Master Control)</option>
+            <option value="viewer">Auditor / Viewer Mode (Read-Only Review)</option>
           </select>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
           <div class="form-group">
-            <label class="form-label" for="regPhone" style="font-size:12px; font-weight:700;">Contact Mobile No *</label>
-            <input type="tel" id="regPhone" class="form-control" required placeholder="10-digit phone" style="padding:10px;" />
+            <label class="form-label" for="regPhone" style="font-size:11.5px; font-weight:700;">Contact Mobile No *</label>
+            <input type="tel" id="regPhone" class="form-control" required placeholder="10-digit phone" style="padding:8px;" />
           </div>
           <div class="form-group">
-            <label class="form-label" for="regRoute" style="font-size:12px; font-weight:700;">Assigned Beat / Dept</label>
-            <input type="text" id="regRoute" class="form-control" placeholder="e.g. Civil Lines Beat" value="Civil Lines Beat" style="padding:10px;" />
+            <label class="form-label" for="regRoute" style="font-size:11.5px; font-weight:700;">Assigned Beat / Dept</label>
+            <input type="text" id="regRoute" class="form-control" placeholder="e.g. Civil Lines Beat" value="Civil Lines Beat" style="padding:8px;" />
           </div>
         </div>
 
         <!-- Admin Master PIN Verification -->
-        <div style="background:#eff6ff; padding:12px; border-radius:8px; border:1px solid #bfdbfe; margin-top:4px;">
-          <label class="form-label" for="regAdminPin" style="font-size:12px; font-weight:700; color:#1e40af;">🔐 Admin Master Password Verification *</label>
-          <input type="password" id="regAdminPin" class="form-control" required placeholder="Enter Admin Password (default: Admin@919)" value="Admin@919" style="padding:10px; font-weight:700; font-family:monospace;" />
-          <div style="font-size:11px; color:#3b82f6; margin-top:4px;">
+        <div style="background:#eff6ff; padding:10px; border-radius:6px; border:1px solid #bfdbfe; margin-top:4px;">
+          <label class="form-label" for="regAdminPin" style="font-size:11.5px; font-weight:700; color:#1e40af;">Admin Master Password Verification *</label>
+          <input type="password" id="regAdminPin" class="form-control" required placeholder="Enter Admin Password" style="padding:8px; font-weight:700; font-family:monospace;" />
+          <div style="font-size:10.5px; color:#3b82f6; margin-top:3px;">
             Admin authentication required to prevent unauthorized account creation.
           </div>
         </div>
 
-        <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:12px; border-top:1px solid #e2e8f0;">
-          <button type="button" class="btn btn-secondary" onclick="closeAdminRegisterModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary" style="font-weight:800; padding:10px 20px;">
-            ✓ Register Staff (अकाउंट बनाएं)
+        <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:8px; border-top:1px solid #e2e8f0;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeAdminRegisterModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" style="font-weight:700; padding:6px 14px;">
+            Register Staff
           </button>
         </div>
       </form>
@@ -230,17 +230,6 @@
       const input = document.getElementById(inputId);
       if (input) {
         input.type = input.type === 'password' ? 'text' : 'password';
-      }
-    }
-
-    function autoFillCredentials(role, user, pass) {
-      switchLoginTab(role);
-      if (role === 'admin') {
-        document.getElementById('adminUsernameInput').value = user;
-        document.getElementById('adminPasswordInput').value = pass;
-      } else {
-        document.getElementById('soUserIdInput').value = user;
-        document.getElementById('soPasswordInput').value = pass;
       }
     }
 
@@ -372,19 +361,19 @@
         noticeBox.style.background = '#fffbeb';
         noticeBox.style.border = '1px solid #fde68a';
         noticeBox.style.color = '#92400e';
-        noticeBox.innerHTML = '<strong>⏱️ Session Expired:</strong> You were automatically signed out due to 15 minutes of inactivity for security. Please sign in again to continue.';
+        noticeBox.innerHTML = '<strong>Session Expired:</strong> You were automatically signed out due to 15 minutes of inactivity for security. Please sign in again to continue.';
       } else if (reason === 'manual') {
         noticeBox.style.display = 'block';
         noticeBox.style.background = '#f0fdf4';
         noticeBox.style.border = '1px solid #bbf7d0';
         noticeBox.style.color = '#166534';
-        noticeBox.innerHTML = '<strong>✓ Signed Out:</strong> You have been successfully signed out of your session.';
+        noticeBox.innerHTML = '<strong>Signed Out:</strong> You have been successfully signed out of your session.';
       } else if (reason === 'unauthorized') {
         noticeBox.style.display = 'block';
         noticeBox.style.background = '#fef2f2';
         noticeBox.style.border = '1px solid #fecaca';
         noticeBox.style.color = '#b91c1c';
-        noticeBox.innerHTML = '<strong>🔒 Access Required:</strong> Please sign in with authorized credentials to access this system.';
+        noticeBox.innerHTML = '<strong>Access Required:</strong> Please sign in with authorized credentials to access this system.';
       }
     }
 

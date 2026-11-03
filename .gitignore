@@ -9,3 +9,9 @@
 /backend/database/ds_enterprises_data.json
 /data/DS_Enterprises_Clean_Starter_Backup.json
 /ds_enterprises_data.json
+*.zip
+node_modules/
+/client/dist/
+/data/db/
+/scratch/
+/.git - Copy/

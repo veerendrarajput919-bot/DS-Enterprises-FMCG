@@ -279,6 +279,8 @@ if ($method === 'GET') {
             ]
         ]);
     }
+
+    errorResponse("Unsupported GET action: {$action}", 400);
 }
 
 /**
@@ -718,4 +720,9 @@ if ($method === 'POST') {
             errorResponse("Failed to update status: " . $e->getMessage(), 500);
         }
     }
+
+    errorResponse("Unsupported POST action: {$subAction}", 400);
 }
+
+errorResponse("Method {$method} not allowed", 405);
+

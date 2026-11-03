@@ -39,80 +39,80 @@
 
     <main class="ds-main-content">
       <!-- Unified Order Workflow Navigation Bar -->
-      <div class="ds-tab-bar">
-        <a href="order-report.html" class="ds-subnav-pill active">📋 All Orders & Reports</a>
-        <a href="order-punching.html" class="ds-subnav-pill">🛒 Punch Field Order</a>
-        <a href="route-analysis.html" class="ds-subnav-pill">📍 Route & Beat Tracker</a>
-        <a href="bill-management.html" class="ds-subnav-pill">🧾 Bill Management</a>
-        <a href="order-approval.html" class="ds-subnav-pill">⚡ Order Approvals</a>
+      <div class="ds-tab-bar" style="margin-bottom:8px; gap:4px;">
+        <a href="order-report.html" class="ds-subnav-pill active">All Orders & Reports</a>
+        <a href="order-punching.html" class="ds-subnav-pill">Punch Field Order</a>
+        <a href="route-analysis.html" class="ds-subnav-pill">Route & Beat Tracker</a>
+        <a href="bill-management.html" class="ds-subnav-pill">Bill Management</a>
+        <a href="order-approval.html" class="ds-subnav-pill">Order Approvals</a>
       </div>
 
-<div class="ds-panel">
-  <div class="ds-panel-header" style="flex-wrap:wrap; gap:12px;">
+<div class="ds-panel" style="padding:10px 12px; margin-bottom:10px;">
+  <div class="ds-panel-header" style="flex-wrap:wrap; gap:8px; margin-bottom:8px;">
     <div>
-      <h3 class="ds-panel-title">📋 Order History & Fulfillment Status</h3>
+      <h3 class="ds-panel-title">Order History & Fulfillment Status</h3>
       <p class="ds-panel-subtitle">Comprehensive order reporting, status lifecycle tracking, cancellation management & Excel export</p>
     </div>
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.exportOrdersToExcel()" style="font-weight:700;">
-        📑 Export Filtered Excel
+    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.exportOrdersToExcel()" style="font-weight:700; padding:4px 8px; font-size:11.5px;">
+        Export Filtered Excel
       </button>
-      <a href="bill-management.html" class="btn btn-secondary btn-sm" style="font-weight:700;">🧾 Bill Management Hub</a>
-      <a href="order-punching.html" class="btn btn-primary btn-sm" style="font-weight:700;">🛒 Punch New Order</a>
+      <a href="bill-management.html" class="btn btn-secondary btn-sm" style="font-weight:700; padding:4px 8px; font-size:11.5px;">Bill Management Hub</a>
+      <a href="order-punching.html" class="btn btn-primary btn-sm" style="font-weight:700; padding:4px 8px; font-size:11.5px;">Punch New Order</a>
     </div>
   </div>
 
   <!-- KPI Summary Cards (Filtered Dynamically) -->
-  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; margin-bottom:18px;">
-    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px;">
-      <div style="font-size:11px; text-transform:uppercase; color:var(--ds-text-muted); font-weight:700;">Total Orders</div>
-      <div style="font-size:20px; font-weight:900; color:var(--ds-text); margin-top:2px;" id="kpiTotalOrders">0</div>
-      <div style="font-size:11px; color:var(--ds-text-muted); margin-top:2px;" id="kpiTotalUnits">0 Units</div>
+  <div class="kpi-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:6px; margin-bottom:8px;">
+    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px 10px;">
+      <div style="font-size:10px; text-transform:uppercase; color:var(--ds-text-muted); font-weight:700;">Total Orders</div>
+      <div style="font-size:18px; font-weight:800; color:var(--ds-text); margin-top:1px;" id="kpiTotalOrders">0</div>
+      <div style="font-size:10px; color:var(--ds-text-muted); margin-top:1px;" id="kpiTotalUnits">0 Units</div>
     </div>
-    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:12px;">
-      <div style="font-size:11px; text-transform:uppercase; color:#1e40af; font-weight:700;">Total Value</div>
-      <div style="font-size:20px; font-weight:900; color:#1d4ed8; margin-top:2px;" id="kpiTotalAmount">₹ 0</div>
-      <div style="font-size:11px; color:#3b82f6; margin-top:2px;">Gross booking value</div>
+    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:6px 10px;">
+      <div style="font-size:10px; text-transform:uppercase; color:#1e40af; font-weight:700;">Total Value</div>
+      <div style="font-size:18px; font-weight:800; color:#1d4ed8; margin-top:1px;" id="kpiTotalAmount">₹ 0</div>
+      <div style="font-size:10px; color:#3b82f6; margin-top:1px;">Gross booking value</div>
     </div>
-    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:12px;">
-      <div style="font-size:11px; text-transform:uppercase; color:#166534; font-weight:700;">✅ Delivered</div>
-      <div style="font-size:20px; font-weight:900; color:#15803d; margin-top:2px;" id="kpiDeliveredAmount">₹ 0</div>
-      <div style="font-size:11px; color:#16a34a; margin-top:2px;" id="kpiDeliveredCount">0 orders fulfilled</div>
+    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:6px 10px;">
+      <div style="font-size:10px; text-transform:uppercase; color:#166534; font-weight:700;">Delivered</div>
+      <div style="font-size:18px; font-weight:800; color:#15803d; margin-top:1px;" id="kpiDeliveredAmount">₹ 0</div>
+      <div style="font-size:10px; color:#16a34a; margin-top:1px;" id="kpiDeliveredCount">0 orders fulfilled</div>
     </div>
-    <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:10px; padding:12px;">
-      <div style="font-size:11px; text-transform:uppercase; color:#9f1239; font-weight:700;">❌ Cancelled (Customer)</div>
-      <div style="font-size:20px; font-weight:900; color:#be123c; margin-top:2px;" id="kpiPartyCancelCount">0</div>
-      <div style="font-size:11px; color:#e11d48; margin-top:2px;" id="kpiPartyCancelAmount">₹ 0 (Denied by Customer)</div>
+    <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:8px; padding:6px 10px;">
+      <div style="font-size:10px; text-transform:uppercase; color:#9f1239; font-weight:700;">Cancelled (Customer)</div>
+      <div style="font-size:18px; font-weight:800; color:#be123c; margin-top:1px;" id="kpiPartyCancelCount">0</div>
+      <div style="font-size:10px; color:#e11d48; margin-top:1px;" id="kpiPartyCancelAmount">₹ 0 (Denied by Customer)</div>
     </div>
-    <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:12px;">
-      <div style="font-size:11px; text-transform:uppercase; color:#5b21b6; font-weight:700;">⚠️ Cancelled (Company)</div>
-      <div style="font-size:20px; font-weight:900; color:#6d28d9; margin-top:2px;" id="kpiOwnCancelCount">0</div>
-      <div style="font-size:11px; color:#7c3aed; margin-top:2px;" id="kpiOwnCancelAmount">₹ 0 (Company / Admin)</div>
+    <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:8px; padding:6px 10px;">
+      <div style="font-size:10px; text-transform:uppercase; color:#5b21b6; font-weight:700;">Cancelled (Company)</div>
+      <div style="font-size:18px; font-weight:800; color:#6d28d9; margin-top:1px;" id="kpiOwnCancelCount">0</div>
+      <div style="font-size:10px; color:#7c3aed; margin-top:1px;" id="kpiOwnCancelAmount">₹ 0 (Company / Admin)</div>
     </div>
   </div>
 
   <!-- Bill Status Views / Filter Tabs -->
-  <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; align-items:center;">
-    <span style="font-size:12px; font-weight:800; color:var(--ds-text-muted); margin-right:4px;">BILL STATUS VIEW:</span>
-    <button type="button" class="btn btn-sm btn-primary" id="btnBillViewAll" onclick="DS_Orders.setBillStatusView('all')" style="font-weight:700; border-radius:20px; padding:5px 14px; display:inline-flex; align-items:center; gap:6px;">
-      📋 All Bills <span id="badgeBillViewAll" class="badge" style="background:rgba(255,255,255,0.25); color:#fff; font-size:11px; padding:1px 6px;">0</span>
+  <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; align-items:center;">
+    <span style="font-size:11px; font-weight:800; color:var(--ds-text-muted); margin-right:2px;">STATUS:</span>
+    <button type="button" class="btn btn-sm btn-primary" id="btnBillViewAll" onclick="DS_Orders.setBillStatusView('all')" style="font-weight:700; border-radius:14px; padding:3px 10px; font-size:11px; display:inline-flex; align-items:center; gap:4px;">
+      All Bills <span id="badgeBillViewAll" class="badge" style="background:rgba(255,255,255,0.25); color:#fff; font-size:10px; padding:1px 5px;">0</span>
     </button>
-    <button type="button" class="btn btn-sm btn-secondary" id="btnBillViewPaid" onclick="DS_Orders.setBillStatusView('paid')" style="font-weight:700; border-radius:20px; padding:5px 14px; display:inline-flex; align-items:center; gap:6px;">
-      ✅ Paid Bills <span id="badgeBillViewPaid" class="badge" style="background:#dcfce7; color:#15803d; font-size:11px; padding:1px 6px;">0</span>
+    <button type="button" class="btn btn-sm btn-secondary" id="btnBillViewPaid" onclick="DS_Orders.setBillStatusView('paid')" style="font-weight:700; border-radius:14px; padding:3px 10px; font-size:11px; display:inline-flex; align-items:center; gap:4px;">
+      Paid Bills <span id="badgeBillViewPaid" class="badge" style="background:#dcfce7; color:#15803d; font-size:10px; padding:1px 5px;">0</span>
     </button>
-    <button type="button" class="btn btn-sm btn-secondary" id="btnBillViewUnpaid" onclick="DS_Orders.setBillStatusView('unpaid')" style="font-weight:700; border-radius:20px; padding:5px 14px; display:inline-flex; align-items:center; gap:6px;">
-      ⏳ Unpaid Bills <span id="badgeBillViewUnpaid" class="badge" style="background:#fef3c7; color:#b45309; font-size:11px; padding:1px 6px;">0</span>
+    <button type="button" class="btn btn-sm btn-secondary" id="btnBillViewUnpaid" onclick="DS_Orders.setBillStatusView('unpaid')" style="font-weight:700; border-radius:14px; padding:3px 10px; font-size:11px; display:inline-flex; align-items:center; gap:4px;">
+      Unpaid Bills <span id="badgeBillViewUnpaid" class="badge" style="background:#fef3c7; color:#b45309; font-size:10px; padding:1px 5px;">0</span>
     </button>
-    <button type="button" class="btn btn-sm btn-secondary" id="btnBillViewOutstanding" onclick="DS_Orders.setBillStatusView('outstanding')" style="font-weight:700; border-radius:20px; padding:5px 14px; display:inline-flex; align-items:center; gap:6px;">
-      🚨 Outstanding Bills <span id="badgeBillViewOutstanding" class="badge" style="background:#fee2e2; color:#b91c1c; font-size:11px; padding:1px 6px;">0</span>
+    <button type="button" class="btn btn-sm btn-secondary" id="btnBillViewOutstanding" onclick="DS_Orders.setBillStatusView('outstanding')" style="font-weight:700; border-radius:14px; padding:3px 10px; font-size:11px; display:inline-flex; align-items:center; gap:4px;">
+      Outstanding Bills <span id="badgeBillViewOutstanding" class="badge" style="background:#fee2e2; color:#b91c1c; font-size:10px; padding:1px 5px;">0</span>
     </button>
-    <a href="bill-management.html" class="btn btn-sm btn-secondary" style="margin-left:auto; font-size:12px; font-weight:700; color:var(--ds-primary); text-decoration:none;">
-      ↗ Open Full Bill Management Hub
+    <a href="bill-management.html" class="btn btn-sm btn-secondary" style="margin-left:auto; font-size:11px; font-weight:700; padding:3px 8px; color:var(--ds-primary); text-decoration:none;">
+      Open Full Bill Management
     </a>
   </div>
 
   <!-- Advanced Filter Bar -->
-  <div class="ds-filter-bar" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:14px; margin-bottom:18px; box-shadow:0 1px 3px rgba(0,0,0,0.04); flex-wrap:wrap; gap:12px;">
+  <div class="ds-filter-bar" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; margin-bottom:10px; box-shadow:0 1px 3px rgba(0,0,0,0.03); flex-wrap:wrap; gap:8px;">
     <!-- Date Range Quick Select -->
     <div class="form-group" style="min-width:140px;">
       <label class="form-label">Sales Period</label>
@@ -206,7 +206,7 @@
         <option value="Ready for Delivery">4. Ready for Delivery</option>
         <option value="Dispatched">5. Dispatched (On Van)</option>
         <option value="Delivered">6. Delivered (Completed)</option>
-        <option value="all_cancelled">❌ All Cancelled</option>
+        <option value="all_cancelled">All Cancelled</option>
         <option value="Cancelled by Customer">7. Cancelled by Customer</option>
         <option value="Cancelled by Company/Admin">8. Cancelled by Company/Admin</option>
       </select>
@@ -277,8 +277,8 @@
   <div class="modal-card" style="width:min(580px, 95%);">
     <div class="modal-header" style="border-bottom:1px solid #fee2e2; background:#fff1f2;">
       <div>
-        <h3 class="modal-title" id="cancelOrderTitle" style="color:#9f1239; display:flex; align-items:center; gap:6px;">
-          ❌ Order Cancellation & Mandatory Reason
+        <h3 class="modal-title" id="cancelOrderTitle" style="color:#9f1239;">
+          Order Cancellation & Mandatory Reason
         </h3>
         <p style="margin:2px 0 0; font-size:12px; color:#be123c;">
           Select whether cancellation was initiated by Customer or Company/Admin, and record mandatory remark notes.
@@ -287,34 +287,34 @@
       <button type="button" class="modal-close" onclick="DS_Orders.closeCancelOrderModal()" aria-label="Close">×</button>
     </div>
 
-    <form id="formCancelOrder" onsubmit="DS_Orders.confirmCancelOrder(event)" style="padding:16px; display:flex; flex-direction:column; gap:14px;">
+    <form id="formCancelOrder" onsubmit="DS_Orders.confirmCancelOrder(event)" style="padding:12px; display:flex; flex-direction:column; gap:10px;">
       <input type="hidden" id="cancelOrderId" value="" />
 
       <!-- Order Summary Card -->
-      <div id="cancelOrderSummaryCard" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 14px; font-size:12px;">
+      <div id="cancelOrderSummaryCard" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:8px 10px; font-size:12px;">
       </div>
 
       <!-- Cancellation Type Radio Options (Customer vs Company/Admin) -->
       <div>
-        <label class="form-label" style="font-weight:800; margin-bottom:8px; display:block;">Who Cancelled the Order? *</label>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-          <label style="border:2px solid #fecdd3; background:#fff1f2; border-radius:8px; padding:10px; cursor:pointer; display:flex; flex-direction:column; gap:4px;" id="lblCancelParty">
-            <div style="display:flex; align-items:center; gap:8px;">
+        <label class="form-label" style="font-weight:800; margin-bottom:6px; display:block;">Who Cancelled the Order? *</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <label style="border:1px solid #fecdd3; background:#fff1f2; border-radius:6px; padding:8px; cursor:pointer; display:flex; flex-direction:column; gap:2px;" id="lblCancelParty">
+            <div style="display:flex; align-items:center; gap:6px;">
               <input type="radio" name="cancelTypeRadio" id="radioCancelParty" value="Cancelled by Customer" checked onchange="DS_Orders.handleCancelTypeChange(this.value)" />
-              <strong style="color:#9f1239; font-size:13px;">Cancelled by Customer</strong>
+              <strong style="color:#9f1239; font-size:12px;">Cancelled by Customer</strong>
             </div>
-            <div style="font-size:11px; color:#be123c; margin-left:24px;">
-              Grahak / Store retailer ne order lene se mana kar diya (Party Refused)
+            <div style="font-size:10.5px; color:#be123c; margin-left:20px;">
+              Party Refused Delivery
             </div>
           </label>
 
-          <label style="border:2px solid #ddd6fe; background:#f5f3ff; border-radius:8px; padding:10px; cursor:pointer; display:flex; flex-direction:column; gap:4px;" id="lblCancelOwn">
-            <div style="display:flex; align-items:center; gap:8px;">
+          <label style="border:1px solid #ddd6fe; background:#f5f3ff; border-radius:6px; padding:8px; cursor:pointer; display:flex; flex-direction:column; gap:2px;" id="lblCancelOwn">
+            <div style="display:flex; align-items:center; gap:6px;">
               <input type="radio" name="cancelTypeRadio" id="radioCancelOwn" value="Cancelled by Company/Admin" onchange="DS_Orders.handleCancelTypeChange(this.value)" />
-              <strong style="color:#5b21b6; font-size:13px;">Cancelled by Company/Admin</strong>
+              <strong style="color:#5b21b6; font-size:12px;">Cancelled by Company/Admin</strong>
             </div>
-            <div style="font-size:11px; color:#6d28d9; margin-left:24px;">
-              Internal / Company issue (Stock Shortage, Overdue Credit, Logistics)
+            <div style="font-size:10.5px; color:#6d28d9; margin-left:20px;">
+              Internal / Company issue
             </div>
           </label>
         </div>
@@ -330,19 +330,19 @@
 
       <!-- Mandatory Detailed Remark / Note Input -->
       <div class="form-group">
-        <label class="form-label" for="cancelOrderRemark">Mandatory Cancellation Remarks / Note (विवरण / टिप्पणी) *</label>
-        <textarea id="cancelOrderRemark" class="form-control" rows="3" required placeholder="Grahak ya company ke cancel karne ka vishesh kaaran anivarya roop se likhein..." style="resize:vertical;"></textarea>
+        <label class="form-label" for="cancelOrderRemark">Mandatory Cancellation Remarks / Note *</label>
+        <textarea id="cancelOrderRemark" class="form-control" rows="2" required placeholder="Enter mandatory cancellation reason..." style="resize:vertical;"></textarea>
       </div>
 
       <!-- Stock Recovery Notice -->
-      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:8px 12px; font-size:11px; color:#1e40af;">
-        ℹ️ <strong>Stock Auto-Restoration:</strong> Cancelling this order will automatically restore the booked SKU quantities back into warehouse stock inventory.
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:6px 10px; font-size:11px; color:#1e40af;">
+        <strong>Stock Auto-Restoration:</strong> Cancelling this order will automatically restore the booked SKU quantities back into warehouse stock inventory.
       </div>
 
-      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px; padding-top:6px;">
-        <button type="button" class="btn btn-secondary" onclick="DS_Orders.closeCancelOrderModal()">Close</button>
-        <button type="submit" class="btn btn-danger" style="font-weight:800; background:#be123c; border-color:#be123c; color:#fff;">
-          ✓ Confirm Order Cancellation
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:6px; padding-top:4px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.closeCancelOrderModal()">Close</button>
+        <button type="submit" class="btn btn-danger btn-sm" style="font-weight:700; background:#be123c; border-color:#be123c; color:#fff;">
+          Confirm Order Cancellation
         </button>
       </div>
     </form>
@@ -353,19 +353,19 @@
 <div id="adminNoteModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="adminNoteTitle">
   <div class="modal-card" style="width:min(500px, 95%);">
     <div class="modal-header">
-      <h3 class="modal-title" id="adminNoteTitle">📝 Add Internal Admin Note</h3>
+      <h3 class="modal-title" id="adminNoteTitle">Add Internal Admin Note</h3>
       <button type="button" class="modal-close" onclick="DS_Orders.closeAdminNoteModal()" aria-label="Close">×</button>
     </div>
-    <form id="formAdminNote" onsubmit="DS_Orders.saveAdminNote(event)" style="padding:16px; display:flex; flex-direction:column; gap:12px;">
+    <form id="formAdminNote" onsubmit="DS_Orders.saveAdminNote(event)" style="padding:12px; display:flex; flex-direction:column; gap:10px;">
       <input type="hidden" id="adminNoteOrderId" value="" />
-      <div id="adminNoteOrderSummary" style="font-size:12px; color:#475569; background:#f8fafc; padding:8px 12px; border-radius:6px; border:1px solid #e2e8f0;"></div>
+      <div id="adminNoteOrderSummary" style="font-size:11.5px; color:#475569; background:#f8fafc; padding:6px 10px; border-radius:6px; border:1px solid #e2e8f0;"></div>
       <div class="form-group">
         <label class="form-label" for="adminNoteText">Internal Confidential Note *</label>
-        <textarea id="adminNoteText" class="form-control" rows="4" required placeholder="Write internal instructions, audit comment, or payment follow-up note..."></textarea>
+        <textarea id="adminNoteText" class="form-control" rows="3" required placeholder="Write internal instructions, audit comment, or payment follow-up note..."></textarea>
       </div>
-      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px; padding-top:4px;">
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:6px; padding-top:4px;">
         <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.closeAdminNoteModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary btn-sm" style="font-weight:700;">💾 Save Admin Note</button>
+        <button type="submit" class="btn btn-primary btn-sm" style="font-weight:700;">Save Admin Note</button>
       </div>
     </form>
   </div>
@@ -376,7 +376,7 @@
   <div class="modal-card" style="width:min(680px, 95%); max-height:90vh; display:flex; flex-direction:column;">
     <div class="modal-header">
       <div>
-        <h3 class="modal-title" id="orderDetailsTitle">📦 Order Manifest & Tracking Details</h3>
+        <h3 class="modal-title" id="orderDetailsTitle">Order Manifest & Tracking Details</h3>
         <p style="margin:2px 0 0; font-size:12px; color:var(--ds-text-muted);" id="orderDetailsSubtitle">Order Information</p>
       </div>
       <button type="button" class="modal-close" onclick="DS_Orders.closeOrderDetailsModal()" aria-label="Close">×</button>

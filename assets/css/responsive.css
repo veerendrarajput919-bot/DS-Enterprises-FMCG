@@ -1,6 +1,772 @@
 /* ==========================================================================
-   DS ENTERPRISES — RESPONSIVE STYLES (CONSOLIDATED)
+   DS ENTERPRISES — COMPREHENSIVE MOBILE & TABLET RESPONSIVE STYLESHEET
    File: assets/css/responsive.css
-   Architecture: Unified into assets/css/style.css for single-source elegance.
+   Architecture: High-performance, touch-friendly, information-dense ERP layout
+   Breakpoints:
+     - Large Desktops: > 1200px
+     - Laptops & Small Desktops: 993px - 1200px
+     - Tablets & Phablets: 769px - 992px
+     - Smartphones & Small Tablets: 481px - 768px
+     - Compact Mobile & iPhones: <= 480px
    ========================================================================== */
-@import url('./style.css');
+
+/* ── 1. GLOBAL MOBILE RESETS & TOUCH ERGONOMICS ────────────────────────── */
+@media (max-width: 992px) {
+  html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  body {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button, a, input, select, textarea {
+    touch-action: manipulation;
+  }
+
+  /* Safe Area Support for Notched Devices (iPhone X/11/12/13/14/15/16) */
+  .ds-main-content {
+    padding-left: max(10px, env(safe-area-inset-left, 0px)) !important;
+    padding-right: max(10px, env(safe-area-inset-right, 0px)) !important;
+  }
+
+  /* Universal Container Stacking */
+  .ds-container, .ds-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* Split Grids to Single Column on Tablets */
+  .ds-grid-split,
+  .ds-grid-2-1,
+  .ds-grid-1-1,
+  .ds-grid-cart,
+  .ds-grid-charts-row1,
+  .ds-grid-charts-row2 {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+/* ── DESKTOP ONLY (Hide mobile-specific docks and floating elements) ─────── */
+@media (min-width: 769px) {
+  .ds-mobile-cart-bar {
+    display: none !important;
+  }
+}
+
+/* ── 2. TABLET RESPONSIVE ADAPTATIONS (769px to 992px) ─────────────────── */
+@media (min-width: 769px) and (max-width: 992px) {
+  .ds-sidebar {
+    width: 200px !important;
+    padding: 10px 6px !important;
+  }
+
+  .ds-sidebar-nav-scroll .ds-nav-link {
+    font-size: 11.5px !important;
+    padding: 7px 8px !important;
+  }
+
+  .ds-main-content {
+    padding: 12px 14px !important;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .filter-row-1, .filter-row-2, .filter-row-3,
+  .filter-grid-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+}
+
+/* ── 3. SMARTPHONE & PORTABLE VIEWPORT (<= 768px) ──────────────────────── */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Utility Display Helpers */
+  .hide-mobile, .d-none-mobile {
+    display: none !important;
+  }
+
+  .show-mobile-inline {
+    display: inline-block !important;
+  }
+
+  .show-mobile-block {
+    display: block !important;
+  }
+
+  .show-mobile-flex {
+    display: flex !important;
+  }
+
+  /* ── 3A. COMPACT HEADER ── */
+  .ds-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 990 !important;
+    height: 46px !important;
+    background: #0f172a !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2) !important;
+  }
+
+  .ds-header-inner {
+    padding: 0 10px !important;
+    height: 46px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  .ds-mobile-toggle, #dsSidebarToggleBtn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 8px !important;
+    font-size: 18px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .ds-brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    text-decoration: none !important;
+  }
+
+  .ds-brand-logo-text {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    border-radius: 6px !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .ds-brand-title {
+    font-size: 13.5px !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    letter-spacing: -0.2px !important;
+    line-height: 1.1 !important;
+  }
+
+  .ds-brand-subtitle {
+    display: none !important;
+  }
+
+  .ds-header-center {
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 4px !important;
+  }
+
+  .ds-role-badge {
+    padding: 2px 7px !important;
+    font-size: 9.5px !important;
+    line-height: 1.1 !important;
+    border-radius: 10px !important;
+    font-weight: 800 !important;
+  }
+
+  .ds-header-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  .ds-header-profile-btn {
+    padding: 2px !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    border: none !important;
+  }
+
+  .ds-header-avatar {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 11.5px !important;
+    border-radius: 50% !important;
+  }
+
+  .ds-header-profile-menu, .ds-profile-dropdown {
+    right: 8px !important;
+    top: 50px !important;
+    width: 240px !important;
+    max-width: 90vw !important;
+  }
+
+  .ds-quick-logout-btn {
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+    min-height: 28px !important;
+    border-radius: 6px !important;
+  }
+
+  /* ── 3B. OFF-CANVAS SIDEBAR DRAWER ── */
+  .ds-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 270px !important;
+    max-width: 85vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    z-index: 10000 !important;
+    background: #ffffff !important;
+    box-shadow: 6px 0 30px rgba(0, 0, 0, 0.45) !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 0 0 20px 0 !important;
+  }
+
+  .ds-sidebar.open {
+    transform: translateX(0) !important;
+  }
+
+  .ds-sidebar-backdrop {
+    display: none;
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(15, 23, 42, 0.65) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    z-index: 9998 !important;
+  }
+
+  .ds-sidebar-backdrop.active {
+    display: block !important;
+  }
+
+  .ds-sidebar-top-bar {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 12px 14px !important;
+    background: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .ds-sidebar-close-btn {
+    background: #e2e8f0 !important;
+    border: none !important;
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 50% !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    color: #475569 !important;
+    cursor: pointer !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .ds-sidebar-role-badge {
+    margin: 10px 12px !important;
+    padding: 8px 10px !important;
+    border-radius: 8px !important;
+  }
+
+  .ds-sidebar-nav-scroll {
+    padding: 0 8px !important;
+  }
+
+  .ds-nav-group {
+    margin-bottom: 8px !important;
+  }
+
+  .ds-nav-heading {
+    padding: 8px 10px !important;
+    font-size: 11px !important;
+  }
+
+  .ds-nav-link {
+    font-size: 12px !important;
+    padding: 9px 12px !important;
+    min-height: 38px !important;
+    border-radius: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  /* ── 3C. MAIN CONTENT & PANELS ── */
+  .ds-main-content {
+    padding: 8px 8px calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .ds-panel {
+    padding: 12px 10px !important;
+    border-radius: 10px !important;
+    margin-bottom: 10px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03) !important;
+  }
+
+  .ds-panel-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .ds-panel-header > div:last-child {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  .ds-panel-title {
+    font-size: 15px !important;
+  }
+
+  .ds-panel-subtitle {
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+  }
+
+  /* ── 3D. HORIZONTAL TOUCH TAB BAR / SUBNAV ── */
+  .ds-tab-bar, .ds-subnav-bar {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    white-space: nowrap !important;
+    scrollbar-width: none !important;
+    padding: 4px !important;
+    gap: 6px !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    margin-bottom: 10px !important;
+  }
+
+  .ds-tab-bar::-webkit-scrollbar, .ds-subnav-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .ds-tab-btn, .ds-subnav-pill {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    padding: 6px 12px !important;
+    min-height: 32px !important;
+    border-radius: 6px !important;
+  }
+
+  /* ── 3E. KPI SUMMARY CARDS ── */
+  .kpi-grid, .r-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 4px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .kpi-card, .r-kpi-card {
+    padding: 5px 8px !important;
+    min-height: 46px !important;
+    border-radius: 6px !important;
+    gap: 3px !important;
+  }
+
+  .kpi-card-value, .kpi-value {
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+  }
+
+  .kpi-card-label, .kpi-label {
+    font-size: 8.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.2px !important;
+  }
+
+  .kpi-card-icon, .kpi-icon-wrap, .qa-icon, .admin-action-icon {
+    display: none !important;
+  }
+
+  /* ── 3F. QUICK ACTIONS BAR ── */
+  .quick-actions-bar {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 4px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .quick-action-btn {
+    padding: 5px 6px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    min-height: 30px !important;
+    justify-content: center !important;
+    text-align: center !important;
+    border-radius: 5px !important;
+  }
+
+  /* ── 3G. FILTER BARS ── */
+  .ds-filter-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+  }
+
+  .filter-grid-row, .filter-row-1, .filter-row-2, .filter-row-3, .ds-filter-grid {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .form-group {
+    margin-bottom: 6px !important;
+    width: 100% !important;
+  }
+
+  .form-label {
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    margin-bottom: 2px !important;
+    display: block !important;
+  }
+
+  .form-control, select.form-control, input.form-control {
+    width: 100% !important;
+    min-width: 100% !important;
+    font-size: 13.5px !important;
+    padding: 8px 10px !important;
+    min-height: 38px !important;
+    border-radius: 6px !important;
+    line-height: 1.3 !important;
+  }
+
+  /* ── 3H. CITY_1 CARDS & BEAT GRID ── */
+  #rCity1CardsGrid, #beatRetailersGrid, #routeSummaryCards, .store-grid, .product-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .r-c1-card {
+    padding: 12px !important;
+    border-radius: 10px !important;
+  }
+
+  /* ── 3I. CHARTS & GRAPHS ── */
+  .ds-grid-charts,
+  [style*="grid-template-columns:repeat(auto-fit, minmax(3"],
+  [style*="grid-template-columns:repeat(auto-fill, minmax(3"],
+  [style*="grid-template-columns:repeat(auto-fit, minmax(2"],
+  [style*="grid-template-columns:repeat(auto-fill, minmax(2"],
+  [style*="grid-template-columns:minmax(0,"] {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  [style*="height:220px; position:relative;"],
+  [style*="height:250px; position:relative;"] {
+    height: 185px !important;
+  }
+
+  /* ── 3J. FLOATING MOBILE CART BAR & DOCK ── */
+  .ds-mobile-cart-bar {
+    position: fixed !important;
+    bottom: calc(54px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 8px !important;
+    right: 8px !important;
+    background: linear-gradient(135deg, #0f172a, #1e293b) !important;
+    color: #ffffff !important;
+    padding: 10px 14px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
+    z-index: 9990 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    cursor: pointer !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  /* ── 3K. LOGIN SCREEN COMPACT MOBILE VIEW ── */
+  body[data-page="login.html"] {
+    padding: 14px 10px calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  body[data-page="login.html"] .ds-panel {
+    padding: 22px 16px !important;
+    border-radius: 12px !important;
+  }
+
+  /* ── 3J. TABLES & DATA WRAPPERS ── */
+  .ds-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: inset -8px 0 8px -8px rgba(0,0,0,0.12) !important;
+    margin-bottom: 6px !important;
+  }
+
+  .ds-table {
+    min-width: 540px !important;
+    font-size: 11px !important;
+  }
+
+  .ds-table th, .ds-table td {
+    padding: 6px 8px !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+  }
+
+  .table-action-btn {
+    padding: 3px 6px !important;
+    font-size: 10.5px !important;
+    min-height: 26px !important;
+    border-radius: 5px !important;
+  }
+
+  /* ── 3K. MODAL DIALOGS ── */
+  .modal-overlay {
+    padding: 6px !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+  }
+
+  .modal-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 90vh !important;
+    margin: 0 !important;
+    border-radius: 16px 16px 8px 8px !important;
+  }
+
+  .modal-header {
+    padding: 10px 14px !important;
+  }
+
+  .modal-title {
+    font-size: 15px !important;
+  }
+
+  .modal-card form, .modal-card [style*="overflow-y:auto"] {
+    padding: 12px 14px !important;
+  }
+
+  .modal-card [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .modal-footer {
+    padding: 10px 14px !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  /* ── 3L. UNIVERSAL MOBILE TOUCH BOTTOM DOCK ── */
+  .ds-bottom-nav {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 48px !important;
+    background: #ffffff !important;
+    border-top: 1px solid #e2e8f0 !important;
+    z-index: 9999 !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    padding: 0 4px env(safe-area-inset-bottom, 0px) !important;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .ds-bottom-nav-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #64748b !important;
+    text-decoration: none !important;
+    font-size: 8.5px !important;
+    font-weight: 700 !important;
+    gap: 1px !important;
+    flex: 1 !important;
+    height: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+  }
+
+  .ds-bottom-nav-item:active,
+  .ds-bottom-nav-item.active {
+    color: #2563eb !important;
+  }
+
+  .ds-bottom-nav-icon {
+    font-size: 16px !important;
+    line-height: 1 !important;
+  }
+
+  .ds-bottom-nav-label {
+    font-size: 8.5px !important;
+    line-height: 1 !important;
+    letter-spacing: 0.2px !important;
+  }
+
+  /* Buttons on Mobile */
+  .btn {
+    min-height: 36px !important;
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+    border-radius: 6px !important;
+  }
+
+  .btn-sm {
+    min-height: 30px !important;
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+  }
+
+  .btn-xs {
+    min-height: 24px !important;
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+  }
+}
+
+/* ── 4. COMPACT PHONES & IPHONES (<= 480px) ────────────────────────────── */
+@media (max-width: 480px) {
+  .ds-header {
+    height: 44px !important;
+  }
+
+  .ds-header-inner {
+    height: 44px !important;
+    padding: 0 8px !important;
+  }
+
+  .ds-brand-title {
+    font-size: 12.5px !important;
+  }
+
+  .ds-brand-logo-text {
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 10px !important;
+  }
+
+  .kpi-grid, .r-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 5px !important;
+  }
+
+  .kpi-card, .r-kpi-card {
+    padding: 6px 8px !important;
+    min-height: 52px !important;
+  }
+
+  .kpi-card-value, .kpi-value {
+    font-size: 13.5px !important;
+  }
+
+  .kpi-card-label, .kpi-label {
+    font-size: 8px !important;
+  }
+
+  .kpi-card-icon, .kpi-icon-wrap, .qa-icon, .admin-action-icon {
+    display: none !important;
+  }
+
+  .ds-main-content {
+    padding: 4px 5px calc(52px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .ds-panel {
+    padding: 8px 8px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .quick-actions-bar {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 4px !important;
+  }
+
+  .quick-action-btn {
+    font-size: 10px !important;
+    padding: 4px 4px !important;
+    min-height: 28px !important;
+  }
+
+  /* Table on very small screens */
+  .ds-table th, .ds-table td {
+    padding: 5px 6px !important;
+    font-size: 10px !important;
+  }
+
+  /* Modals on small phones */
+  .modal-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 14px 14px 0 0 !important;
+  }
+
+  .modal-header {
+    padding: 8px 12px !important;
+  }
+
+  .modal-title {
+    font-size: 14px !important;
+  }
+}
+
+/* ── 5. ULTRA-COMPACT PHONES & RETRO SCREENS (<= 360px) ─────────────────── */
+@media (max-width: 360px) {
+  .kpi-grid, .r-kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .quick-actions-bar {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ds-brand-title {
+    font-size: 11px !important;
+  }
+
+  .ds-role-badge {
+    display: none !important;
+  }
+
+  .ds-table {
+    min-width: 480px !important;
+  }
+}

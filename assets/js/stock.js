@@ -431,101 +431,101 @@
         // Stock status
         let statusBadge = '';
         if (stockQty <= 0) {
-          statusBadge = '<span class="badge" style="background:#fee2e2; color:#b91c1c; font-weight:700;">🔴 Out of Stock</span>';
+          statusBadge = '<span class="badge" style="background:#fee2e2; color:#b91c1c; font-weight:700;">Out of Stock</span>';
         } else if (stockQty <= minStock) {
-          statusBadge = `<span class="badge" style="background:#fef3c7; color:#b45309; font-weight:700;">🟠 Low Stock: ${DS_App.qty(stockQty)} ${unit}</span>`;
+          statusBadge = `<span class="badge" style="background:#fef3c7; color:#b45309; font-weight:700;">Low Stock: ${DS_App.qty(stockQty)} ${unit}</span>`;
         } else {
-          statusBadge = `<span class="badge" style="background:#ecfdf5; color:#047857; font-weight:700;">🟢 In Stock: ${DS_App.qty(stockQty)} ${unit}</span>`;
+          statusBadge = `<span class="badge" style="background:#ecfdf5; color:#047857; font-weight:700;">In Stock: ${DS_App.qty(stockQty)} ${unit}</span>`;
         }
 
         const initial = name ? name.charAt(0).toUpperCase() : 'P';
 
         return `
-          <div class="store-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:14px; border-radius:12px; border:1px solid #e2e8f0; background:#ffffff; box-shadow:0 1px 3px rgba(0,0,0,0.04); transition:all 0.2s ease;">
+          <div class="store-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:10px 12px; border-radius:8px; border:1px solid #e2e8f0; background:#ffffff; box-shadow:0 1px 3px rgba(0,0,0,0.03); transition:all 0.2s ease;">
             <div>
               <!-- Top Row: Image Thumbnail & SKU Tags -->
-              <div style="display:flex; gap:12px; align-items:flex-start; margin-bottom:10px;">
-                <div style="width:72px; height:72px; border-radius:10px; background:#f8fafc; border:1px solid #e2e8f0; overflow:hidden; display:grid; place-items:center; flex-shrink:0;">
+              <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:8px;">
+                <div style="width:56px; height:56px; border-radius:6px; background:#f8fafc; border:1px solid #e2e8f0; overflow:hidden; display:grid; place-items:center; flex-shrink:0;">
                   ${imgPath ? `
-                    <img src="${imgPath}" alt="${esc(name)}" style="width:100%; height:100%; object-fit:contain; padding:2px;" onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<div style=\\'font-weight:800; font-size:22px; color:#0284c7;\\'>${initial}</div>';" />
+                    <img src="${imgPath}" alt="${esc(name)}" style="width:100%; height:100%; object-fit:contain; padding:2px;" onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<div style=\\'font-weight:800; font-size:18px; color:#0284c7;\\'>${initial}</div>';" />
                   ` : `
-                    <div style="width:100%; height:100%; display:grid; place-items:center; font-weight:800; font-size:22px; color:#0284c7; background:linear-gradient(135deg, #e0f2fe, #bae6fd);">
+                    <div style="width:100%; height:100%; display:grid; place-items:center; font-weight:800; font-size:18px; color:#0284c7; background:linear-gradient(135deg, #e0f2fe, #bae6fd);">
                       ${initial}
                     </div>
                   `}
                 </div>
 
                 <div style="flex:1; min-width:0;">
-                  <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:4px;">
-                    <span style="font-family:monospace; font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px; background:#f1f5f9; color:#475569;">
+                  <div style="display:flex; gap:4px; flex-wrap:wrap; margin-bottom:3px;">
+                    <span style="font-family:monospace; font-size:9.5px; font-weight:800; padding:1px 5px; border-radius:3px; background:#f1f5f9; color:#475569;">
                       ${esc(code)}
                     </span>
-                    <span class="badge" style="background:#e0f2fe; color:#0369a1; font-size:10px; padding:2px 6px;">
+                    <span class="badge" style="background:#e0f2fe; color:#0369a1; font-size:9.5px; padding:1px 5px;">
                       ${esc(brand)}
                     </span>
                   </div>
-                  <h4 style="margin:0 0 2px; font-size:14px; font-weight:800; color:var(--ds-text); line-height:1.3; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;" title="${esc(name)}">
+                  <h4 style="margin:0 0 2px; font-size:13px; font-weight:800; color:var(--ds-text); line-height:1.2; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;" title="${esc(name)}">
                     ${esc(name)}
                   </h4>
-                  <div style="font-size:11px; color:var(--ds-text-muted);">${esc(cat)}</div>
+                  <div style="font-size:10.5px; color:var(--ds-text-muted);">${esc(cat)}</div>
                 </div>
               </div>
 
               <!-- Stock & Margin Badges -->
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:4px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:4px;">
                 ${statusBadge}
                 ${canViewMargins ? `
-                  <span style="font-size:11px; font-weight:700; color:${marginPct >= 0 ? '#059669' : '#dc2626'}; background:#f0fdf4; padding:2px 6px; border-radius:4px;" title="Distributor Purchase Margin">
+                  <span style="font-size:10.5px; font-weight:700; color:${marginPct >= 0 ? '#059669' : '#dc2626'}; background:#f0fdf4; padding:2px 5px; border-radius:4px;" title="Distributor Purchase Margin">
                     ${marginPct >= 0 ? '+' : ''}${marginPct}% Margin
                   </span>
                 ` : `
-                  <span style="font-size:11px; font-weight:700; color:#0369a1; background:#e0f2fe; padding:2px 6px; border-radius:4px;" title="Retailer Margin on MRP">
+                  <span style="font-size:10.5px; font-weight:700; color:#0369a1; background:#e0f2fe; padding:2px 5px; border-radius:4px;" title="Retailer Margin on MRP">
                     ${retailerMarginPct}% Retail Margin
                   </span>
                 `}
               </div>
 
               <!-- Pricing Matrix Box -->
-              <div style="background:#f8fafc; border:1px solid #f1f5f9; border-radius:8px; padding:8px 10px; margin-bottom:12px; font-size:12px;">
+              <div style="background:#f8fafc; border:1px solid #f1f5f9; border-radius:6px; padding:6px 8px; margin-bottom:8px; font-size:11.5px;">
                 ${canViewMargins ? `
                   <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                    <span style="color:var(--ds-text-muted); font-size:11px;">Purchase Cost:</span>
+                    <span style="color:var(--ds-text-muted); font-size:10.5px;">Purchase Cost:</span>
                     <strong style="color:#475569; font-family:monospace;">${DS_App.money(pCost)}</strong>
                   </div>
                 ` : `
                   <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                    <span style="color:var(--ds-text-muted); font-size:11px;">Pack Unit:</span>
+                    <span style="color:var(--ds-text-muted); font-size:10.5px;">Pack Unit:</span>
                     <strong style="color:#475569;">${esc(unit)}</strong>
                   </div>
                 `}
                 <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                  <span style="color:var(--ds-text-muted); font-size:11px;">Dealer Selling Rate:</span>
-                  <strong style="color:var(--ds-primary); font-family:monospace; font-size:13px;">${DS_App.money(sRate)}</strong>
+                  <span style="color:var(--ds-text-muted); font-size:10.5px;">Dealer Selling Rate:</span>
+                  <strong style="color:var(--ds-primary); font-family:monospace; font-size:12.5px;">${DS_App.money(sRate)}</strong>
                 </div>
-                <div style="display:flex; justify-content:space-between; border-top:1px dashed #e2e8f0; padding-top:3px; margin-top:3px;">
-                  <span style="color:var(--ds-text-muted); font-size:11px;">Printed MRP:</span>
-                  <span style="color:var(--ds-text-light); text-decoration:line-through; font-size:11px;">${DS_App.money(mrp)}</span>
+                <div style="display:flex; justify-content:space-between; border-top:1px dashed #e2e8f0; padding-top:2px; margin-top:2px;">
+                  <span style="color:var(--ds-text-muted); font-size:10.5px;">Printed MRP:</span>
+                  <span style="color:var(--ds-text-light); text-decoration:line-through; font-size:10.5px;">${DS_App.money(mrp)}</span>
                 </div>
               </div>
             </div>
 
             <!-- Action Buttons Footer -->
-            <div style="display:flex; justify-content:space-between; align-items:center; pt-2; border-top:1px solid #f1f5f9; padding-top:8px;">
-              <div style="font-size:11px; color:var(--ds-text-muted);">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:6px;">
+              <div style="font-size:10.5px; color:var(--ds-text-muted);">
                 Min: <strong>${minStock} ${unit}</strong>
               </div>
-              <div style="display:flex; gap:6px;">
+              <div style="display:flex; gap:4px;">
                 ${canAdjust ? `
-                  <button type="button" class="btn btn-secondary btn-sm" style="padding:3px 8px; font-size:11px;" title="Adjust Stock Inward / Reconcile" onclick="DS_Stock.openStockAdjust('${esc(code)}')">
-                    ⚡ Stock
+                  <button type="button" class="btn btn-secondary btn-sm" style="padding:2px 6px; font-size:11px;" title="Adjust Stock Inward / Reconcile" onclick="DS_Stock.openStockAdjust('${esc(code)}')">
+                    Stock
                   </button>
                 ` : ''}
                 ${canManage ? `
-                  <button type="button" class="btn btn-secondary btn-sm" style="padding:3px 8px; font-size:11px;" title="Edit Product Info" onclick="DS_Stock.openProductModal('${esc(code)}')">
-                    ✏️ Edit
+                  <button type="button" class="btn btn-secondary btn-sm" style="padding:2px 6px; font-size:11px;" title="Edit Product Info" onclick="DS_Stock.openProductModal('${esc(code)}')">
+                    Edit
                   </button>
-                  <button type="button" class="btn btn-danger btn-sm" style="padding:3px 8px; font-size:11px;" title="Delete Product" onclick="DS_Stock.deleteProduct('${esc(code)}')">
-                    🗑️
+                  <button type="button" class="btn btn-danger btn-sm" style="padding:2px 6px; font-size:11px;" title="Delete Product" onclick="DS_Stock.deleteProduct('${esc(code)}')">
+                    Del
                   </button>
                 ` : ''}
               </div>
@@ -572,7 +572,7 @@
               <div style="width:36px; height:36px; border-radius:6px; background:#f8fafc; border:1px solid #e2e8f0; overflow:hidden; display:inline-grid; place-items:center;">
                 ${imgPath ? `
                   <img src="${imgPath}" alt="${esc(name)}" style="width:100%; height:100%; object-fit:contain;" onerror="this.style.display='none';" />
-                ` : `<span style="font-size:12px;">📦</span>`}
+                ` : `<span style="font-size:10px; color:#94a3b8;">No Pic</span>`}
               </div>
             </td>
             <td class="font-mono font-bold" style="font-size:11px;">${esc(code)}</td>
@@ -588,11 +588,11 @@
             <td>${statusText}</td>
             <td style="text-align:center; white-space:nowrap;">
               ${canAdjust ? `
-                <button type="button" class="btn btn-secondary btn-sm" style="padding:2px 6px; font-size:11px;" onclick="DS_Stock.openStockAdjust('${esc(code)}')" title="Adjust Stock">⚡</button>
+                <button type="button" class="btn btn-secondary btn-sm" style="padding:2px 6px; font-size:11px;" onclick="DS_Stock.openStockAdjust('${esc(code)}')" title="Adjust Stock">Stock</button>
               ` : ''}
               ${canManage ? `
-                <button type="button" class="btn btn-secondary btn-sm" style="padding:2px 6px; font-size:11px;" onclick="DS_Stock.openProductModal('${esc(code)}')" title="Edit Product">✏️</button>
-                <button type="button" class="btn btn-danger btn-sm" style="padding:2px 6px; font-size:11px;" onclick="DS_Stock.deleteProduct('${esc(code)}')" title="Delete Product">🗑️</button>
+                <button type="button" class="btn btn-secondary btn-sm" style="padding:2px 6px; font-size:11px;" onclick="DS_Stock.openProductModal('${esc(code)}')" title="Edit Product">Edit</button>
+                <button type="button" class="btn btn-danger btn-sm" style="padding:2px 6px; font-size:11px;" onclick="DS_Stock.deleteProduct('${esc(code)}')" title="Delete Product">Del</button>
               ` : ''}
             </td>
           </tr>
@@ -624,7 +624,7 @@
         const prod = (db.stock || []).find(p => (p.code === code || p['Item Code'] === code));
         if (!prod) return;
 
-        if (modalTitle) modalTitle.textContent = `✏️ Edit Product Information — ${prod.name || prod.Name}`;
+        if (modalTitle) modalTitle.textContent = `Edit Product Information — ${prod.name || prod.Name}`;
         if (editCodeInput) editCodeInput.value = code;
         if (codeInput) {
           codeInput.value = code;
@@ -651,7 +651,7 @@
         const count = (db.stock || []).length;
         const nextCode = `SKU-${String(count + 1).padStart(3, '0')}`;
 
-        if (modalTitle) modalTitle.textContent = '📦 Add New FMCG Product';
+        if (modalTitle) modalTitle.textContent = 'Add New FMCG Product';
         if (editCodeInput) editCodeInput.value = '';
         if (codeInput) {
           codeInput.value = nextCode;

@@ -36,22 +36,22 @@
     <main class="ds-main-content">
       <!-- Unified Sales & Beat Workflow Navigation Bar -->
       <div class="ds-tab-bar">
-        <a href="party-wise.html" class="ds-subnav-pill active">🏪 Party-Wise Sale</a>
-        <a href="route-analysis.html" class="ds-subnav-pill">📍 Route & Beat Tracker</a>
-        <a href="order-punching.html" class="ds-subnav-pill">🛒 Field Order Punching</a>
-        <a href="sales-analysis.html" class="ds-subnav-pill">📈 Overview & Trends</a>
-        <a href="item-brand-wise-sale.html" class="ds-subnav-pill">📑 Item & Brand Matrix</a>
+        <a href="party-wise.html" class="ds-subnav-pill active">Party-Wise Sale</a>
+        <a href="route-analysis.html" class="ds-subnav-pill">Route & Beat Tracker</a>
+        <a href="order-punching.html" class="ds-subnav-pill">Field Order Punching</a>
+        <a href="sales-analysis.html" class="ds-subnav-pill">Overview & Trends</a>
+        <a href="item-brand-wise-sale.html" class="ds-subnav-pill">Item & Brand Matrix</a>
       </div>
 
       <div class="ds-panel">
-        <div class="ds-panel-header" style="flex-wrap:wrap; gap:10px;">
+        <div class="ds-panel-header" style="flex-wrap:wrap; gap:8px;">
           <div>
-            <h3 class="ds-panel-title">🏪 Party Wise Deep Dive & Retailer Behaviour</h3>
+            <h3 class="ds-panel-title">Party Wise Deep Dive & Retailer Behaviour</h3>
             <p class="ds-panel-subtitle">Comprehensive outlet sales turnover, billing gaps, no-sale alerts, and retailer returns</p>
           </div>
-          <div style="display:flex; gap:8px;">
-            <a href="order-punching.html" class="btn btn-primary btn-sm" style="font-weight:700; display:inline-flex; align-items:center; gap:4px;">
-              🛒 Order Punching
+          <div style="display:flex; gap:6px;">
+            <a href="order-punching.html" class="btn btn-primary btn-sm" style="font-weight:700;">
+              Order Punching
             </a>
           </div>
         </div>
@@ -159,7 +159,7 @@
 
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:16px; margin-bottom:16px;">
             <div class="ds-panel" style="margin:0; background:#fff;">
-              <h5 style="margin:0 0 8px; font-weight:700;">🏷 Brand-wise Purchases</h5>
+              <h5 style="margin:0 0 8px; font-weight:700;">Brand-wise Purchases</h5>
               <div class="ds-table-wrap" style="max-height:220px; overflow-y:auto;">
                 <table class="ds-table" id="pwPartyBrandSales">
                   <thead><tr><th>Brand</th><th class="num">Sales</th><th class="num">Qty</th><th class="num">Bills</th></tr></thead>
@@ -169,7 +169,7 @@
             </div>
 
             <div class="ds-panel" style="margin:0; background:#fff;">
-              <h5 style="margin:0 0 8px; font-weight:700;">📑 Bill History Summary</h5>
+              <h5 style="margin:0 0 8px; font-weight:700;">Bill History Summary</h5>
               <div class="ds-table-wrap" style="max-height:220px; overflow-y:auto;">
                 <table class="ds-table" id="pwPartyBills">
                   <thead><tr><th>Invoice</th><th>Date</th><th class="num">Amount</th><th>Status</th><th>Age</th></tr></thead>
@@ -181,7 +181,7 @@
 
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:16px;">
             <div class="ds-panel" style="margin:0; background:#fff;">
-              <h5 style="margin:0 0 8px; font-weight:700; color:#b91c1c;">💵 Unpaid Invoices (Outstanding)</h5>
+              <h5 style="margin:0 0 8px; font-weight:700; color:#b91c1c;">Unpaid Invoices (Outstanding)</h5>
               <div class="ds-table-wrap" style="max-height:220px; overflow-y:auto;">
                 <table class="ds-table" id="pwPartyOutstanding">
                   <thead><tr><th>Invoice</th><th>Date</th><th class="num">Due Amount</th><th>Aging</th><th>Brands</th></tr></thead>
@@ -191,7 +191,7 @@
             </div>
 
             <div class="ds-panel" style="margin:0; background:#fff;">
-              <h5 style="margin:0 0 8px; font-weight:700; color:#b91c1c;">↩ Product Returns</h5>
+              <h5 style="margin:0 0 8px; font-weight:700; color:#b91c1c;">Product Returns</h5>
               <div class="ds-table-wrap" style="max-height:220px; overflow-y:auto;">
                 <table class="ds-table" id="pwPartyReturns">
                   <thead><tr><th>Brand</th><th class="num">Return Qty</th><th class="num">Return Value</th></tr></thead>
@@ -206,12 +206,12 @@
         <div class="ds-panel" style="margin-bottom:20px;">
           <div class="ds-panel-header">
             <div>
-              <h4 class="ds-panel-title">📋 Party Summary Directory</h4>
+              <h4 class="ds-panel-title">Party Summary Directory</h4>
               <span style="font-size:12px; color:var(--ds-text-muted);">Sales Value • Party • Invoice • Return Qty • Average Bill Value</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
               <div style="position:relative; display:flex; align-items:center;">
-                <input type="text" id="pwPartyTableSearch" name="party_table_search" class="form-control" placeholder="🔍 Search Party, Route, City..." autocomplete="off" spellcheck="false" style="font-size:12px; padding:5px 28px 5px 10px; width:220px; border-radius:6px;" title="Search Party Directory by name, city, or route" />
+                <input type="text" id="pwPartyTableSearch" name="party_table_search" class="form-control" placeholder="Search Party, Route, City..." autocomplete="off" spellcheck="false" style="font-size:12px; padding:5px 28px 5px 10px; width:220px; border-radius:6px;" title="Search Party Directory by name, city, or route" />
                 <button type="button" id="pwPartyTableSearchClear" onclick="DS_PartyWise.clearPartyTableSearch()" title="Clear Search" style="position:absolute; right:8px; background:none; border:none; color:#64748b; font-weight:800; cursor:pointer; font-size:13px; display:none; padding:0; line-height:1;">✕</button>
               </div>
               <label style="font-size:12px; font-weight:700; color:var(--ds-text-muted);">Sort By:</label>
@@ -249,7 +249,7 @@
         <!-- Average Monthly Sale (Line Chart + Running Average Table Side-by-Side) -->
         <div class="ds-panel" style="margin-bottom:20px;">
           <div class="ds-panel-header">
-            <h4 class="ds-panel-title">📈 Average Monthly Sales & Running Average</h4>
+            <h4 class="ds-panel-title">Average Monthly Sales & Running Average</h4>
             <span style="font-size:12px; color:var(--ds-text-muted);">Monthly progression with continuous running average line</span>
           </div>
           <div style="display:grid; grid-template-columns:minmax(0, 1.4fr) minmax(300px, 0.6fr); gap:16px; align-items:center;">
@@ -271,12 +271,12 @@
         <div class="ds-panel" style="margin-bottom:20px;">
           <div class="ds-panel-header">
             <div>
-              <h4 class="ds-panel-title">🏆 Top 20 Outlets by Turnover</h4>
+              <h4 class="ds-panel-title">Top 20 Outlets by Turnover</h4>
               <span id="pwTopPartyNote" style="font-size:12px; color:var(--ds-text-muted);">Ranked by filtered sales value</span>
             </div>
             <div style="display:flex; gap:8px;">
               <button type="button" class="btn btn-secondary btn-sm" id="pwTopPartyClearBtn">Clear</button>
-              <button type="button" class="btn btn-success btn-sm" id="pwTopPartyExcelBtn">📊 Excel Export</button>
+              <button type="button" class="btn btn-success btn-sm" id="pwTopPartyExcelBtn">Excel Export</button>
             </div>
           </div>
 
@@ -331,12 +331,12 @@
         <div class="ds-panel" style="margin-bottom:20px;">
           <div class="ds-panel-header">
             <div>
-              <h4 class="ds-panel-title">⚠️ No Sale Outlets (Dormant & Lapsed Retailers)</h4>
+              <h4 class="ds-panel-title">No Sale Outlets (Dormant & Lapsed Retailers)</h4>
               <span id="pwNoSaleSelectionNote" style="font-size:12px; color:var(--ds-text-muted);">Parties with no billing for selected brand/firm or days threshold</span>
             </div>
             <div style="display:flex; gap:8px;">
               <button type="button" class="btn btn-secondary btn-sm" id="pwNoSaleClearBtn">Clear</button>
-              <button type="button" class="btn btn-success btn-sm" id="pwNoSaleExcelBtn">📊 Excel Export</button>
+              <button type="button" class="btn btn-success btn-sm" id="pwNoSaleExcelBtn">Excel Export</button>
             </div>
           </div>
 

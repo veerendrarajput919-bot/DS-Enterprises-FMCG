@@ -40,61 +40,61 @@
     <main class="ds-main-content">
       
       <!-- Sales Officers Directory Panel -->
-      <div class="ds-panel">
-        <div class="ds-panel-header" style="flex-wrap:wrap; gap:12px; align-items:flex-start;">
+      <div class="ds-panel" style="padding:10px 12px; margin-bottom:10px;">
+        <div class="ds-panel-header" style="flex-wrap:wrap; gap:8px; align-items:flex-start; margin-bottom:8px;">
           <div>
-            <h3 class="ds-panel-title">👥 Staff, Roles & Permissions Management</h3>
+            <h3 class="ds-panel-title">Staff, Roles & Permissions Management</h3>
             <p class="ds-panel-subtitle">Manage user accounts, assign enterprise operational roles (Admin, IMS, Dispatch, SO, Accounts, Billing, Auditor) and fine-tune granular feature permissions</p>
           </div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button type="button" class="btn btn-secondary" onclick="DS_SalesOfficers.switchTab('routemap')" style="font-weight:700; background:#f0f9ff; border-color:#bae6fd; color:#0369a1;" title="Excel file se sabhi Sales Officers ko Beat Routes assign karein">
-              🗺️ Assign Route Map (Excel)
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.switchTab('routemap')" style="font-weight:700; background:#f0f9ff; border-color:#bae6fd; color:#0369a1; padding:4px 8px; font-size:11.5px;" title="Excel file se sabhi Sales Officers ko Beat Routes assign karein">
+              Assign Route Map (Excel)
             </button>
-            <button type="button" class="btn btn-success" onclick="DS_SalesOfficers.authorizeAllStaff()" style="font-weight:700; background:#16a34a; border-color:#16a34a; color:#fff;" title="Sabhi staff accounts ko turant full access (13/13 permissions) dein">
-              ✓ Sabko Authorized (All Staff)
+            <button type="button" class="btn btn-success btn-sm" onclick="DS_SalesOfficers.authorizeAllStaff()" style="font-weight:700; background:#16a34a; border-color:#16a34a; color:#fff; padding:4px 8px; font-size:11.5px;" title="Sabhi staff accounts ko turant full access (13/13 permissions) dein">
+              Authorize All Staff
             </button>
-            <button type="button" id="btnOpenAddOfficer" class="btn btn-primary" onclick="DS_SalesOfficers.openAddModal()" style="font-weight:700;">
-              ➕ Register New Staff / User
+            <button type="button" id="btnOpenAddOfficer" class="btn btn-primary btn-sm" onclick="DS_SalesOfficers.openAddModal()" style="font-weight:700; padding:4px 10px; font-size:11.5px;">
+              Register New Staff / User
             </button>
           </div>
         </div>
 
-        <div id="soAdminOnlyNotice" style="display:none; padding:10px 14px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; color:#1e40af; font-size:12px; margin-bottom:16px;">
-          ℹ️ You are viewing the Staff & Permissions Master in read-only mode. Roles and security credentials are managed exclusively by Administrator.
+        <div id="soAdminOnlyNotice" style="display:none; padding:6px 10px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; color:#1e40af; font-size:11.5px; margin-bottom:8px;">
+          You are viewing the Staff & Permissions Master in read-only mode. Roles and security credentials are managed exclusively by Administrator.
         </div>
 
         <!-- Navigation Tabs: Staff Directory vs Roles Matrix vs Route Map -->
-        <div style="display:flex; gap:8px; border-bottom:2px solid #e2e8f0; margin-bottom:18px; padding-bottom:2px; flex-wrap:wrap;">
-          <button type="button" id="tabStaffDirectoryBtn" class="btn btn-primary btn-sm" onclick="DS_SalesOfficers.switchTab('directory')" style="font-weight:700; border-radius:8px 8px 0 0;">
-            👥 Staff Accounts Directory (<span id="staffTotalCount">0</span>)
+        <div style="display:flex; gap:6px; border-bottom:1px solid #e2e8f0; margin-bottom:10px; padding-bottom:2px; flex-wrap:wrap;">
+          <button type="button" id="tabStaffDirectoryBtn" class="btn btn-primary btn-sm" onclick="DS_SalesOfficers.switchTab('directory')" style="font-weight:700; border-radius:4px 4px 0 0; font-size:11.5px; padding:4px 10px;">
+            Staff Accounts Directory (<span id="staffTotalCount">0</span>)
           </button>
-          <button type="button" id="tabRolesMatrixBtn" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.switchTab('matrix')" style="font-weight:700; border-radius:8px 8px 0 0;">
-            🛡️ Enterprise Roles & Permissions Matrix
+          <button type="button" id="tabRolesMatrixBtn" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.switchTab('matrix')" style="font-weight:700; border-radius:4px 4px 0 0; font-size:11.5px; padding:4px 10px;">
+            Enterprise Roles & Permissions Matrix
           </button>
-          <button type="button" id="tabRouteMapBtn" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.switchTab('routemap')" style="font-weight:700; border-radius:8px 8px 0 0;">
-            🗺️ Beat Route Map & Excel Assignment
+          <button type="button" id="tabRouteMapBtn" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.switchTab('routemap')" style="font-weight:700; border-radius:4px 4px 0 0; font-size:11.5px; padding:4px 10px;">
+            Beat Route Map & Excel Assignment
           </button>
         </div>
 
         <!-- TAB 1: Staff Directory View -->
         <div id="viewStaffDirectory">
           <!-- Role & Route Filter Bar -->
-          <div class="ds-filter-bar" style="margin-bottom:16px; flex-wrap:wrap; gap:12px; align-items:flex-end;">
-            <div class="form-group" style="min-width:180px;">
+          <div class="ds-filter-bar" style="margin-bottom:8px; flex-wrap:wrap; gap:8px; align-items:flex-end; padding:8px 10px;">
+            <div class="form-group" style="min-width:160px;">
               <label class="form-label">Filter by Role</label>
               <select id="filterStaffRole" class="form-control" onchange="DS_SalesOfficers.renderDirectory()">
                 <option value="">All Roles (7 FMCG Roles)</option>
-                <option value="admin">👑 Administrator (Full Master)</option>
-                <option value="ims_manager">📦 IMS / Warehouse Lead</option>
-                <option value="dispatcher">🚚 Dispatch & Logistics Lead</option>
-                <option value="so">👤 Sales Officer (Beat Operations)</option>
-                <option value="accounts">💰 Accounts & Recovery Head</option>
-                <option value="billing_operator">🧾 Billing & Invoicing Desk</option>
-                <option value="viewer">👁️ Auditor / Viewer Mode</option>
+                <option value="admin">Administrator (Full Master)</option>
+                <option value="ims_manager">IMS / Warehouse Lead</option>
+                <option value="dispatcher">Dispatch & Logistics Lead</option>
+                <option value="so">Sales Officer (Beat Operations)</option>
+                <option value="accounts">Accounts & Recovery Head</option>
+                <option value="billing_operator">Billing & Invoicing Desk</option>
+                <option value="viewer">Auditor / Viewer Mode</option>
               </select>
             </div>
 
-            <div class="form-group" style="min-width:180px;">
+            <div class="form-group" style="min-width:160px;">
               <label class="form-label">Filter by Route / Beat</label>
               <select id="filterStaffRoute" class="form-control" onchange="DS_SalesOfficers.renderDirectory()">
                 <option value="">All Beat Routes</option>
@@ -122,49 +122,49 @@
         <!-- TAB 2: Roles & Permissions Matrix View -->
         <div id="viewRolesMatrix" style="display:none;">
           <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px; margin-bottom:18px; box-shadow:0 1px 4px rgba(0,0,0,0.05);">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
               <div>
-                <h4 style="margin:0 0 4px; font-size:16px; font-weight:800; color:var(--ds-text); display:flex; align-items:center; gap:8px;">
-                  🛡️ Dynamic Roles & Permissions Matrix
+                <h4 style="margin:0 0 2px; font-size:14px; font-weight:800; color:var(--ds-text);">
+                  Dynamic Roles & Permissions Matrix
                 </h4>
-                <p style="margin:0; font-size:12px; color:var(--ds-text-muted);">
-                  Roles & permissions fix nahi hain! Kisi bhi cell check (✓ / ✕) par click karke customize karein, ya 'Sabko Authorized' button dabayein.
+                <p style="margin:0; font-size:11.5px; color:var(--ds-text-muted);">
+                  Roles & permissions can be customized by clicking any cell, or using the buttons below.
                 </p>
               </div>
-              <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                <button type="button" class="btn btn-success" onclick="DS_SalesOfficers.authorizeAllRoles()" style="font-weight:800; background:#16a34a; border-color:#16a34a; color:#ffffff; padding:7px 14px; font-size:13px; box-shadow:0 2px 6px rgba(22,163,74,0.25);" title="Sabhi 7 roles ko sabhi 13 permissions instant authorized karein">
-                  ✓ Sabko Authorized (All Roles)
+              <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                <button type="button" class="btn btn-success btn-sm" onclick="DS_SalesOfficers.authorizeAllRoles()" style="font-weight:700; background:#16a34a; border-color:#16a34a; color:#ffffff; padding:4px 10px; font-size:11.5px;" title="Authorize all permissions for all roles">
+                  Authorize All Roles
                 </button>
-                <button type="button" class="btn btn-secondary" onclick="DS_SalesOfficers.authorizeAllStaff()" style="font-weight:700; font-size:12px; background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;" title="Directory ke sabhi staff members ko full access grant karein">
-                  👥 Sab Staff Authorized
+                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.authorizeAllStaff()" style="font-weight:700; font-size:11.5px; padding:4px 8px; background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;">
+                  Authorize All Staff
                 </button>
-                <button type="button" class="btn btn-secondary" onclick="DS_SalesOfficers.saveMatrixManual()" style="font-weight:700; font-size:12px; background:#f8fafc; color:#334155; border-color:#cbd5e1;">
-                  💾 Save Matrix
+                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.saveMatrixManual()" style="font-weight:700; font-size:11.5px; padding:4px 8px; background:#f8fafc; color:#334155; border-color:#cbd5e1;">
+                  Save Matrix
                 </button>
-                <button type="button" class="btn btn-secondary" onclick="DS_SalesOfficers.resetToDefaults()" style="font-weight:700; font-size:12px; background:#fff1f2; color:#be123c; border-color:#fecdd3;" title="Restore original enterprise FMCG defaults">
-                  ↺ Reset Defaults
+                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.resetToDefaults()" style="font-weight:700; font-size:11.5px; padding:4px 8px; background:#fff1f2; color:#be123c; border-color:#fecdd3;" title="Restore original enterprise FMCG defaults">
+                  Reset Defaults
                 </button>
               </div>
             </div>
 
             <!-- Status & Interactive Legend Bar -->
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:14px; padding-top:12px; border-top:1px solid #f1f5f9; font-size:12px;">
-              <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
-                <div style="display:flex; align-items:center; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-top:8px; padding-top:8px; border-top:1px solid #f1f5f9; font-size:11.5px;">
+              <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                <div style="display:flex; align-items:center; gap:4px;">
                   <span style="font-weight:700; color:var(--ds-text-secondary);">Matrix Status:</span>
-                  <span id="matrixStatusBadge" class="badge" style="background:#dcfce7; color:#15803d; font-weight:800; font-size:11px;">
+                  <span id="matrixStatusBadge" class="badge" style="background:#dcfce7; color:#15803d; font-weight:800; font-size:10.5px;">
                     Dynamic Permissions Active
                   </span>
                 </div>
-                <label style="display:flex; align-items:center; gap:6px; font-weight:700; cursor:pointer; color:#0369a1; background:#f0f9ff; padding:3px 8px; border-radius:6px; border:1px solid #bae6fd;">
+                <label style="display:flex; align-items:center; gap:4px; font-weight:700; cursor:pointer; color:#0369a1; background:#f0f9ff; padding:2px 6px; border-radius:4px; border:1px solid #bae6fd;">
                   <input type="checkbox" id="chkUniversalAllAuth" onchange="DS_SalesOfficers.toggleUniversalMode(this.checked)" />
-                  🔓 Universal Full Access Mode (All Users Bypass Checks)
+                  Universal Full Access Mode (All Users Bypass Checks)
                 </label>
               </div>
-              <div style="display:flex; gap:12px; font-size:12px; font-weight:700;">
-                <span style="display:flex; align-items:center; gap:4px;"><span class="ds-matrix-toggle-btn allowed" style="width:20px; height:20px; font-size:11px; cursor:default;">✓</span> Authorized</span>
-                <span style="display:flex; align-items:center; gap:4px;"><span class="ds-matrix-toggle-btn denied" style="width:20px; height:20px; font-size:11px; cursor:default;">✕</span> Restricted</span>
-                <span style="color:var(--ds-text-muted); font-size:11px; font-weight:500;">(Click any cell to toggle)</span>
+              <div style="display:flex; gap:8px; font-size:11.5px; font-weight:700;">
+                <span style="display:flex; align-items:center; gap:4px;"><span class="ds-matrix-toggle-btn allowed" style="width:18px; height:18px; font-size:10px; cursor:default;">✓</span> Authorized</span>
+                <span style="display:flex; align-items:center; gap:4px;"><span class="ds-matrix-toggle-btn denied" style="width:18px; height:18px; font-size:10px; cursor:default;">✕</span> Restricted</span>
+                <span style="color:var(--ds-text-muted); font-size:10.5px; font-weight:500;">(Click any cell to toggle)</span>
               </div>
             </div>
           </div>
@@ -178,43 +178,43 @@
 
         <!-- TAB 3: Route Map & Beat Assignment View -->
         <div id="viewRouteMap" style="display:none;">
-          <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px; margin-bottom:18px; box-shadow:0 1px 4px rgba(0,0,0,0.05);">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px; margin-bottom:10px; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
               <div>
-                <h4 style="margin:0 0 4px; font-size:16px; font-weight:800; color:var(--ds-text); display:flex; align-items:center; gap:8px;">
-                  🗺️ Beat Route Mapping & Excel Assignment
+                <h4 style="margin:0 0 2px; font-size:14px; font-weight:800; color:var(--ds-text);">
+                  Beat Route Mapping & Excel Assignment
                 </h4>
-                <p style="margin:0; font-size:12px; color:var(--ds-text-muted);">
-                  Sales Officers ko unke beat routes Excel sheet upload karke instant assign karein ya niche table me direct update karein.
+                <p style="margin:0; font-size:11.5px; color:var(--ds-text-muted);">
+                  Assign beat routes via Excel sheet upload or direct update below.
                 </p>
               </div>
-              <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.downloadRouteMapTemplate()" style="font-weight:700;">
-                  📥 Download Sample Excel Template
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.downloadRouteMapTemplate()" style="font-weight:700; padding:4px 8px; font-size:11.5px;">
+                  Download Sample Excel Template
                 </button>
               </div>
             </div>
 
             <!-- Excel Upload Card -->
-            <div style="background:#f8fafc; border:2px dashed #93c5fd; border-radius:10px; padding:16px; margin-top:16px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+            <div style="background:#f8fafc; border:1px dashed #93c5fd; border-radius:6px; padding:10px 12px; margin-top:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
                 <div>
-                  <strong style="font-size:13px; color:#1e3a8a;">Excel Route Map File Upload:</strong>
-                  <div style="font-size:11px; color:#64748b;">Columns supported: Sales Officer Name / ID, Route / Beat Name, Day / Schedule, Area</div>
+                  <strong style="font-size:12px; color:#1e3a8a;">Excel Route Map File Upload:</strong>
+                  <div style="font-size:10.5px; color:#64748b;">Columns: Sales Officer Name / ID, Route / Beat Name, Day / Schedule, Area</div>
                 </div>
-                <input type="file" id="routeMapExcelInput" accept=".xlsx, .xls, .csv" class="form-control" style="max-width:280px; padding:5px; font-size:12px;" onchange="DS_SalesOfficers.handleRouteMapExcelUpload(event)" />
+                <input type="file" id="routeMapExcelInput" accept=".xlsx, .xls, .csv" class="form-control" style="max-width:240px; padding:3px 6px; font-size:11.5px;" onchange="DS_SalesOfficers.handleRouteMapExcelUpload(event)" />
               </div>
 
               <!-- Preview of parsed assignments -->
-              <div id="routeMapPreviewArea" style="display:none; margin-top:12px; border-top:1px solid #e2e8f0; padding-top:12px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                  <strong style="font-size:12px; color:#0f172a;" id="routeMapPreviewTitle">Parsed Route Assignments:</strong>
-                  <button type="button" class="btn btn-success btn-sm" onclick="DS_SalesOfficers.applyRouteMapAssignments()" style="font-weight:800; background:#16a34a; border-color:#16a34a; color:#fff;">
-                    ✓ Confirm & Apply Assignments
+              <div id="routeMapPreviewArea" style="display:none; margin-top:8px; border-top:1px solid #e2e8f0; padding-top:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <strong style="font-size:11.5px; color:#0f172a;" id="routeMapPreviewTitle">Parsed Route Assignments:</strong>
+                  <button type="button" class="btn btn-success btn-sm" onclick="DS_SalesOfficers.applyRouteMapAssignments()" style="font-weight:700; background:#16a34a; border-color:#16a34a; color:#fff; padding:3px 8px; font-size:11.5px;">
+                    Confirm & Apply Assignments
                   </button>
                 </div>
-                <div class="ds-table-wrap" style="max-height:220px; overflow-y:auto;">
-                  <table class="ds-table" style="font-size:12px;" id="routeMapPreviewTable">
+                <div class="ds-table-wrap" style="max-height:200px; overflow-y:auto;">
+                  <table class="ds-table" style="font-size:11.5px;" id="routeMapPreviewTable">
                     <thead>
                       <tr>
                         <th>Staff ID / Code</th>
@@ -267,16 +267,16 @@
       <div id="addOfficerModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="addOfficerTitle">
         <div class="modal-card" style="width:min(660px, 95%); max-height:92vh; display:flex; flex-direction:column;">
           <div class="modal-header">
-            <h3 class="modal-title" id="addOfficerTitle">👥 Register Staff & Assign IMS Role</h3>
+            <h3 class="modal-title" id="addOfficerTitle">Register Staff & Assign IMS Role</h3>
             <button type="button" class="modal-close" aria-label="Close registration modal" onclick="DS_App.closeModal('addOfficerModal')">×</button>
           </div>
 
-          <form id="addOfficerForm" onsubmit="DS_SalesOfficers.handleSaveSubmit(event)" style="overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:14px;">
+          <form id="addOfficerForm" onsubmit="DS_SalesOfficers.handleSaveSubmit(event)" style="overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:10px;">
             <input type="hidden" id="editOfficerId" value="" />
               
-            <div id="officerModalError" style="display:none; padding:8px 12px; background:#fef2f2; border:1px solid #fecaca; border-radius:6px; color:#b91c1c; font-size:12px; font-weight:600;"></div>
+            <div id="officerModalError" style="display:none; padding:6px 10px; background:#fef2f2; border:1px solid #fecaca; border-radius:6px; color:#b91c1c; font-size:11.5px; font-weight:600;"></div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
               <div class="form-group">
                 <label class="form-label" for="regOfficerId">Staff Code / ID</label>
                 <input type="text" id="regOfficerId" class="form-control" readonly style="background:var(--ds-surface-subtle); font-weight:700; font-family:monospace;" />
@@ -289,108 +289,108 @@
 
             <!-- Role Assignment -->
             <div class="form-group">
-              <label class="form-label" for="staffRoleSelect">🏢 Assigned Enterprise Role *</label>
-              <select id="staffRoleSelect" class="form-control" required onchange="DS_SalesOfficers.handleRoleSelect(this.value)" style="font-weight:700; background:#f0f9ff; border-color:#7dd3fc; padding:10px 12px;">
-                <option value="so">👤 Sales Officer (Beat Operations, Mobile Store Orders & Recovery)</option>
-                <option value="ims_manager">📦 IMS / Warehouse Manager (Catalog CRUD, Stock Inward & Margins)</option>
-                <option value="dispatcher">🚚 Dispatch & Logistics Lead (Order Approval, Dispatch Challan & Loading Manifests)</option>
-                <option value="accounts">💰 Accounts & Recovery Head (Collections, Receivables Aging & Order Clearance)</option>
-                <option value="billing_operator">🧾 Billing & Invoicing Desk (Order Punching, Invoicing & Receipts)</option>
-                <option value="admin">👑 Administrator (Full Master Control, Settings, Resets & Ingestion)</option>
-                <option value="viewer">👁️ Auditor / Viewer Mode (Read-Only Financial Review & Export)</option>
+              <label class="form-label" for="staffRoleSelect">Assigned Enterprise Role *</label>
+              <select id="staffRoleSelect" class="form-control" required onchange="DS_SalesOfficers.handleRoleSelect(this.value)" style="font-weight:700; background:#f0f9ff; border-color:#7dd3fc; padding:6px 10px;">
+                <option value="so">Sales Officer (Beat Operations, Mobile Store Orders & Recovery)</option>
+                <option value="ims_manager">IMS / Warehouse Manager (Catalog CRUD, Stock Inward & Margins)</option>
+                <option value="dispatcher">Dispatch & Logistics Lead (Order Approval, Dispatch Challan & Loading Manifests)</option>
+                <option value="accounts">Accounts & Recovery Head (Collections, Receivables Aging & Order Clearance)</option>
+                <option value="billing_operator">Billing & Invoicing Desk (Order Punching, Invoicing & Receipts)</option>
+                <option value="admin">Administrator (Full Master Control, Settings, Resets & Ingestion)</option>
+                <option value="viewer">Auditor / Viewer Mode (Read-Only Financial Review & Export)</option>
               </select>
-              <div id="roleDescriptionHint" style="font-size:11px; color:#0369a1; margin-top:4px; font-weight:600;"></div>
+              <div id="roleDescriptionHint" style="font-size:10.5px; color:#0369a1; margin-top:3px; font-weight:600;"></div>
             </div>
 
             <!-- Granular Responsibilities & Permissions Matrix -->
-            <div style="background:var(--ds-surface-subtle); padding:14px; border-radius:10px; border:1px solid var(--ds-border);">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
-                <div style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--ds-primary); letter-spacing:0.5px;">
-                  🛡️ Granular Responsibilities Matrix (13 Feature Permissions)
+            <div style="background:var(--ds-surface-subtle); padding:10px; border-radius:8px; border:1px solid var(--ds-border);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+                <div style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:var(--ds-primary); letter-spacing:0.5px;">
+                  Granular Responsibilities Matrix (13 Feature Permissions)
                 </div>
-                <div style="display:flex; gap:6px;">
-                  <button type="button" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.resetPermsToRoleDefaults()" style="font-size:10px; padding:3px 8px;">
-                    ↺ Reset to Role Defaults
+                <div style="display:flex; gap:4px;">
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.resetPermsToRoleDefaults()" style="font-size:10px; padding:2px 6px;">
+                    Reset Defaults
                   </button>
-                  <button type="button" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.toggleAllPerms(true)" style="font-size:10px; padding:3px 8px;">
-                    ✓ All
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.toggleAllPerms(true)" style="font-size:10px; padding:2px 6px;">
+                    All
                   </button>
-                  <button type="button" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.toggleAllPerms(false)" style="font-size:10px; padding:3px 8px;">
-                    ✕ Clear
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.toggleAllPerms(false)" style="font-size:10px; padding:2px 6px;">
+                    Clear
                   </button>
                 </div>
               </div>
 
               <!-- Group 1: Catalog & Inventory -->
-              <div style="margin-bottom:10px;">
-                <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#64748b; margin-bottom:6px;">📦 Product Catalog & Warehouse Inventory</div>
-                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:6px; font-size:12px;">
+              <div style="margin-bottom:8px;">
+                <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#64748b; margin-bottom:4px;">Product Catalog & Warehouse Inventory</div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:4px; font-size:11.5px;">
                   <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="permManageProducts" /> 📦 Product Catalog CRUD
+                    <input type="checkbox" id="permManageProducts" /> Product Catalog CRUD
                   </label>
                   <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="permAdjustStock" /> ⚡ Stock Inward & Adjust
+                    <input type="checkbox" id="permAdjustStock" /> Stock Inward & Adjust
                   </label>
                   <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="permViewMargins" /> 💰 View Margins & Costs
+                    <input type="checkbox" id="permViewMargins" /> View Margins & Costs
                   </label>
                 </div>
               </div>
 
               <!-- Group 2: Orders & Dispatch Logistics -->
-              <div style="margin-bottom:10px;">
-                <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#64748b; margin-bottom:6px;">🛒 Field Orders & Logistics Fulfillment</div>
-                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:6px; font-size:12px;">
+              <div style="margin-bottom:8px;">
+                <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#64748b; margin-bottom:4px;">Field Orders & Logistics Fulfillment</div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:4px; font-size:11.5px;">
                   <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="permPunchOrders" checked /> 🛒 Field Order Punching
+                    <input type="checkbox" id="permPunchOrders" checked /> Field Order Punching
                   </label>
                   <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="permApproveOrders" /> ✅ Order Status Approval
+                    <input type="checkbox" id="permApproveOrders" /> Order Status Approval
                   </label>
                   <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="permManageDispatch" /> 🚚 Dispatch & Van Manifest
+                    <input type="checkbox" id="permManageDispatch" /> Dispatch & Van Manifest
                   </label>
                 </div>
               </div>
 
               <!-- Group 3: Finance & Receivables -->
-              <div style="margin-bottom:10px;">
-                <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#64748b; margin-bottom:6px;">💵 Collections & Receivables</div>
-                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:6px; font-size:12px;">
+              <div style="margin-bottom:8px;">
+                <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#64748b; margin-bottom:4px;">Collections & Receivables</div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:4px; font-size:11.5px;">
                   <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="permCollectPayments" checked /> 💵 Payment Recovery
+                    <input type="checkbox" id="permCollectPayments" checked /> Payment Recovery
                   </label>
                   <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="permViewOutstanding" checked /> ⏳ Party Outstanding Ledger
+                    <input type="checkbox" id="permViewOutstanding" checked /> Party Outstanding Ledger
                   </label>
                 </div>
               </div>
 
               <!-- Group 4: Business Intelligence & Reports -->
-              <div style="margin-bottom:10px;">
-                <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#64748b; margin-bottom:6px;">📊 Business Intelligence & Export</div>
-                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:6px; font-size:12px;">
+              <div style="margin-bottom:8px;">
+                <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#64748b; margin-bottom:4px;">Business Intelligence & Export</div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:4px; font-size:11.5px;">
                   <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="permViewAnalytics" /> 📈 Sales & Beat Analytics
+                    <input type="checkbox" id="permViewAnalytics" /> Sales & Beat Analytics
                   </label>
                   <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="permExportReports" checked /> 📑 Export Excel & PDF
+                    <input type="checkbox" id="permExportReports" checked /> Export Excel & PDF
                   </label>
                 </div>
               </div>
 
               <!-- Group 5: Administration & Master Data -->
               <div>
-                <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#64748b; margin-bottom:6px;">⚙️ Administration & System Control</div>
-                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:6px; font-size:12px;">
+                <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#64748b; margin-bottom:4px;">Administration & System Control</div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:4px; font-size:11.5px;">
                   <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="permManageStaff" /> 👑 Staff & Role Admin
+                    <input type="checkbox" id="permManageStaff" /> Staff & Role Admin
                   </label>
                   <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="permImportData" /> 📥 Excel / Tally Ingest
+                    <input type="checkbox" id="permImportData" /> Excel / Tally Ingest
                   </label>
                   <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" id="permResetData" /> 🧹 Database Reset & Wipe
+                    <input type="checkbox" id="permResetData" /> Database Reset & Wipe
                   </label>
                 </div>
               </div>
@@ -398,11 +398,11 @@
             </div>
 
             <!-- Login Credentials -->
-            <div style="background:var(--ds-surface-subtle); padding:12px; border-radius:8px; border:1px solid var(--ds-border);">
-              <div style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--ds-accent); margin-bottom:8px;">
-                🔑 Login Credentials Setup
+            <div style="background:var(--ds-surface-subtle); padding:10px; border-radius:6px; border:1px solid var(--ds-border);">
+              <div style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:var(--ds-accent); margin-bottom:6px;">
+                Login Credentials Setup
               </div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                 <div class="form-group">
                   <label class="form-label" for="newOfficerUserId">Login User ID *</label>
                   <input type="text" id="newOfficerUserId" class="form-control" required placeholder="e.g. ramesh" style="font-weight:700; font-family:monospace;" />
@@ -412,12 +412,12 @@
                   <input type="text" id="newOfficerPassword" class="form-control" value="1234" required placeholder="Min 4 digits" style="font-weight:700; font-family:monospace;" />
                 </div>
               </div>
-              <p style="font-size:11px; color:var(--ds-text-muted); margin:6px 0 0;">
+              <p style="font-size:10.5px; color:var(--ds-text-muted); margin:4px 0 0;">
                 The staff member will use this <strong>User ID</strong> and <strong>Password</strong> to sign into the system.
               </p>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
               <div class="form-group">
                 <label class="form-label" for="newOfficerPhone">Contact Mobile Number *</label>
                 <input type="tel" id="newOfficerPhone" class="form-control" required placeholder="e.g. 9839123456" />
@@ -434,9 +434,9 @@
               <input type="number" id="newOfficerTarget" class="form-control" value="300000" min="0" step="5000" />
             </div>
 
-            <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px; padding:0; margin-top:8px;">
-              <button type="button" class="btn btn-secondary" onclick="DS_App.closeModal('addOfficerModal')">Cancel</button>
-              <button type="submit" class="btn btn-primary" style="font-weight:700;">✓ Save Staff & Permissions</button>
+            <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:6px; padding:0; margin-top:6px;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="DS_App.closeModal('addOfficerModal')">Cancel</button>
+              <button type="submit" class="btn btn-primary btn-sm" style="font-weight:700;">Save Staff & Permissions</button>
             </div>
           </form>
         </div>

@@ -33,108 +33,143 @@
       header: `
 <header class="ds-header">
   <div class="ds-header-inner">
-    <div style="display:flex; align-items:center; gap:8px; min-width:0;">
-      <button type="button" class="ds-sidebar-toggle ds-mobile-toggle" id="dsSidebarToggleBtn" aria-label="Toggle Sidebar Navigation" onclick="if(window.DS_App) DS_App.toggleSidebar(event);">☰</button>
-      <a href="dashboard.html" class="ds-brand" style="text-decoration:none; display:flex; align-items:center; gap:8px; min-width:0;">
-        <img src="../assets/images/logo.png" alt="DS Enterprises Logo" 
-             style="width:34px; height:34px; border-radius:8px; object-fit:contain; background:#ffffff; padding:2px; box-shadow:0 2px 6px rgba(0,0,0,0.25); flex-shrink:0;" />
-        <div style="min-width:0;">
-          <h1 class="ds-brand-title" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">DS Enterprises</h1>
-          <p class="ds-brand-subtitle hide-mobile">FMCG Distribution & Sales System</p>
-        </div>
+    <div class="ds-header-left">
+      <button type="button" class="ds-mobile-toggle ds-sidebar-toggle" id="dsSidebarToggleBtn" aria-label="Toggle Navigation" onclick="if(window.DS_App) DS_App.toggleSidebar(event);">☰</button>
+      <a href="dashboard.html" class="ds-brand" title="DS Enterprises Home">
+        <span class="ds-brand-logo-text">DS</span>
+        <span class="ds-brand-title">DS Enterprises</span>
       </a>
     </div>
     <div class="ds-header-center">
-      <span id="dsHeaderRoleBadge" class="ds-role-badge admin">👑 Admin Mode</span>
-      <div id="dsHeaderUserName" class="ds-header-user hide-mobile">Logged in as: <strong>Administrator</strong></div>
+      <span id="dsHeaderRoleBadge" class="ds-role-badge admin">Admin</span>
     </div>
-    <div class="ds-header-actions">
-      <button type="button" id="dsHeaderLogoutBtn" class="btn btn-danger btn-sm" onclick="DS_Auth.logout('manual')" title="Logout of session">🚪 Logout</button>
+    <div class="ds-header-right">
+      <div class="ds-header-profile-wrap">
+        <button type="button" id="dsHeaderProfileBtn" class="ds-header-profile-btn" onclick="DS_App.toggleProfileDropdown(event)" aria-expanded="false" title="Account Menu">
+          <span class="ds-header-avatar" id="dsHeaderAvatar">A</span>
+          <span class="ds-header-username hide-mobile" id="dsHeaderUserNameText">Admin</span>
+          <span class="ds-header-chevron hide-mobile">▾</span>
+        </button>
+        <div id="dsHeaderProfileMenu" class="ds-profile-dropdown" role="menu">
+          <div class="ds-dropdown-header">
+            <div class="ds-dropdown-name" id="dsDropdownFullName">Administrator</div>
+            <div class="ds-dropdown-role" id="dsDropdownRoleName">Super Admin</div>
+          </div>
+          <div class="ds-dropdown-divider"></div>
+          <a href="sales-officers.html?action=register" class="ds-dropdown-item" data-permission="canManageStaff">
+            <span>Staff & Users</span>
+          </a>
+          <a href="clear-old-data.html" class="ds-dropdown-item" data-permission="canResetData">
+            <span>Settings</span>
+          </a>
+          <button type="button" class="ds-dropdown-item" onclick="if(window.DS_Dashboard && DS_Dashboard.openCustomizeModal) DS_Dashboard.openCustomizeModal();">
+            <span>Customize Dashboard</span>
+          </button>
+          <div class="ds-dropdown-divider"></div>
+          <button type="button" class="ds-dropdown-item text-danger" onclick="DS_Auth.logout('manual')">
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </div>
+      <button type="button" class="btn btn-outline-danger btn-xs ds-quick-logout-btn" onclick="DS_Auth.logout('manual')" title="Sign out of system">
+        <span class="hide-mobile">Logout</span>
+      </button>
     </div>
   </div>
 </header>`,
       sidebar: `
 <aside class="ds-sidebar">
-  <div class="ds-sidebar-top-bar show-mobile-flex" style="display:none; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid var(--ds-border); background:var(--ds-surface-subtle);">
+  <div class="ds-sidebar-top-bar">
     <div style="display:flex; align-items:center; gap:8px;">
-      <img src="../assets/images/logo.png" alt="Logo" style="width:26px; height:26px; border-radius:6px; object-fit:contain;" />
-      <span style="font-weight:800; font-size:14px; color:var(--ds-primary-dark);">DS Enterprises</span>
+      <span class="ds-brand-logo-text" style="font-size:12px; padding:3px 6px;">DS</span>
+      <span style="font-weight:800; font-size:13px; color:var(--ds-primary-dark);">DS Enterprises</span>
     </div>
-    <button type="button" class="btn btn-sm btn-secondary" onclick="DS_App.closeMobileSidebar()" aria-label="Close navigation" style="padding:4px 8px; font-size:16px; font-weight:800; border-radius:6px; min-height:auto;">✕</button>
+    <button type="button" class="ds-sidebar-close-btn" onclick="DS_App.closeMobileSidebar()" aria-label="Close navigation">✕</button>
   </div>
   <div id="dsSidebarRoleIndicator" class="ds-sidebar-role-badge">
-    <div style="display:flex; align-items:center; gap:8px;">
-      <span id="dsSidebarRoleIcon" style="font-size:16px;">👑</span>
-      <div>
-        <div id="dsSidebarRoleTitle" style="font-weight:800; font-size:12px; line-height:1.2;">Admin Panel</div>
-        <div id="dsSidebarRoleUser" style="font-size:10px; color:var(--ds-text-muted); line-height:1.1;">Administrator</div>
-      </div>
-    </div>
-  </div>
-  <div class="ds-nav-group">
-    <div class="ds-nav-heading">Overview</div>
-    <a href="dashboard.html" class="ds-nav-link" data-page="dashboard.html"><span class="ds-nav-icon">📊</span><span>Dashboard</span></a>
-  </div>
-  <div class="ds-nav-group">
-    <div class="ds-nav-heading">Sales & Analytics</div>
-    <a href="sales-analysis.html" class="ds-nav-link" data-page="sales-analysis.html" data-permission="canViewAnalytics"><span class="ds-nav-icon">📈</span><span>Sales Analysis</span></a>
-    <a href="party-wise.html" class="ds-nav-link" data-page="party-wise.html" data-permission="canViewAnalytics"><span class="ds-nav-icon">🏪</span><span>Party-Wise Sale</span></a>
-    <a href="route-analysis.html" class="ds-nav-link" data-page="route-analysis.html" data-permission="canViewAnalytics"><span class="ds-nav-icon">📍</span><span>Route & Beat</span></a>
-    <a href="item-brand-wise-sale.html" class="ds-nav-link" data-page="item-brand-wise-sale.html" data-permission="canViewAnalytics"><span class="ds-nav-icon">📑</span><span>Item & Brand Matrix</span></a>
-  </div>
-  <div class="ds-nav-group">
-    <div class="ds-nav-heading">Receivables & Collections</div>
-    <a href="outstanding.html" class="ds-nav-link" data-page="outstanding.html" data-permission="canViewOutstanding"><span class="ds-nav-icon">⏳</span><span>Outstanding & Receivables</span><span class="badge" style="font-size:9px; margin-left:auto; background:#dcfce7; color:#166534; padding:1px 5px;">Unified</span></a>
-    <a href="payment-collections.html" class="ds-nav-link" data-page="payment-collections.html" data-permission="canCollectPayments"><span class="ds-nav-icon">💵</span><span>Payment Collections</span></a>
-  </div>
-  <div class="ds-nav-group">
-    <div class="ds-nav-heading">Inventory & Field Sales</div>
-    <a href="stock.html" class="ds-nav-link" data-page="stock.html" data-permission="canManageProducts"><span class="ds-nav-icon">📦</span><span>IMS Stock & Products</span></a>
-    <a href="order-punching.html" class="ds-nav-link" data-page="order-punching.html" data-permission="canPunchOrders"><span class="ds-nav-icon">🛒</span><span>Order Punching</span></a>
-    <a href="order-report.html" class="ds-nav-link" data-page="order-report.html" data-permission="canPunchOrders"><span class="ds-nav-icon">📋</span><span>Order Reports</span></a>
-    <a href="sales-officers.html" class="ds-nav-link" data-page="sales-officers.html" data-permission="canManageStaff"><span class="ds-nav-icon">👥</span><span>Staff, Roles & Permissions</span><span class="badge" style="font-size:9px; margin-left:auto; background:#fef3c7; color:#b45309; padding:1px 5px;">Admin</span></a>
-  </div>
-  <div class="ds-nav-group">
-    <div class="ds-nav-heading">Fulfillment & Logistics</div>
-    <a href="order-approval.html" class="ds-nav-link" data-page="order-approval.html" data-permission="canApproveOrders"><span class="ds-nav-icon">⚡</span><span>Order Approval</span></a>
-    <a href="route-assignment.html" class="ds-nav-link" data-page="route-assignment.html" data-permission="canManageDispatch"><span class="ds-nav-icon">🗺️</span><span>Route & Delivery Assignment</span><span class="badge" style="font-size:9px; margin-left:auto; background:#dbeafe; color:#1e40af; padding:1px 5px;">New</span></a>
-    <a href="dispatch.html" class="ds-nav-link" data-page="dispatch.html" data-permission="canManageDispatch"><span class="ds-nav-icon">🚚</span><span>Dispatch & Loading Sheets</span><span class="badge" style="font-size:9px; margin-left:auto; background:#dcfce7; color:#166534; padding:1px 5px;">Unified</span></a>
-  </div>
-  <div class="ds-nav-group">
-    <div class="ds-nav-heading">Data & Settings</div>
-    <a href="upload-update.html" class="ds-nav-link" data-page="upload-update.html" data-permission="canImportData"><span class="ds-nav-icon">📥</span><span>Excel Data Ingest</span><span class="badge" style="font-size:9px; margin-left:auto; background:#fef3c7; color:#b45309; padding:1px 5px;">Admin</span></a>
-    <a href="clear-old-data.html" class="ds-nav-link" data-page="clear-old-data.html" data-permission="canResetData"><span class="ds-nav-icon">🧹</span><span>Data Management & Reset</span><span class="badge" style="font-size:9px; margin-left:auto; background:#fee2e2; color:#b91c1c; padding:1px 5px;">Admin</span></a>
-    <a href="../index.html" class="ds-nav-link"><span class="ds-nav-icon">🏠</span><span>Master App Hub</span></a>
-  </div>
-  <div class="ds-sidebar-footer" style="padding:14px 12px; margin-top:auto; border-top:1px solid var(--ds-border); background:var(--ds-surface-subtle);">
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+    <div style="display:flex; align-items:center; gap:6px;">
+      <span id="dsSidebarRoleIcon" style="font-size:11px; font-weight:800; color:var(--ds-primary);">●</span>
       <div style="min-width:0;">
-        <div id="dsSidebarFooterUser" style="font-weight:700; font-size:12px; color:var(--ds-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Administrator</div>
-        <div style="font-size:10px; color:var(--ds-text-muted); display:flex; align-items:center; gap:4px;">
-          <span style="width:6px; height:6px; border-radius:50%; background:#10b981; display:inline-block;"></span>
-          <span id="dsSidebarSessionStatus">Active • 15m idle lock</span>
-        </div>
+        <div id="dsSidebarRoleTitle" style="font-weight:800; font-size:11px; line-height:1.2; color:var(--ds-text);">Admin Panel</div>
+        <div id="dsSidebarRoleUser" style="font-size:9.5px; color:var(--ds-text-muted); line-height:1.1;">Administrator</div>
       </div>
     </div>
-    <button type="button" id="dsSidebarLogoutBtn" class="btn btn-danger" onclick="DS_Auth.logout('manual')" style="width:100%; font-weight:700; font-size:12.5px; padding:9px; justify-content:center; display:flex; align-items:center; gap:6px;">
-      🚪 Sign Out / Logout
-    </button>
+  </div>
+  <div class="ds-sidebar-nav-scroll">
+    <div class="ds-nav-group" data-group-id="sales-analytics">
+      <button type="button" class="ds-nav-heading" onclick="DS_App.toggleSidebarGroup('sales-analytics')">
+        <span class="ds-heading-text">Sales & Analytics</span>
+        <span class="ds-heading-chevron">▾</span>
+      </button>
+      <div class="ds-nav-group-links" id="group-sales-analytics">
+        <a href="dashboard.html" class="ds-nav-link" data-page="dashboard.html"><span class="ds-nav-icon">📊</span><span>Overview & Trends</span></a>
+        <a href="sales-analysis.html" class="ds-nav-link" data-page="sales-analysis.html" data-permission="canViewAnalytics"><span class="ds-nav-icon">📈</span><span>Sales Analysis</span></a>
+        <a href="party-wise.html" class="ds-nav-link" data-page="party-wise.html" data-permission="canViewAnalytics"><span class="ds-nav-icon">🏪</span><span>Party Wise Sale</span></a>
+        <a href="route-analysis.html" class="ds-nav-link" data-page="route-analysis.html" data-permission="canViewAnalytics"><span class="ds-nav-icon">📍</span><span>Route & Beat</span></a>
+        <a href="item-brand-wise-sale.html" class="ds-nav-link" data-page="item-brand-wise-sale.html" data-permission="canViewAnalytics"><span class="ds-nav-icon">📑</span><span>Item & Brand Matrix</span></a>
+      </div>
+    </div>
+    <div class="ds-nav-group" data-group-id="receivables-collections">
+      <button type="button" class="ds-nav-heading" onclick="DS_App.toggleSidebarGroup('receivables-collections')">
+        <span class="ds-heading-text">Receivables & Collections</span>
+        <span class="ds-heading-chevron">▾</span>
+      </button>
+      <div class="ds-nav-group-links" id="group-receivables-collections">
+        <a href="bill-management.html" class="ds-nav-link" data-page="bill-management.html" data-permission="canViewOutstanding"><span class="ds-nav-icon">🧾</span><span>Bill Management</span></a>
+        <a href="outstanding.html" class="ds-nav-link" data-page="outstanding.html" data-permission="canViewOutstanding"><span class="ds-nav-icon">⏳</span><span>Outstanding & Receivables</span></a>
+        <a href="payment-collections.html" class="ds-nav-link" data-page="payment-collections.html" data-permission="canCollectPayments"><span class="ds-nav-icon">💵</span><span>Payment Collections</span></a>
+      </div>
+    </div>
+    <div class="ds-nav-group" data-group-id="inventory-field-sales">
+      <button type="button" class="ds-nav-heading" onclick="DS_App.toggleSidebarGroup('inventory-field-sales')">
+        <span class="ds-heading-text">Inventory & Field Sales</span>
+        <span class="ds-heading-chevron">▾</span>
+      </button>
+      <div class="ds-nav-group-links" id="group-inventory-field-sales">
+        <a href="stock.html" class="ds-nav-link" data-page="stock.html" data-permission="canManageProducts"><span class="ds-nav-icon">📦</span><span>IMS Stock & Products</span></a>
+        <a href="order-punching.html" class="ds-nav-link" data-page="order-punching.html" data-permission="canPunchOrders"><span class="ds-nav-icon">🛒</span><span>Order Punching</span></a>
+        <a href="order-report.html" class="ds-nav-link" data-page="order-report.html" data-permission="canPunchOrders"><span class="ds-nav-icon">📋</span><span>Order Reports</span></a>
+        <a href="sales-officers.html" class="ds-nav-link" data-page="sales-officers.html" data-permission="canManageStaff"><span class="ds-nav-icon">👥</span><span>Staff, Roles & Permissions</span></a>
+      </div>
+    </div>
+    <div class="ds-nav-group" data-group-id="fulfillment-logistics">
+      <button type="button" class="ds-nav-heading" onclick="DS_App.toggleSidebarGroup('fulfillment-logistics')">
+        <span class="ds-heading-text">Fulfillment & Logistics</span>
+        <span class="ds-heading-chevron">▾</span>
+      </button>
+      <div class="ds-nav-group-links" id="group-fulfillment-logistics">
+        <a href="order-approval.html" class="ds-nav-link" data-page="order-approval.html" data-permission="canApproveOrders"><span class="ds-nav-icon">⚡</span><span>Order Approval</span></a>
+        <a href="route-assignment.html" class="ds-nav-link" data-page="route-assignment.html" data-permission="canManageDispatch"><span class="ds-nav-icon">🗺️</span><span>Route & Delivery Assignment</span></a>
+        <a href="dispatch.html" class="ds-nav-link" data-page="dispatch.html" data-permission="canManageDispatch"><span class="ds-nav-icon">🚚</span><span>Dispatch & Loading Sheets</span></a>
+      </div>
+    </div>
+    <div class="ds-nav-group" data-group-id="data-settings">
+      <button type="button" class="ds-nav-heading" onclick="DS_App.toggleSidebarGroup('data-settings')">
+        <span class="ds-heading-text">Data & Settings</span>
+        <span class="ds-heading-chevron">▾</span>
+      </button>
+      <div class="ds-nav-group-links" id="group-data-settings">
+        <a href="upload-update.html" class="ds-nav-link" data-page="upload-update.html" data-permission="canImportData"><span class="ds-nav-icon">📥</span><span>Excel Data Ingest</span></a>
+        <a href="clear-old-data.html" class="ds-nav-link" data-page="clear-old-data.html" data-permission="canResetData"><span class="ds-nav-icon">⚙️</span><span>Settings</span></a>
+        <a href="sales-officers.html?action=register" class="ds-nav-link" data-page="sales-officers.html" data-permission="canManageStaff"><span class="ds-nav-icon">👤</span><span>User Management</span></a>
+      </div>
+    </div>
   </div>
 </aside>
 <div class="ds-sidebar-backdrop"></div>`,
       footer: `
-<footer style="margin-top:40px; padding:20px 0; border-top:1px solid var(--ds-border); text-align:center; font-size:12px; color:var(--ds-text-muted);">
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; max-width:1700px; margin:0 auto; padding:0 20px;">
-    <div><strong>DS Enterprises</strong> — FMCG Management & Field Sales Automation System v4.0.0</div>
-    <div><span>100% Offline Capable • Pure Client-Side ERP</span></div>
+<footer class="ds-footer">
+  <div class="ds-footer-inner">
+    <div><strong>DS Enterprises</strong> — FMCG Management & Field Sales System</div>
+    <div><span>Offline-First Enterprise ERP</span></div>
   </div>
 </footer>
 <nav class="ds-bottom-nav" aria-label="Mobile Navigation Dock">
-  <a href="dashboard.html" class="ds-bottom-nav-item" data-page="dashboard.html"><span class="ds-bottom-nav-icon">📊</span><span>Home</span></a>
-  <a href="order-punching.html" class="ds-bottom-nav-item" data-page="order-punching.html"><span class="ds-bottom-nav-icon">🛒</span><span>Punch</span></a>
-  <a href="outstanding.html" class="ds-bottom-nav-item" data-page="outstanding.html"><span class="ds-bottom-nav-icon">⏳</span><span>Due</span></a>
-  <a href="dispatch.html" class="ds-bottom-nav-item" data-page="dispatch.html"><span class="ds-bottom-nav-icon">🚚</span><span>Dispatch</span></a>
-  <button type="button" class="ds-bottom-nav-item" onclick="if(window.DS_App) DS_App.toggleMobileSidebar();" aria-label="Open Mobile Menu"><span class="ds-bottom-nav-icon">☰</span><span>Menu</span></button>
+  <a href="dashboard.html" class="ds-bottom-nav-item" data-page="dashboard.html"><span class="ds-bottom-nav-icon">🏠</span><span class="ds-bottom-nav-label">Home</span></a>
+  <a href="order-punching.html" class="ds-bottom-nav-item" data-page="order-punching.html"><span class="ds-bottom-nav-icon">🛒</span><span class="ds-bottom-nav-label">Punch</span></a>
+  <a href="outstanding.html" class="ds-bottom-nav-item" data-page="outstanding.html"><span class="ds-bottom-nav-icon">⏳</span><span class="ds-bottom-nav-label">Due</span></a>
+  <a href="dispatch.html" class="ds-bottom-nav-item" data-page="dispatch.html"><span class="ds-bottom-nav-icon">🚚</span><span class="ds-bottom-nav-label">Dispatch</span></a>
+  <button type="button" class="ds-bottom-nav-item" onclick="if(window.DS_App) DS_App.toggleMobileSidebar();" aria-label="Open Mobile Menu"><span class="ds-bottom-nav-icon">☰</span><span class="ds-bottom-nav-label">Menu</span></button>
 </nav>`,
       modal: `
 <div id="dsAdminConfirmModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
@@ -288,9 +323,21 @@
 
       // Setup UI listeners
       this.initNavigation();
+      this.initSidebarGroups();
       this.initMobileSidebar();
       this.updateNavigationPermissions();
       if (window.DS_Auth) DS_Auth.updateHeaderUI();
+
+      // Outside click listener for account profile dropdown
+      document.addEventListener('click', (e) => {
+        const menu = document.getElementById('dsHeaderProfileMenu');
+        const btn = document.getElementById('dsHeaderProfileBtn');
+        if (menu && menu.classList.contains('show')) {
+          if (!menu.contains(e.target) && !btn?.contains(e.target)) {
+            this.closeProfileDropdown();
+          }
+        }
+      });
 
       // Restore desktop sidebar collapsed state
       if (window.innerWidth > 768) {
@@ -419,6 +466,67 @@
       return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
     },
 
+    // User Profile Dropdown Controller
+    toggleProfileDropdown: function (event) {
+      if (event && event.stopPropagation) event.stopPropagation();
+      const menu = document.getElementById('dsHeaderProfileMenu');
+      const btn = document.getElementById('dsHeaderProfileBtn');
+      if (!menu) return;
+      const isOpen = menu.classList.toggle('show');
+      if (btn) btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    },
+
+    closeProfileDropdown: function () {
+      const menu = document.getElementById('dsHeaderProfileMenu');
+      const btn = document.getElementById('dsHeaderProfileBtn');
+      if (menu) menu.classList.remove('show');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    },
+
+    // Collapsible Sidebar Accordion Groups
+    toggleSidebarGroup: function (groupId) {
+      const groupEl = document.querySelector(`.ds-nav-group[data-group-id="${groupId}"]`);
+      if (!groupEl) return;
+      groupEl.classList.toggle('collapsed');
+      this.saveSidebarGroupsState();
+    },
+
+    saveSidebarGroupsState: function () {
+      try {
+        const groups = document.querySelectorAll('.ds-nav-group[data-group-id]');
+        const state = {};
+        groups.forEach(g => {
+          const id = g.getAttribute('data-group-id');
+          if (id) state[id] = g.classList.contains('collapsed');
+        });
+        localStorage.setItem('ds_sidebar_groups_state', JSON.stringify(state));
+      } catch (e) {}
+    },
+
+    initSidebarGroups: function () {
+      try {
+        const raw = localStorage.getItem('ds_sidebar_groups_state');
+        const state = raw ? JSON.parse(raw) : {};
+        document.querySelectorAll('.ds-nav-group[data-group-id]').forEach(g => {
+          const id = g.getAttribute('data-group-id');
+          if (id && state[id] === true) {
+            g.classList.add('collapsed');
+          } else {
+            g.classList.remove('collapsed');
+          }
+        });
+      } catch (e) {}
+
+      // Keep active page group open
+      const activeLink = document.querySelector('.ds-nav-link.active');
+      if (activeLink) {
+        const parentGroup = activeLink.closest('.ds-nav-group');
+        if (parentGroup) {
+          parentGroup.classList.remove('collapsed');
+        }
+      }
+    },
+
     // Navigation & Active Link Highlight
     initNavigation: function () {
       const currentPath = window.location.pathname.replace(/\/$/, '');
@@ -437,6 +545,8 @@
           link.classList.remove('active');
         }
       });
+
+      this.initSidebarGroups();
     },
 
     // Responsive Sidebar Navigation (Mobile Drawer + Desktop Collapse)

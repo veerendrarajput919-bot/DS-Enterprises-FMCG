@@ -128,6 +128,9 @@ function errorResponse(string $message, int $statusCode = 400, array $extra = []
  * Read and Decode JSON Request Body
  */
 function getJsonInput(): array {
+    if (!empty($GLOBALS['MOCK_JSON_INPUT'])) {
+        return is_array($GLOBALS['MOCK_JSON_INPUT']) ? $GLOBALS['MOCK_JSON_INPUT'] : (json_decode($GLOBALS['MOCK_JSON_INPUT'], true) ?: []);
+    }
     $raw = file_get_contents('php://input');
     if (empty($raw)) {
         return $_POST ?: [];

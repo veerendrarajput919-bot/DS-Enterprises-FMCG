@@ -1127,6 +1127,33 @@
         }
       }
 
+      // Update Header Profile Dropdown Trigger & Details
+      const headerAvatar = document.getElementById('dsHeaderAvatar');
+      const headerUserNameText = document.getElementById('dsHeaderUserNameText');
+      const dropdownFullName = document.getElementById('dsDropdownFullName');
+      const dropdownRoleName = document.getElementById('dsDropdownRoleName');
+
+      if (isLoginPage) {
+        if (headerAvatar) headerAvatar.textContent = '?';
+        if (headerUserNameText) headerUserNameText.textContent = 'Sign In';
+        if (dropdownFullName) dropdownFullName.textContent = 'Guest User';
+        if (dropdownRoleName) dropdownRoleName.textContent = 'Not Logged In';
+      } else if (isCurrentAdmin) {
+        if (headerAvatar) headerAvatar.textContent = 'A';
+        if (headerUserNameText) headerUserNameText.textContent = 'Admin';
+        if (dropdownFullName) dropdownFullName.textContent = 'Administrator';
+        if (dropdownRoleName) dropdownRoleName.textContent = 'Super Admin (Full Access)';
+      } else {
+        const staff = this.getActiveSo();
+        const roleCfg = this.ROLE_CONFIG[currentRole] || this.ROLE_CONFIG.so;
+        const roleTitle = roleCfg.label || 'Staff';
+        const initial = staff.name ? staff.name.trim().charAt(0).toUpperCase() : 'U';
+        if (headerAvatar) headerAvatar.textContent = initial;
+        if (headerUserNameText) headerUserNameText.textContent = staff.name || 'Staff';
+        if (dropdownFullName) dropdownFullName.textContent = staff.name || 'Staff User';
+        if (dropdownRoleName) dropdownRoleName.textContent = `${roleTitle} (${staff.route || 'General'})`;
+      }
+
       // Update Sidebar Role Banner
       if (sideRoleTitle && sideRoleIcon && sideRoleUser) {
         if (isCurrentAdmin) {

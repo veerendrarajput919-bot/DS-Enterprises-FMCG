@@ -40,33 +40,33 @@
     <main class="ds-main-content">
       <!-- Unified Order & Field Sales Navigation Bar -->
       <div class="ds-tab-bar">
-        <a href="order-punching.html" class="ds-subnav-pill active">🛒 Punch Field Order</a>
-        <a href="route-analysis.html" class="ds-subnav-pill">📍 Route & Beat Tracker</a>
-        <a href="route-assignment.html" class="ds-subnav-pill">🗺️ Route Delivery</a>
-        <a href="order-report.html" class="ds-subnav-pill">📋 All Orders & Reports</a>
-        <a href="order-approval.html" class="ds-subnav-pill">⚡ Order Approvals</a>
+        <a href="order-punching.html" class="ds-subnav-pill active">Punch Field Order</a>
+        <a href="route-analysis.html" class="ds-subnav-pill">Route & Beat Tracker</a>
+        <a href="route-assignment.html" class="ds-subnav-pill">Route Delivery</a>
+        <a href="order-report.html" class="ds-subnav-pill">All Orders & Reports</a>
+        <a href="order-approval.html" class="ds-subnav-pill">Order Approvals</a>
       </div>
 
 <div class="ds-grid-cart">
   <!-- Left Column: Store Selection & Product Catalog -->
   <div class="ds-panel">
-    <div class="ds-panel-header" style="flex-wrap:wrap; gap:10px;">
+    <div class="ds-panel-header" style="flex-wrap:wrap; gap:8px;">
       <div>
-        <h3 class="ds-panel-title">🛒 Field Sales Order Punching</h3>
+        <h3 class="ds-panel-title">Field Sales Order Punching</h3>
         <p class="ds-panel-subtitle">Select beat retailer and add FMCG items to booking cart</p>
       </div>
-      <button type="button" class="btn btn-primary" onclick="DS_Orders.openAddProductModal()" style="font-weight:800; display:inline-flex; align-items:center; gap:6px;">
-        ➕ Add New Product (नया प्रोडक्ट जोड़ें)
+      <button type="button" class="btn btn-primary btn-sm" onclick="DS_Orders.openAddProductModal()" style="font-weight:700;">
+        Add New Product
       </button>
     </div>
 
     <!-- Quick Guide Strip -->
-    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:8px 12px; margin-bottom:14px; font-size:12px; color:#1e40af; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-      <div><strong>💡 Order Guide:</strong> 1. Select Store → 2. Adjust qty (+ / −) in catalog → 3. Need unlisted item? Click <strong>➕ Add New Product</strong> → 4. Click Submit</div>
+    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:6px 10px; margin-bottom:10px; font-size:11.5px; color:#1e40af; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+      <div><strong>Order Guide:</strong> 1. Select Store → 2. Adjust qty in catalog → 3. Need unlisted item? Click <strong>Add New Product</strong> → 4. Click Submit</div>
     </div>
 
     <!-- Store Selection -->
-    <div class="ds-filter-bar" style="margin-bottom:14px;">
+    <div class="ds-filter-bar" style="margin-bottom:10px;">
       <div class="form-group" style="width:200px;">
         <label class="form-label">Filter Route</label>
         <select id="orderRouteSelect" class="form-control">
@@ -82,16 +82,16 @@
     </div>
 
     <!-- Store Info Card -->
-    <div id="orderStoreInfoCard" style="display:none; background:var(--ds-surface-subtle); padding:14px; border-radius:var(--ds-radius-md); margin-bottom:16px; border:1px solid var(--ds-border);">
+    <div id="orderStoreInfoCard" style="display:none; background:var(--ds-surface-subtle); padding:10px; border-radius:var(--ds-radius-sm); margin-bottom:10px; border:1px solid var(--ds-border);">
     </div>
 
     <!-- Search in Catalog & Quick Add -->
-    <div style="display:flex; gap:10px; margin-bottom:14px;">
+    <div style="display:flex; gap:8px; margin-bottom:10px;">
       <div class="form-group" style="flex:1; margin-bottom:0;">
-        <input type="text" id="catalogSearchInput" class="form-control" placeholder="🔍 Search products by name or brand (e.g. Parle, Tide, Soap, Biscuit)..." autocomplete="off" spellcheck="false" style="padding:10px 14px;" />
+        <input type="text" id="catalogSearchInput" class="form-control" placeholder="Search products by name or brand (e.g. Parle, Tide, Soap, Biscuit)..." autocomplete="off" spellcheck="false" style="padding:6px 10px;" />
       </div>
-      <button type="button" class="btn btn-secondary" onclick="DS_Orders.openAddProductModal()" title="Add product not found in list" style="font-size:13px; font-weight:700; white-space:nowrap;">
-        ➕ New SKU
+      <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.openAddProductModal()" title="Add product not found in list" style="font-size:12px; font-weight:700; white-space:nowrap;">
+        New SKU
       </button>
     </div>
 
@@ -102,15 +102,15 @@
   </div>
 
   <!-- Right Column: Live Order Cart -->
-  <div class="ds-panel" id="orderCartPanel" style="position:sticky; top:70px; max-height:calc(100vh - 90px); display:flex; flex-direction:column; justify-content:space-between;">
+  <div class="ds-panel" id="orderCartPanel" style="position:sticky; top:54px; max-height:calc(100vh - 70px); display:flex; flex-direction:column; justify-content:space-between;">
     <div>
-      <div class="ds-panel-header" style="align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+      <div class="ds-panel-header" style="align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
         <div>
-          <h3 class="ds-panel-title">🛍️ Booking Cart</h3>
+          <h3 class="ds-panel-title">Booking Cart</h3>
           <p class="ds-panel-subtitle">Review items before final submission</p>
         </div>
-        <button type="button" class="btn btn-sm" onclick="DS_Orders.clearCart()" style="border:1px solid #fca5a5; background:#fff1f2; color:#b91c1c; font-weight:700; font-size:12px; padding:4px 10px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;" title="Remove all items from cart (कार्ट खाली करें)">
-          🗑️ Clear Cart
+        <button type="button" class="btn btn-xs" onclick="DS_Orders.clearCart()" style="border:1px solid #fca5a5; background:#fff1f2; color:#b91c1c; font-weight:700; font-size:11px; padding:3px 8px; border-radius:5px; cursor:pointer;" title="Remove all items from cart">
+          Clear Cart
         </button>
       </div>
 
@@ -119,22 +119,22 @@
       </div>
     </div>
 
-    <div style="border-top:2px solid var(--ds-border); padding-top:14px; margin-top:14px;">
-      <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;">
+    <div style="border-top:2px solid var(--ds-border); padding-top:10px; margin-top:10px;">
+      <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
         <span>Total Units:</span>
         <strong id="cartTotalQty">0</strong>
       </div>
-      <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;">
+      <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
         <span>Subtotal:</span>
         <span id="cartSubtotal">₹ 0.00</span>
       </div>
-      <div style="display:flex; justify-content:space-between; font-size:17px; font-weight:800; color:var(--ds-primary); margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:800; color:var(--ds-primary); margin-bottom:10px;">
         <span>Net Total:</span>
         <span id="cartNetTotal">₹ 0.00</span>
       </div>
 
-      <button type="button" class="btn btn-primary btn-lg" style="width:100%; font-weight:800; min-height:44px;" onclick="DS_Orders.submitOrder()">
-        ✓ Submit & Book Order
+      <button type="button" class="btn btn-primary" style="width:100%; font-weight:700; min-height:38px;" onclick="DS_Orders.submitOrder()">
+        Submit & Book Order
       </button>
     </div>
   </div>
@@ -142,16 +142,16 @@
 
 <!-- Floating Mobile Cart Dock (Visible on phones when cart has items) -->
 <div id="mobileCartFloatingBar" class="ds-mobile-cart-bar" style="display:none;" onclick="DS_Orders.scrollToCart()">
-  <div style="display:flex; align-items:center; gap:8px;">
-    <div style="background:#0284c7; color:#ffffff; border-radius:999px; padding:3px 10px; font-weight:800; font-size:12px; display:inline-flex; align-items:center; gap:4px;">
-      🛒 <span id="mCartUnits">0</span>
+  <div style="display:flex; align-items:center; gap:6px;">
+    <div style="background:#0284c7; color:#ffffff; border-radius:999px; padding:2px 8px; font-weight:800; font-size:11px;">
+      <span id="mCartUnits">0</span> Units
     </div>
-    <div style="font-size:15px; font-weight:800; color:#10b981;" id="mCartTotal">
+    <div style="font-size:14px; font-weight:800; color:#10b981;" id="mCartTotal">
       ₹ 0.00
     </div>
   </div>
-  <button type="button" class="btn btn-success btn-sm" style="font-weight:700; padding:6px 14px; border-radius:20px; box-shadow:0 2px 6px rgba(0,0,0,0.25);">
-    Review Cart →
+  <button type="button" class="btn btn-success btn-xs" style="font-weight:700; padding:4px 10px; border-radius:14px;">
+    Review Cart
   </button>
 </div>
 
@@ -160,7 +160,7 @@
   <div class="modal-card" style="width:min(580px, 95%);">
     <div class="modal-header">
       <div>
-        <h3 class="modal-title" id="addProductTitle">➕ Add New FMCG Product</h3>
+        <h3 class="modal-title" id="addProductTitle">Add New FMCG Product</h3>
         <p style="margin:2px 0 0; font-size:12px; color:var(--ds-text-muted);">Create a new item in stock catalog & book directly in this cart</p>
       </div>
       <button type="button" class="modal-close" onclick="DS_Orders.closeAddProductModal()" aria-label="Close">×</button>
@@ -231,7 +231,7 @@
       <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:700; color:#166534; font-size:13px; margin:0;">
           <input type="checkbox" id="npAutoAddToCart" checked />
-          <span>✓ Turant is order cart me add karein</span>
+          <span>Turant is order cart me add karein</span>
         </label>
         <div style="display:flex; align-items:center; gap:6px;">
           <label for="npCartQty" style="font-size:12px; color:#166534; font-weight:600; margin:0;">Booking Qty:</label>
@@ -241,7 +241,7 @@
 
       <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px; padding-top:8px;">
         <button type="button" class="btn btn-secondary" onclick="DS_Orders.closeAddProductModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary" style="font-weight:700;">✓ Save Product & Add to Cart</button>
+        <button type="submit" class="btn btn-primary" style="font-weight:700;">Save Product & Add to Cart</button>
       </div>
     </form>
   </div>
@@ -251,12 +251,12 @@
 <div class="ds-panel" style="margin-top:24px;">
   <div class="ds-panel-header" style="flex-wrap:wrap; gap:10px;">
     <div>
-      <h3 class="ds-panel-title">📋 Today's Booked Orders (आज बुक किए गए ऑर्डर्स)</h3>
+      <h3 class="ds-panel-title">Today's Booked Orders (आज बुक किए गए ऑर्डर्स)</h3>
       <p class="ds-panel-subtitle">Review generated Invoice / Bill No & manage order lifecycle</p>
     </div>
     <div style="display:flex; align-items:center; gap:8px;">
       <span id="recentPunchCountBadge" class="badge" style="background:#e0f2fe; color:#0369a1; font-weight:700;">0 Orders</span>
-      <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.renderRecentOrdersTable()" title="Refresh List">↺ Refresh</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.renderRecentOrdersTable()" title="Refresh List">Refresh</button>
     </div>
   </div>
 
@@ -264,19 +264,19 @@
   <div class="ds-filter-panel" style="margin-bottom:14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 14px;">
     <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
       <div class="form-group" style="flex:1; min-width:240px; margin-bottom:0;">
-        <input type="text" id="recentPunchSearchInput" class="form-control" placeholder="🔍 Search by Order ID, Invoice/Bill No, Store or Beat Route..." autocomplete="off" spellcheck="false" oninput="DS_Orders.renderRecentOrdersTable()" />
+        <input type="text" id="recentPunchSearchInput" class="form-control" placeholder="Search by Order ID, Invoice/Bill No, Store or Beat Route..." autocomplete="off" spellcheck="false" oninput="DS_Orders.renderRecentOrdersTable()" />
       </div>
       <div class="form-group" style="min-width:200px; margin-bottom:0;">
         <select id="recentPunchStatusFilter" class="form-control" onchange="DS_Orders.renderRecentOrdersTable()">
           <option value="">All Statuses</option>
           <option value="active">Active Orders (Non-Cancelled)</option>
-          <option value="all_cancelled">❌ All Cancelled</option>
-          <option value="Cancelled by Customer">❌ Cancelled by Customer</option>
-          <option value="Cancelled by Company/Admin">⚠️ Cancelled by Company/Admin</option>
+          <option value="all_cancelled">All Cancelled</option>
+          <option value="Cancelled by Customer">Cancelled by Customer</option>
+          <option value="Cancelled by Company/Admin">Cancelled by Company/Admin</option>
         </select>
       </div>
       <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('recentPunchSearchInput').value=''; document.getElementById('recentPunchStatusFilter').value=''; DS_Orders.renderRecentOrdersTable();" style="height:36px; padding:0 12px; font-weight:700;">
-        ↺ Reset
+        Reset
       </button>
     </div>
   </div>
@@ -308,7 +308,7 @@
     <div class="modal-header" style="border-bottom:1px solid #fee2e2; background:#fff1f2;">
       <div>
         <h3 class="modal-title" id="cancelOrderTitle" style="color:#9f1239; display:flex; align-items:center; gap:6px;">
-          ❌ Order Cancellation & Mandatory Reason
+          Order Cancellation & Mandatory Reason
         </h3>
         <p style="margin:2px 0 0; font-size:12px; color:#be123c;">
           Specify whether cancellation was initiated by Customer or Company/Admin, and record mandatory remark notes.
@@ -366,13 +366,13 @@
 
       <!-- Stock Recovery Notice -->
       <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:8px 12px; font-size:11px; color:#1e40af;">
-        ℹ️ <strong>Stock Auto-Restoration:</strong> Cancelling this order will automatically restore the booked SKU quantities back into warehouse stock inventory.
+        <strong>Stock Auto-Restoration:</strong> Cancelling this order will automatically restore the booked SKU quantities back into warehouse stock inventory.
       </div>
 
       <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px; padding-top:6px;">
         <button type="button" class="btn btn-secondary" onclick="DS_Orders.closeCancelOrderModal()">Close</button>
         <button type="submit" class="btn btn-danger" style="font-weight:800; background:#be123c; border-color:#be123c; color:#fff;">
-          ✓ Confirm Order Cancellation
+          Confirm Order Cancellation
         </button>
       </div>
     </form>
@@ -384,7 +384,7 @@
   <div class="modal-card" style="width:min(680px, 95%); max-height:90vh; display:flex; flex-direction:column;">
     <div class="modal-header">
       <div>
-        <h3 class="modal-title" id="orderDetailsTitle">📦 Order Overview & Manifest</h3>
+        <h3 class="modal-title" id="orderDetailsTitle">Order Overview & Manifest</h3>
         <p id="orderDetailsSubtitle" style="margin:2px 0 0; font-size:12px; color:var(--ds-text-muted);"></p>
       </div>
       <button type="button" class="modal-close" onclick="DS_Orders.closeOrderDetailsModal()" aria-label="Close">×</button>

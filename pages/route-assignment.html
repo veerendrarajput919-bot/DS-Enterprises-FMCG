@@ -33,96 +33,98 @@
     <main class="ds-main-content">
       <!-- Unified Logistics & Route Workflow Navigation Bar -->
       <div class="ds-tab-bar">
-        <a href="route-assignment.html" class="ds-subnav-pill active">🗺️ Route Delivery Assignment</a>
-        <a href="route-analysis.html" class="ds-subnav-pill">📍 Route & Beat Tracker</a>
-        <a href="dispatch.html" class="ds-subnav-pill">🚚 Dispatch & Loading Sheets</a>
-        <a href="order-punching.html" class="ds-subnav-pill">🛒 Field Order Punching</a>
+        <a href="route-assignment.html" class="ds-subnav-pill active">Route Delivery Assignment</a>
+        <a href="route-analysis.html" class="ds-subnav-pill">Route & Beat Tracker</a>
+        <a href="dispatch.html" class="ds-subnav-pill">Dispatch & Loading Sheets</a>
+        <a href="order-punching.html" class="ds-subnav-pill">Field Order Punching</a>
       </div>
 
       <div class="ds-panel">
         <div class="ds-panel-header" style="flex-wrap:wrap; gap:12px;">
           <div>
-            <h3 class="ds-panel-title">🚚 Route Management & Delivery Assignment</h3>
+            <h3 class="ds-panel-title">Route Management & Delivery Assignment</h3>
             <p class="ds-panel-subtitle">Excel route ingestion, stop sequence ordering, delivery personnel allocation & printable manifests</p>
           </div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-            <a href="order-punching.html" class="btn btn-primary btn-sm" style="font-weight:800; display:inline-flex; align-items:center; gap:6px;">
-              🛒 Punch Order (ऑर्डर पंचिंग)
+          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+            <a href="order-punching.html" class="btn btn-primary btn-sm" style="font-weight:700;">
+              Punch Order
             </a>
             <button type="button" class="btn btn-secondary btn-sm" onclick="DS_RouteAssignment.downloadTemplate()" style="font-weight:700;">
-              ⬇ Download Route Template
+              Download Route Template
             </button>
             <button type="button" class="btn btn-secondary btn-sm" onclick="DS_RouteAssignment.openUploadModal()" style="font-weight:700;">
-              📥 Upload Route Excel Sheet
+              Upload Route Excel Sheet
             </button>
             <button type="button" class="btn btn-success btn-sm" onclick="DS_RouteAssignment.exportAssignmentsToExcel()" style="font-weight:700;">
-              📊 Export to Excel
+              Export to Excel
             </button>
           </div>
         </div>
 
         <!-- Active Beat Routes Summary Cards -->
-        <div style="margin-bottom:20px;">
-          <h4 style="font-size:13px; font-weight:800; text-transform:uppercase; color:var(--ds-text-muted); margin-bottom:10px; letter-spacing:0.5px;">
-            🗺️ Active Delivery Beat Routes (Today's Progress)
+        <div style="margin-bottom:10px;">
+          <h4 style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--ds-text-muted); margin-bottom:6px; letter-spacing:0.3px;">
+            Active Delivery Beat Routes (Today's Progress)
           </h4>
-          <div id="routeSummaryCards" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px;">
+          <div id="routeSummaryCards" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:8px;">
             <!-- Populated dynamically by DS_RouteAssignment.renderRouteCards() -->
           </div>
         </div>
 
         <!-- Global Filter Bar for Delivery Assignments -->
-        <div class="ds-filter-panel" style="margin-bottom:18px;">
-          <div class="ds-filter-grid">
+        <div class="ds-filter-panel" style="margin-bottom:10px; padding:8px 10px;">
+          <div class="ds-filter-grid" style="gap:8px;">
             <div class="form-group">
-              <label class="form-label">📅 Assignment Date</label>
+              <label class="form-label">Assignment Date</label>
               <input type="date" id="routeFilterDate" class="form-control" />
             </div>
 
             <div class="form-group">
-              <label class="form-label">🏙️ City 1 (Main)</label>
+              <label class="form-label">City 1 (Main)</label>
               <select id="routeFilterCity1" class="form-control">
                 <option value="">All City 1</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label class="form-label">🌆 City</label>
+              <label class="form-label">City</label>
               <select id="routeFilterCity" class="form-control">
                 <option value="">All Cities</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label class="form-label">🗺️ Route / Beat</label>
+              <label class="form-label">Route / Beat</label>
               <select id="routeFilterSelect" class="form-control">
                 <option value="">All Delivery Routes</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label class="form-label">🚚 Delivery Status</label>
+              <label class="form-label">Delivery Status</label>
               <select id="routeFilterStatus" class="form-control">
                 <option value="">All Statuses</option>
                 <option value="Assigned">Assigned (Pending)</option>
-                <option value="In Transit">In Transit 🚚</option>
-                <option value="Delivered">Delivered ✅</option>
-                <option value="Failed">Failed / Returned ❌</option>
+                <option value="In Transit">In Transit</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Failed">Failed / Returned</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label class="form-label">👤 Delivery Person</label>
+              <label class="form-label">Delivery Person</label>
               <input type="text" id="routeFilterPerson" class="form-control" placeholder="Filter by person name..." autocomplete="off" spellcheck="false" />
             </div>
 
             <div class="form-group" style="flex:1; min-width:200px;">
-              <label class="form-label">🔍 Search Customer / Order / Area</label>
+              <label class="form-label">Search Customer / Order / Area</label>
               <input type="text" id="routeSearchInput" class="form-control" placeholder="Search by party, order ID, address..." autocomplete="off" spellcheck="false" />
             </div>
 
             <div style="display:flex; gap:6px;">
-              <button type="button" class="btn btn-secondary" onclick="DS_RouteAssignment.resetFilters()" style="height:38px; padding:0 14px; font-weight:700;">
+              <button type="button" class="btn btn-secondary" onclick="DS_RouteAssignment.resetFilters()" style="height:34px; padding:0 12px; font-weight:700;">
+                Reset
+              </button>
                 ↺ Reset
               </button>
             </div>
@@ -133,12 +135,12 @@
         <div class="ds-panel-header" style="margin-bottom:10px;">
           <div>
             <h4 class="ds-panel-title" style="font-size:15px;">
-              📍 Scheduled Delivery Stops & Run Order
+              Scheduled Delivery Stops & Run Order
             </h4>
             <span id="assignmentsCountBadge" class="badge" style="background:#e0f2fe; color:#0369a1; font-size:11px;">0 Stops</span>
           </div>
           <span style="font-size:12px; color:var(--ds-text-muted);">
-            💡 Tip: Change stop sequence number (#) or edit delivery person name directly in table
+            Tip: Change stop sequence number (#) or edit delivery person name directly in table
           </span>
         </div>
 
@@ -174,7 +176,7 @@
     <div class="modal-card" style="width:min(880px, 95%); max-height:90vh; display:flex; flex-direction:column;">
       <div class="modal-header">
         <div>
-          <h3 class="modal-title" id="routeUploadTitle">📥 Upload Route & Delivery Excel Sheet</h3>
+          <h3 class="modal-title" id="routeUploadTitle">Upload Route & Delivery Excel Sheet</h3>
           <p style="margin:2px 0 0; font-size:12px; color:var(--ds-text-muted);">
             Upload delivery runs, stops, orders, and assigned delivery personnel
           </p>
@@ -201,15 +203,14 @@
         <!-- File Drag/Select Box -->
         <div style="border:2px dashed #93c5fd; background:#eff6ff; border-radius:10px; padding:20px; text-align:center; margin-bottom:16px;">
           <input type="file" id="routeExcelFileInput" accept=".xlsx, .xls, .csv" style="display:none;" />
-          <div style="font-size:32px; margin-bottom:6px;">📊</div>
           <h4 style="margin:0 0 4px; font-size:15px; font-weight:800; color:#1e40af;">Select or Drop Route Assignment Excel (.xlsx / .csv)</h4>
           <p style="margin:0 0 12px; font-size:12px; color:#3b82f6;">Supported columns: Route ID, Route Name, Sequence, Customer ID/Name, Address, Order Number, Delivery Person</p>
           <div style="display:flex; gap:10px; justify-content:center;">
             <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('routeExcelFileInput').click()">
-              📁 Browse Excel File
+              Browse Excel File
             </button>
             <button type="button" class="btn btn-secondary btn-sm" onclick="DS_RouteAssignment.downloadTemplate()">
-              ⬇ Download Template
+              Download Template
             </button>
           </div>
         </div>
@@ -221,7 +222,7 @@
       <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; padding:12px 18px; border-top:1px solid #e2e8f0;">
         <button type="button" class="btn btn-secondary" onclick="DS_RouteAssignment.closeUploadModal()">Cancel</button>
         <button type="button" id="btnConfirmRouteImport" class="btn btn-success" style="display:none; font-weight:800;" onclick="DS_RouteAssignment.confirmImport()">
-          ✓ Confirm & Assign Delivery Stops
+          Confirm & Assign Delivery Stops
         </button>
       </div>
     </div>
@@ -232,7 +233,7 @@
     <div class="modal-card" style="width:min(900px, 95%); max-height:92vh; display:flex; flex-direction:column;">
       <div class="modal-header">
         <div>
-          <h3 class="modal-title" id="manifestModalTitle">🖨️ Printable Delivery Route Manifest (Run Sheet)</h3>
+          <h3 class="modal-title" id="manifestModalTitle">Printable Delivery Route Manifest (Run Sheet)</h3>
           <p style="margin:2px 0 0; font-size:12px; color:var(--ds-text-muted);">Official A4 manifest slip for tempo / van driver with customer signatures</p>
         </div>
         <button type="button" class="modal-close" onclick="DS_App.closeModal('routeManifestPrintModal')" aria-label="Close">×</button>
@@ -245,7 +246,7 @@
       <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; padding:12px 18px; border-top:1px solid #e2e8f0;">
         <button type="button" class="btn btn-secondary" onclick="DS_App.closeModal('routeManifestPrintModal')">Close</button>
         <button type="button" class="btn btn-primary" onclick="DS_RouteAssignment.printManifest()" style="font-weight:800;">
-          🖨️ Print Delivery Sheet (A4)
+          Print Delivery Sheet (A4)
         </button>
       </div>
     </div>
@@ -263,6 +264,9 @@
   <script src="../assets/js/route-assignment.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      DS_RouteAssignment.init();
+    });
+    window.addEventListener('ds:components:loaded', () => {
       DS_RouteAssignment.init();
     });
   </script>

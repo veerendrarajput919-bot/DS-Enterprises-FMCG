@@ -733,10 +733,10 @@
         let badgeText = o.status || 'Submitted';
         if (isPartyCancel) {
           badgeClass = 'badge-cancelled-by-party';
-          badgeText = '❌ Cancelled (Customer)';
+          badgeText = 'Cancelled (Customer)';
         } else if (isOwnCancel) {
           badgeClass = 'badge-cancelled-by-own';
-          badgeText = '⚠️ Cancelled (Company)';
+          badgeText = 'Cancelled (Company)';
         } else if (o.status === 'Delivered') {
           badgeClass = 'badge-delivered';
         } else if (o.status === 'Dispatched') {
@@ -752,44 +752,44 @@
         return `
           <tr>
             <td>
-              <button type="button" class="btn btn-link" onclick="DS_Orders.viewOrderDetails('${o.id}')" style="padding:0; font-weight:800; font-size:13px; color:var(--ds-primary); text-decoration:none;">
+              <button type="button" class="btn btn-link" onclick="DS_Orders.viewOrderDetails('${o.id}')" style="padding:0; font-weight:800; font-size:12.5px; color:var(--ds-primary); text-decoration:none;">
                 ${o.id}
               </button>
-              <div style="font-size:11px; color:var(--ds-text-muted);">${DS_App.formatDate(o.date)}</div>
+              <div style="font-size:10.5px; color:var(--ds-text-muted);">${DS_App.formatDate(o.date)}</div>
             </td>
             <td>
-              <span class="badge" style="background:#eff6ff; color:#1d4ed8; font-size:11.5px; font-weight:700; font-family:monospace; padding:3px 8px; border-radius:6px;" title="Invoice / Bill No.">
-                🧾 ${DS_App.escapeHtml(o.invoice_no || o.bill_no || o.invoiceNo || o.billNo || 'Pending')}
+              <span class="badge" style="background:#eff6ff; color:#1d4ed8; font-size:11px; font-weight:700; font-family:monospace; padding:2px 6px; border-radius:4px;" title="Invoice / Bill No.">
+                ${DS_App.escapeHtml(o.invoice_no || o.bill_no || o.invoiceNo || o.billNo || 'Pending')}
               </span>
             </td>
             <td>
               <strong>${DS_App.escapeHtml(o.storeName || o.party)}</strong>
-              ${o.givenContact ? `<div style="font-size:11px; color:var(--ds-text-muted);">📞 ${DS_App.escapeHtml(o.givenContact)}</div>` : ''}
+              ${o.givenContact ? `<div style="font-size:10.5px; color:var(--ds-text-muted);">${DS_App.escapeHtml(o.givenContact)}</div>` : ''}
             </td>
             <td>${DS_App.escapeHtml(o.route || '-')}</td>
             <td class="num">
               <strong>${DS_App.money(o.total)}</strong>
-              <div style="font-size:11px; color:var(--ds-text-muted);">${DS_App.qty(o.qty)} items</div>
+              <div style="font-size:10.5px; color:var(--ds-text-muted);">${DS_App.qty(o.qty)} items</div>
             </td>
             <td>
               <span class="badge ${badgeClass}">${badgeText}</span>
-              ${remarkNote ? `<div style="font-size:11px; color:#be123c; margin-top:2px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${DS_App.escapeHtml(remarkNote)}">📝 ${DS_App.escapeHtml(remarkNote)}</div>` : ''}
+              ${remarkNote ? `<div style="font-size:10.5px; color:#be123c; margin-top:2px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${DS_App.escapeHtml(remarkNote)}">${DS_App.escapeHtml(remarkNote)}</div>` : ''}
             </td>
             <td style="text-align:center;">
-              <div style="display:flex; gap:4px; justify-content:center; flex-wrap:wrap;">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.viewOrderDetails('${o.id}')" title="View Full Order Details" style="padding:3px 7px; font-size:11px;">
-                  👁️
+              <div style="display:flex; gap:3px; justify-content:center; flex-wrap:wrap;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.viewOrderDetails('${o.id}')" title="View Full Order Details" style="padding:2px 6px; font-size:11px;">
+                  View
                 </button>
-                <button type="button" class="btn btn-primary btn-sm" onclick="DS_Orders.copyOrderText('${o.id}')" title="Copy Order for WhatsApp" style="padding:3px 7px; font-size:11px;">
-                  📋
+                <button type="button" class="btn btn-primary btn-sm" onclick="DS_Orders.copyOrderText('${o.id}')" title="Copy Order for WhatsApp" style="padding:2px 6px; font-size:11px;">
+                  WhatsApp
                 </button>
                 ${!isCancelled && o.status !== 'Delivered' ? `
-                  <button type="button" class="btn btn-danger btn-sm" onclick="DS_Orders.openCancelOrderModal('${o.id}')" title="Cancel this order (Customer or Own)" style="padding:3px 8px; font-size:11px; background:#fff1f2; color:#be123c; border:1px solid #fecdd3; font-weight:700;">
-                    ❌ Cancel
+                  <button type="button" class="btn btn-danger btn-sm" onclick="DS_Orders.openCancelOrderModal('${o.id}')" title="Cancel this order (Customer or Own)" style="padding:2px 6px; font-size:11px; background:#fff1f2; color:#be123c; border:1px solid #fecdd3; font-weight:700;">
+                    Cancel
                   </button>
                 ` : isCancelled ? `
-                  <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.openCancelOrderModal('${o.id}')" title="View or edit cancellation remark note" style="padding:3px 8px; font-size:11px; background:#f1f5f9; color:#475569;">
-                    📝 Note
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.openCancelOrderModal('${o.id}')" title="View or edit cancellation remark note" style="padding:2px 6px; font-size:11px; background:#f1f5f9; color:#475569;">
+                    Note
                   </button>
                 ` : ''}
               </div>
@@ -1203,32 +1203,32 @@
         const st = String(o.status || 'Pending');
         if (st === 'Cancelled by Customer' || st === 'Cancelled by Party' || o.cancelType === 'party') {
           badgeClass = 'badge-cancelled-by-party';
-          badgeText = '❌ Cancelled (Customer)';
+          badgeText = 'Cancelled (Customer)';
           const r = o.cancelReason || o.cancelRemark || 'Customer Refused';
-          noteHtml = `<div class="cancel-reason-note" title="${DS_App.escapeHtml(r)}">📝 ${DS_App.escapeHtml(r)}</div>`;
+          noteHtml = `<div class="cancel-reason-note" title="${DS_App.escapeHtml(r)}">${DS_App.escapeHtml(r)}</div>`;
         } else if (st === 'Cancelled by Company/Admin' || st === 'Cancelled by Own' || o.cancelType === 'own') {
           badgeClass = 'badge-cancelled-by-own';
-          badgeText = '⚠️ Cancelled (Company)';
+          badgeText = 'Cancelled (Company)';
           const r = o.cancelReason || o.cancelRemark || 'Company Issue';
-          noteHtml = `<div class="cancel-reason-note own" title="${DS_App.escapeHtml(r)}">📝 ${DS_App.escapeHtml(r)}</div>`;
+          noteHtml = `<div class="cancel-reason-note own" title="${DS_App.escapeHtml(r)}">${DS_App.escapeHtml(r)}</div>`;
         } else if (st === 'Delivered') {
           badgeClass = 'badge-delivered';
-          badgeText = '✓ Delivered';
+          badgeText = 'Delivered';
         } else if (st === 'Dispatched') {
           badgeClass = 'badge-dispatched';
-          badgeText = '🚚 Dispatched';
+          badgeText = 'Dispatched';
         } else if (st === 'Ready for Delivery') {
           badgeClass = 'badge-ready';
-          badgeText = '📦 Ready for Delivery';
+          badgeText = 'Ready for Delivery';
         } else if (st === 'Processing') {
           badgeClass = 'badge-processing';
-          badgeText = '⏳ Processing';
+          badgeText = 'Processing';
         } else if (st === 'Confirmed' || st === 'Approved') {
           badgeClass = 'badge-approved';
-          badgeText = '⚡ Confirmed';
+          badgeText = 'Confirmed';
         } else {
           badgeClass = 'badge-submitted';
-          badgeText = '📋 Pending';
+          badgeText = 'Pending';
         }
 
         const isCancelled = st.includes('Cancelled') || o.cancelType;
@@ -1239,20 +1239,20 @@
         return `
           <tr>
             <td>
-              <button type="button" class="btn btn-link" onclick="DS_Orders.viewOrderDetails('${o.id}')" style="padding:0; font-weight:800; font-size:13px; color:var(--ds-primary); text-decoration:none; cursor:pointer;" title="Click to view full order manifest & notes">
+              <button type="button" class="btn btn-link" onclick="DS_Orders.viewOrderDetails('${o.id}')" style="padding:0; font-weight:800; font-size:12.5px; color:var(--ds-primary); text-decoration:none; cursor:pointer;" title="Click to view full order manifest & notes">
                 ${o.id}
               </button>
               <div style="margin-top:2px;">
-                <span class="badge" style="font-size:10.5px; padding:2px 7px; background:#eff6ff; color:#1d4ed8; font-weight:700; font-family:monospace;" title="Invoice / Bill No.">🧾 ${DS_App.escapeHtml(o.invoice_no || o.bill_no || o.invoiceNo || o.billNo || '-')}</span>
+                <span class="badge" style="font-size:10.5px; padding:2px 6px; background:#eff6ff; color:#1d4ed8; font-weight:700; font-family:monospace;" title="Invoice / Bill No.">${DS_App.escapeHtml(o.invoice_no || o.bill_no || o.invoiceNo || o.billNo || '-')}</span>
               </div>
             </td>
             <td>
-              <div style="font-weight:600; font-size:12px;">${DS_App.formatDate(o.date)}</div>
+              <div style="font-weight:600; font-size:11.5px;">${DS_App.formatDate(o.date)}</div>
               <div style="font-size:10px; color:var(--ds-text-muted);">${o.dateTime ? o.dateTime.split(' ')[1] : ''}</div>
             </td>
             <td>
-              <strong style="color:var(--ds-text); font-size:13px;">${DS_App.escapeHtml(o.storeName || o.party)}</strong>
-              ${o.location ? `<div style="font-size:11px; color:var(--ds-text-muted);">${DS_App.escapeHtml(o.location)}</div>` : ''}
+              <strong style="color:var(--ds-text); font-size:12.5px;">${DS_App.escapeHtml(o.storeName || o.party)}</strong>
+              ${o.location ? `<div style="font-size:10.5px; color:var(--ds-text-muted);">${DS_App.escapeHtml(o.location)}</div>` : ''}
             </td>
             <td>${DS_App.escapeHtml(o.route || '-')}</td>
             <td>
@@ -1263,33 +1263,33 @@
             <td>
               <span class="badge ${badgeClass}">${badgeText}</span>
               ${noteHtml}
-              ${adminNoteCount > 0 ? `<div style="font-size:10px; color:#6366f1; margin-top:3px; font-weight:700;">🔒 ${adminNoteCount} Admin Note(s)</div>` : ''}
+              ${adminNoteCount > 0 ? `<div style="font-size:10px; color:#6366f1; margin-top:2px; font-weight:700;">${adminNoteCount} Admin Note(s)</div>` : ''}
             </td>
             <td style="text-align:center;">
-              <div style="display:flex; gap:4px; justify-content:center; flex-wrap:wrap;">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.viewOrderDetails('${o.id}')" title="View Items, Timeline & Remarks" style="padding:4px 8px; font-size:11px;">
-                  👁️ View
+              <div style="display:flex; gap:3px; justify-content:center; flex-wrap:wrap;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.viewOrderDetails('${o.id}')" title="View Items, Timeline & Remarks" style="padding:3px 6px; font-size:11px;">
+                  View
                 </button>
-                <button type="button" class="btn btn-primary btn-sm" onclick="DS_Orders.copyOrderText('${o.id}')" title="Copy Order Slip for WhatsApp" style="padding:4px 8px; font-size:11px;">
-                  📋 WhatsApp
+                <button type="button" class="btn btn-primary btn-sm" onclick="DS_Orders.copyOrderText('${o.id}')" title="Copy Order Slip for WhatsApp" style="padding:3px 6px; font-size:11px;">
+                  WhatsApp
                 </button>
                 ${!isCancelled && !isDelivered ? `
-                  <button type="button" class="btn btn-danger btn-sm" onclick="DS_Orders.openCancelOrderModal('${o.id}')" title="Cancel this order with reason remark" style="padding:4px 8px; font-size:11px; background:#fff1f2; color:#be123c; border:1px solid #fecdd3;">
-                    ❌ Cancel
+                  <button type="button" class="btn btn-danger btn-sm" onclick="DS_Orders.openCancelOrderModal('${o.id}')" title="Cancel this order with reason remark" style="padding:3px 6px; font-size:11px; background:#fff1f2; color:#be123c; border:1px solid #fecdd3;">
+                    Cancel
                   </button>
                 ` : isCancelled ? `
-                  <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.openCancelOrderModal('${o.id}')" title="View or edit cancellation remark note" style="padding:4px 8px; font-size:11px; background:#f1f5f9; color:#475569;">
-                    📝 Note
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.openCancelOrderModal('${o.id}')" title="View or edit cancellation remark note" style="padding:3px 6px; font-size:11px; background:#f1f5f9; color:#475569;">
+                    Note
                   </button>
                   ${isAdmin ? `
-                    <button type="button" class="btn btn-success btn-sm" onclick="DS_Orders.reopenOrder('${o.id}')" title="Reopen Cancelled Order (Admin Only)" style="padding:4px 8px; font-size:11px; background:#dcfce7; color:#15803d; border:1px solid #86efac;">
-                      ↺ Reopen
+                    <button type="button" class="btn btn-success btn-sm" onclick="DS_Orders.reopenOrder('${o.id}')" title="Reopen Cancelled Order (Admin Only)" style="padding:3px 6px; font-size:11px; background:#dcfce7; color:#15803d; border:1px solid #86efac;">
+                      Reopen
                     </button>
                   ` : ''}
                 ` : ''}
                 ${isAdmin ? `
-                  <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.openAdminNoteModal('${o.id}')" title="Add Confidential Admin Note" style="padding:4px 8px; font-size:11px; color:#4338ca;">
-                    ✍️
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.openAdminNoteModal('${o.id}')" title="Add Confidential Admin Note" style="padding:3px 6px; font-size:11px; color:#4338ca;">
+                    +Note
                   </button>
                 ` : ''}
               </div>
@@ -1678,9 +1678,9 @@
 
           <!-- Order Lifecycle Progress Bar (if not cancelled) -->
           ${!isCancelled ? `
-            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:12px; margin-bottom:14px;">
-              <div style="font-size:11px; font-weight:800; color:#64748b; text-transform:uppercase; margin-bottom:10px;">
-                🔄 Order Fulfillment Lifecycle
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-bottom:10px;">
+              <div style="font-size:10.5px; font-weight:800; color:#64748b; text-transform:uppercase; margin-bottom:8px;">
+                Order Fulfillment Lifecycle
               </div>
               <div style="display:flex; justify-content:space-between; position:relative; gap:4px;">
                 ${stages.map((stName, idx) => {
@@ -1688,10 +1688,10 @@
                   const isCurrent = currentStageIdx === idx;
                   return `
                     <div style="flex:1; text-align:center; position:relative;">
-                      <div style="width:24px; height:24px; border-radius:50%; margin:0 auto 4px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; background:${isDone ? '#15803d' : '#e2e8f0'}; color:${isDone ? '#ffffff' : '#64748b'};">
+                      <div style="width:22px; height:22px; border-radius:50%; margin:0 auto 3px; display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:800; background:${isDone ? '#15803d' : '#e2e8f0'}; color:${isDone ? '#ffffff' : '#64748b'};">
                         ${isDone ? '✓' : idx + 1}
                       </div>
-                      <div style="font-size:10px; font-weight:${isCurrent ? '800' : '500'}; color:${isCurrent ? '#1e3a8a' : '#64748b'};">
+                      <div style="font-size:9.5px; font-weight:${isCurrent ? '800' : '500'}; color:${isCurrent ? '#1e3a8a' : '#64748b'};">
                         ${stName}
                       </div>
                     </div>
@@ -1703,62 +1703,62 @@
 
           <!-- Cancellation Alert Box if Cancelled -->
           ${isCancelled ? `
-            <div style="background:${order.cancelType === 'own' ? '#f5f3ff' : '#fff1f2'}; border:1px solid ${order.cancelType === 'own' ? '#ddd6fe' : '#fecdd3'}; border-radius:10px; padding:14px 16px; margin-bottom:14px;">
-              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
-                <strong style="color:${order.cancelType === 'own' ? '#5b21b6' : '#9f1239'}; font-size:14px;">
-                  ${order.cancelType === 'own' ? '⚠️ Cancelled by Company / Admin' : '❌ Cancelled by Customer'}
+            <div style="background:${order.cancelType === 'own' ? '#f5f3ff' : '#fff1f2'}; border:1px solid ${order.cancelType === 'own' ? '#ddd6fe' : '#fecdd3'}; border-radius:8px; padding:10px 12px; margin-bottom:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+                <strong style="color:${order.cancelType === 'own' ? '#5b21b6' : '#9f1239'}; font-size:13px;">
+                  ${order.cancelType === 'own' ? 'Cancelled by Company / Admin' : 'Cancelled by Customer'}
                 </strong>
                 ${isAdmin ? `
-                  <button type="button" class="btn btn-success btn-sm" onclick="DS_Orders.closeOrderDetailsModal(); DS_Orders.reopenOrder('${order.id}');" style="padding:3px 8px; font-size:11px;">
-                    ↺ Reopen Order
+                  <button type="button" class="btn btn-success btn-sm" onclick="DS_Orders.closeOrderDetailsModal(); DS_Orders.reopenOrder('${order.id}');" style="padding:2px 6px; font-size:11px;">
+                    Reopen Order
                   </button>
                 ` : ''}
               </div>
-              <div style="font-size:12.5px; color:var(--ds-text); margin-top:4px;">
+              <div style="font-size:11.5px; color:var(--ds-text); margin-top:3px;">
                 <strong>Reason Category:</strong> ${DS_App.escapeHtml(order.cancelReason || 'Customer Refused')}
               </div>
-              <div style="font-size:12.5px; color:var(--ds-text); margin-top:2px;">
+              <div style="font-size:11.5px; color:var(--ds-text); margin-top:2px;">
                 <strong>Mandatory Remark / Note:</strong> ${DS_App.escapeHtml(order.cancelRemark || '-')}
               </div>
-              <div style="font-size:11px; color:var(--ds-text-muted); margin-top:8px; border-top:1px dashed #cbd5e1; padding-top:6px;">
+              <div style="font-size:10.5px; color:var(--ds-text-muted); margin-top:6px; border-top:1px dashed #cbd5e1; padding-top:4px;">
                 Cancelled by: <strong>${DS_App.escapeHtml(order.cancelledBy || order.cancelled_by_user || 'Admin')}</strong> (${order.cancelled_by_id || 'ADMIN'}) • At: <strong>${order.cancelledAt ? DS_App.formatDate(order.cancelledAt) : '-'}</strong>
-                ${order.stockRestored ? ' • <span style="color:#15803d; font-weight:700;">✓ Warehouse Inventory Restored</span>' : ''}
+                ${order.stockRestored ? ' • <span style="color:#15803d; font-weight:700;">✓ Inventory Restored</span>' : ''}
               </div>
             </div>
           ` : ''}
 
           <!-- Admin Notes Section -->
-          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px; margin-bottom:14px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <strong style="font-size:12px; color:#4338ca; text-transform:uppercase;">🔒 Confidential Admin Internal Notes</strong>
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <strong style="font-size:11px; color:#4338ca; text-transform:uppercase;">Confidential Admin Internal Notes</strong>
               ${isAdmin ? `
-                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.openAdminNoteModal('${order.id}')" style="font-size:11px; padding:2px 8px; color:#4338ca;">
-                  ➕ Add Admin Note
+                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.openAdminNoteModal('${order.id}')" style="font-size:10.5px; padding:2px 6px; color:#4338ca;">
+                  + Add Admin Note
                 </button>
               ` : ''}
             </div>
             ${Array.isArray(order.adminNotes) && order.adminNotes.length ? `
-              <div style="display:flex; flex-direction:column; gap:6px;">
+              <div style="display:flex; flex-direction:column; gap:4px;">
                 ${order.adminNotes.map(an => `
-                  <div style="background:#ffffff; border:1px solid #e0e7ff; border-radius:6px; padding:8px 10px; font-size:12px;">
+                  <div style="background:#ffffff; border:1px solid #e0e7ff; border-radius:4px; padding:6px 8px; font-size:11.5px;">
                     <div style="color:#1e293b;">${DS_App.escapeHtml(an.note)}</div>
-                    <div style="font-size:10px; color:#6366f1; margin-top:4px;">
+                    <div style="font-size:9.5px; color:#6366f1; margin-top:3px;">
                       By <strong>${DS_App.escapeHtml(an.admin_user || 'Admin')}</strong> • ${an.created_at ? DS_App.formatDate(an.created_at) : ''}
                     </div>
                   </div>
                 `).join('')}
               </div>
             ` : `
-              <div style="font-size:11px; color:#94a3b8; font-style:italic;">No internal notes added yet.</div>
+              <div style="font-size:10.5px; color:#94a3b8; font-style:italic;">No internal notes added yet.</div>
             `}
           </div>
 
           <!-- Items Manifest Table -->
-          <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--ds-text-muted); margin-bottom:6px;">
-            🛒 Ordered FMCG SKUs (${items.length} Items)
+          <div style="font-size:11.5px; font-weight:800; text-transform:uppercase; color:var(--ds-text-muted); margin-bottom:4px;">
+            Ordered FMCG SKUs (${items.length} Items)
           </div>
-          <div class="ds-table-wrap" style="border:1px solid #e2e8f0; border-radius:8px; margin-bottom:14px;">
-            <table class="ds-table" style="font-size:12px;">
+          <div class="ds-table-wrap" style="border:1px solid #e2e8f0; border-radius:6px; margin-bottom:10px;">
+            <table class="ds-table" style="font-size:11.5px;">
               <thead>
                 <tr>
                   <th>#</th>
@@ -1774,7 +1774,7 @@
                   <tr>
                     <td>${idx + 1}</td>
                     <td><strong>${DS_App.escapeHtml(it.name || it.item || '-')}</strong></td>
-                    <td><span class="badge" style="background:#e0f2fe; color:#0369a1; font-size:10px;">${DS_App.escapeHtml(it.brand || '-')}</span></td>
+                    <td><span class="badge" style="background:#e0f2fe; color:#0369a1; font-size:9.5px;">${DS_App.escapeHtml(it.brand || '-')}</span></td>
                     <td class="num">${DS_App.money(it.price || it.rate)}</td>
                     <td class="num"><strong>${DS_App.qty(it.qty)} ${it.unit || ''}</strong></td>
                     <td class="num"><strong>${DS_App.money(it.total || (it.qty * (it.price || it.rate || 0)))}</strong></td>
@@ -1786,13 +1786,13 @@
 
           <!-- Status Audit Trail Timeline -->
           ${backendHistory.length ? `
-            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:12px;">
-              <strong style="font-size:12px; color:#475569; text-transform:uppercase; display:block; margin-bottom:8px;">
-                📜 Order Status Audit Trail
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px;">
+              <strong style="font-size:11px; color:#475569; text-transform:uppercase; display:block; margin-bottom:6px;">
+                Order Status Audit Trail
               </strong>
-              <div style="font-size:11px; display:flex; flex-direction:column; gap:6px;">
+              <div style="font-size:10.5px; display:flex; flex-direction:column; gap:4px;">
                 ${backendHistory.map(h => `
-                  <div style="border-left:2px solid #3b82f6; padding-left:8px;">
+                  <div style="border-left:2px solid #3b82f6; padding-left:6px;">
                     <span style="font-weight:700;">${h.to_status}</span> 
                     <span style="color:#64748b;">(from ${h.from_status || 'Initial'})</span>
                     <span style="color:#94a3b8;"> • by ${h.changed_by} at ${h.created_at}</span>
@@ -1812,17 +1812,17 @@
         const isAdmin = window.DS_Auth ? window.DS_Auth.isAdmin() : true;
 
         actionsWrap.innerHTML = `
-          <button type="button" class="btn btn-primary btn-sm" onclick="DS_Orders.copyOrderText('${order.id}')">
-            📋 WhatsApp Slip
+          <button type="button" class="btn btn-primary btn-sm" onclick="DS_Orders.copyOrderText('${order.id}')" style="font-size:11.5px; padding:4px 8px;">
+            WhatsApp Slip
           </button>
           ${isCancelled && isAdmin ? `
-            <button type="button" class="btn btn-success btn-sm" onclick="DS_Orders.closeOrderDetailsModal(); DS_Orders.reopenOrder('${order.id}');" style="background:#15803d; color:#fff;">
-              ↺ Reopen Order
+            <button type="button" class="btn btn-success btn-sm" onclick="DS_Orders.closeOrderDetailsModal(); DS_Orders.reopenOrder('${order.id}');" style="background:#15803d; color:#fff; font-size:11.5px; padding:4px 8px;">
+              Reopen Order
             </button>
           ` : ''}
           ${!isCancelled && !isDelivered ? `
-            <button type="button" class="btn btn-danger btn-sm" onclick="DS_Orders.closeOrderDetailsModal(); DS_Orders.openCancelOrderModal('${order.id}');" style="background:#be123c; border-color:#be123c; color:#fff;">
-              ❌ Cancel Order
+            <button type="button" class="btn btn-danger btn-sm" onclick="DS_Orders.closeOrderDetailsModal(); DS_Orders.openCancelOrderModal('${order.id}');" style="background:#be123c; border-color:#be123c; color:#fff; font-size:11.5px; padding:4px 8px;">
+              Cancel Order
             </button>
           ` : ''}
         `;

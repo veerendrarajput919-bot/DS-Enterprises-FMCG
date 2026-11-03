@@ -38,29 +38,29 @@
     <div data-component="sidebar"></div>
 
     <main class="ds-main-content">
-<div class="ds-panel" style="max-width:1100px; margin:0 auto;">
-  <div class="ds-panel-header" style="flex-wrap:wrap; gap:12px;">
+<div class="ds-panel" style="max-width:1100px; margin:0 auto; padding:10px 12px;">
+  <div class="ds-panel-header" style="flex-wrap:wrap; gap:8px; margin-bottom:10px;">
     <div>
-      <h3 class="ds-panel-title">📥 FMCG Data Ingestion & Bulk Update Hub</h3>
+      <h3 class="ds-panel-title">FMCG Data Ingestion & Bulk Update Hub</h3>
       <p class="ds-panel-subtitle">Import & update 100+ bills in one upload, audit changes, preview diffs or load multi-file ledgers</p>
     </div>
-    <div style="display:flex; gap:8px;">
-      <button type="button" class="btn btn-secondary btn-sm" onclick="DS_ExcelImport.download100BillsTemplate()" style="font-weight:700;">
-        ⬇ Download 100-Bill Template
+    <div style="display:flex; gap:6px;">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="DS_ExcelImport.download100BillsTemplate()" style="font-weight:700; padding:4px 8px; font-size:11.5px;">
+        Download 100-Bill Template
       </button>
     </div>
   </div>
 
   <!-- Ingestion Mode Navigation Tabs -->
-  <div style="display:flex; gap:8px; border-bottom:2px solid #e2e8f0; margin-bottom:20px; padding-bottom:2px;">
-    <button type="button" id="tabBtnBulk" class="btn btn-sm" onclick="DS_ExcelImport.switchTab('bulk')" style="font-weight:800; border-radius:6px 6px 0 0; background:var(--ds-primary); color:#ffffff; padding:8px 18px;">
-      ⚡ Bulk Bill Ingestion (100+ Bills)
+  <div style="display:flex; gap:6px; border-bottom:1px solid #e2e8f0; margin-bottom:10px; padding-bottom:2px;">
+    <button type="button" id="tabBtnBulk" class="btn btn-sm" onclick="DS_ExcelImport.switchTab('bulk')" style="font-weight:700; border-radius:4px 4px 0 0; background:var(--ds-primary); color:#ffffff; padding:5px 12px; font-size:11.5px;">
+      Bulk Bill Ingestion (100+ Bills)
     </button>
-    <button type="button" id="tabBtnHistory" class="btn btn-sm" onclick="DS_ExcelImport.switchTab('history')" style="font-weight:700; border-radius:6px 6px 0 0; background:transparent; color:#64748b; padding:8px 18px;">
-      📜 Import History & Audit Trail
+    <button type="button" id="tabBtnHistory" class="btn btn-sm" onclick="DS_ExcelImport.switchTab('history')" style="font-weight:700; border-radius:4px 4px 0 0; background:transparent; color:#64748b; padding:5px 12px; font-size:11.5px;">
+      Import History & Audit Trail
     </button>
-    <button type="button" id="tabBtnLegacy" class="btn btn-sm" onclick="DS_ExcelImport.switchTab('legacy')" style="font-weight:700; border-radius:6px 6px 0 0; background:transparent; color:#64748b; padding:8px 18px;">
-      📑 4-File Multi-Sheet Ledger
+    <button type="button" id="tabBtnLegacy" class="btn btn-sm" onclick="DS_ExcelImport.switchTab('legacy')" style="font-weight:700; border-radius:4px 4px 0 0; background:transparent; color:#64748b; padding:5px 12px; font-size:11.5px;">
+      4-File Multi-Sheet Ledger
     </button>
   </div>
 
@@ -69,52 +69,52 @@
   <!-- ══════════════════════════════════════════════════════════════════ -->
   <div id="tabContentBulk">
     <!-- Configuration & Ingestion Rules Bar -->
-    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:20px;">
-      <h4 style="margin:0 0 10px; font-size:14px; font-weight:800; color:#1e293b;">1. Configure Ingestion Mode & Protection Safeguards</h4>
+    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px; margin-bottom:10px;">
+      <h4 style="margin:0 0 6px; font-size:13px; font-weight:800; color:#1e293b;">1. Configure Ingestion Mode & Protection Safeguards</h4>
       
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:10px;">
         <!-- Ingestion Mode Radios -->
         <div>
-          <label class="form-label" style="font-weight:700; margin-bottom:6px; display:block;">Select Processing Mode *</label>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:8px 12px;">
+          <label class="form-label" style="font-weight:700; margin-bottom:4px; display:block;">Select Processing Mode *</label>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:6px 10px;">
               <input type="radio" name="importModeRadio" value="insert_update" checked />
               <div>
-                <strong style="color:#166534;">🟢 Insert New & Update Existing (Recommended)</strong>
-                <div style="font-size:11px; color:var(--ds-text-muted);">Matches stable ID (Bill/Inv No). Updates existing bills & inserts new ones.</div>
+                <strong style="color:#166534;">Insert New & Update Existing (Recommended)</strong>
+                <div style="font-size:10.5px; color:var(--ds-text-muted);">Matches stable ID (Bill/Inv No). Updates existing bills & inserts new ones.</div>
               </div>
             </label>
-            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:8px 12px;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:6px 10px;">
               <input type="radio" name="importModeRadio" value="insert" />
               <div>
-                <strong style="color:#1d4ed8;">🔵 Insert New Only</strong>
-                <div style="font-size:11px; color:var(--ds-text-muted);">Only creates records that do not exist; existing matching bills are skipped.</div>
+                <strong style="color:#1d4ed8;">Insert New Only</strong>
+                <div style="font-size:10.5px; color:var(--ds-text-muted);">Only creates records that do not exist; existing matching bills are skipped.</div>
               </div>
             </label>
-            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:8px 12px;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:6px 10px;">
               <input type="radio" name="importModeRadio" value="update" />
               <div>
-                <strong style="color:#b45309;">🟠 Update Existing Only</strong>
-                <div style="font-size:11px; color:var(--ds-text-muted);">Only modifies matching records; rows without an existing ID are flagged.</div>
+                <strong style="color:#b45309;">Update Existing Only</strong>
+                <div style="font-size:10.5px; color:var(--ds-text-muted);">Only modifies matching records; rows without an existing ID are flagged.</div>
               </div>
             </label>
           </div>
         </div>
 
         <!-- Safeguard Flags -->
-        <div style="display:flex; flex-direction:column; gap:10px; justify-content:center;">
-          <label style="display:flex; align-items:flex-start; gap:8px; font-size:12.5px; cursor:pointer;">
-            <input type="checkbox" id="chkRecalcTaxes" checked style="margin-top:3px;" />
+        <div style="display:flex; flex-direction:column; gap:8px; justify-content:center;">
+          <label style="display:flex; align-items:flex-start; gap:8px; font-size:12px; cursor:pointer;">
+            <input type="checkbox" id="chkRecalcTaxes" checked style="margin-top:2px;" />
             <div>
               <strong>Recalculate Totals & Taxes Using FMCG Rules</strong>
-              <div style="font-size:11px; color:var(--ds-text-muted);">Automatically computes Rate × Qty and 5% GST if not specified in sheet.</div>
+              <div style="font-size:10.5px; color:var(--ds-text-muted);">Automatically computes Rate × Qty and 5% GST if not specified in sheet.</div>
             </div>
           </label>
-          <label style="display:flex; align-items:flex-start; gap:8px; font-size:12.5px; cursor:pointer;">
-            <input type="checkbox" id="chkClearBlankFields" style="margin-top:3px;" />
+          <label style="display:flex; align-items:flex-start; gap:8px; font-size:12px; cursor:pointer;">
+            <input type="checkbox" id="chkClearBlankFields" style="margin-top:2px;" />
             <div>
               <strong>Clear Existing Fields When Column is Blank</strong>
-              <div style="font-size:11px; color:#b91c1c;">⚠️ Warning: By default, blank cells in Excel preserve existing data to prevent accidental loss.</div>
+              <div style="font-size:10.5px; color:#b91c1c;">Warning: By default, blank cells in Excel preserve existing data to prevent accidental loss.</div>
             </div>
           </label>
         </div>
@@ -122,17 +122,16 @@
     </div>
 
     <!-- Drag & Drop File Upload Box -->
-    <div style="border:2px dashed #93c5fd; background:#eff6ff; border-radius:12px; padding:24px; text-align:center; margin-bottom:20px;">
+    <div style="border:2px dashed #93c5fd; background:#eff6ff; border-radius:8px; padding:16px; text-align:center; margin-bottom:10px;">
       <input type="file" id="bulkBillFileInput" accept=".xlsx, .xls, .csv" style="display:none;" />
-      <div style="font-size:36px; margin-bottom:6px;">📊</div>
-      <h4 style="margin:0 0 6px; font-size:16px; font-weight:800; color:#1e40af;">Select or Drop Excel Workbook or CSV File (.xlsx, .xls, .csv)</h4>
-      <p style="margin:0 0 14px; font-size:12px; color:#3b82f6;">Supports 100+ bills in one batch. Auto-detects Bill No, Customer, SKU, Qty, Rate, Tax & Totals.</p>
-      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-        <button type="button" class="btn btn-primary" onclick="document.getElementById('bulkBillFileInput').click()" style="padding:9px 20px; font-weight:700;">
-          📁 Choose Excel / CSV File
+      <h4 style="margin:0 0 4px; font-size:14px; font-weight:800; color:#1e40af;">Select or Drop Excel Workbook or CSV File (.xlsx, .xls, .csv)</h4>
+      <p style="margin:0 0 10px; font-size:11.5px; color:#3b82f6;">Supports 100+ bills in one batch. Auto-detects Bill No, Customer, SKU, Qty, Rate, Tax & Totals.</p>
+      <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+        <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('bulkBillFileInput').click()" style="padding:6px 14px; font-weight:700;">
+          Choose Excel / CSV File
         </button>
-        <button type="button" class="btn btn-secondary" onclick="DS_ExcelImport.download100BillsTemplate()" style="padding:9px 18px;">
-          ⬇ Download 100-Bill Sample Template
+        <button type="button" class="btn btn-secondary btn-sm" onclick="DS_ExcelImport.download100BillsTemplate()" style="padding:6px 14px;">
+          Download 100-Bill Sample Template
         </button>
       </div>
     </div>
@@ -147,7 +146,7 @@
   <div id="tabContentHistory" style="display:none;">
     <div class="ds-panel-header" style="margin-bottom:12px;">
       <div>
-        <h4 class="ds-panel-title" style="font-size:14px;">📜 Excel Ingestion Log & Audit Trail</h4>
+        <h4 class="ds-panel-title" style="font-size:14px;">Excel Ingestion Log & Audit Trail</h4>
         <p class="ds-panel-subtitle">History of uploaded filenames, admins, record counts, and execution status</p>
       </div>
       <button type="button" class="btn btn-secondary btn-sm" onclick="DS_ExcelImport.loadImportHistory()">
@@ -230,12 +229,12 @@
       </div>
     </div>
 
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
-      <button type="button" class="btn btn-success" id="processIndependentBtn" style="padding:10px 20px; font-size:14px; font-weight:700;">
-        ✓ Process Uploaded Files
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+      <button type="button" class="btn btn-success btn-sm" id="processIndependentBtn" style="padding:6px 14px; font-weight:700;">
+        Process Uploaded Files
       </button>
-      <button type="button" class="btn btn-secondary" id="clearIndependentBtn" style="padding:10px 18px; font-size:14px;">
-        🧹 Reset to Sample Seed
+      <button type="button" class="btn btn-secondary btn-sm" id="clearIndependentBtn" style="padding:6px 12px;">
+        Reset to Sample Seed
       </button>
     </div>
     <div id="independentMsg" style="margin-bottom:16px; font-size:13px;"></div>

@@ -39,27 +39,27 @@
 
     <main class="ds-main-content">
       <!-- Unified Order Workflow Navigation Bar -->
-      <div class="ds-tab-bar">
-        <a href="order-approval.html" class="ds-subnav-pill active">⚡ Order Approvals</a>
-        <a href="order-punching.html" class="ds-subnav-pill">🛒 Punch Field Order</a>
-        <a href="order-report.html" class="ds-subnav-pill">📋 All Orders & Reports</a>
-        <a href="route-assignment.html" class="ds-subnav-pill">🗺️ Route Delivery</a>
-        <a href="route-analysis.html" class="ds-subnav-pill">📍 Route & Beat Tracker</a>
+      <div class="ds-tab-bar" style="margin-bottom:8px; gap:4px;">
+        <a href="order-approval.html" class="ds-subnav-pill active">Order Approvals</a>
+        <a href="order-punching.html" class="ds-subnav-pill">Punch Field Order</a>
+        <a href="order-report.html" class="ds-subnav-pill">All Orders & Reports</a>
+        <a href="route-assignment.html" class="ds-subnav-pill">Route Delivery</a>
+        <a href="route-analysis.html" class="ds-subnav-pill">Route & Beat Tracker</a>
       </div>
 
-<div class="ds-panel">
-  <div class="ds-panel-header">
+<div class="ds-panel" style="padding:10px 12px; margin-bottom:10px;">
+  <div class="ds-panel-header" style="flex-wrap:wrap; gap:8px; margin-bottom:8px;">
     <div>
-      <h3 class="ds-panel-title">⚡ Order Fulfillment & Approval Pipeline</h3>
+      <h3 class="ds-panel-title">Order Fulfillment & Approval Pipeline</h3>
       <p class="ds-panel-subtitle">Review booked orders, verify credit limits, approve and authorize warehouse dispatch</p>
     </div>
-    <div style="display:flex; gap:8px;">
-      <a href="loading-sheet.html" class="btn btn-secondary btn-sm">🚐 Van Loading Sheet</a>
+    <div style="display:flex; gap:6px;">
+      <a href="loading-sheet.html" class="btn btn-secondary btn-sm" style="font-weight:700; padding:4px 8px; font-size:11.5px;">Van Loading Sheet</a>
     </div>
   </div>
 
   <!-- Global Unified Filter Bar for Order Approval Pipeline -->
-  <div class="ds-filter-bar" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:14px; margin-bottom:18px; box-shadow:0 1px 3px rgba(0,0,0,0.04); flex-wrap:wrap; gap:12px;">
+  <div class="ds-filter-bar" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; margin-bottom:10px; box-shadow:0 1px 3px rgba(0,0,0,0.03); flex-wrap:wrap; gap:8px;">
     <!-- Sales Period -->
     <div class="form-group" style="min-width:140px;">
       <label class="form-label">Sales Period</label>
@@ -152,7 +152,7 @@
         <option value="Ready for Delivery">4. Ready for Delivery</option>
         <option value="Dispatched">5. Dispatched</option>
         <option value="Delivered">6. Delivered</option>
-        <option value="all_cancelled">❌ All Cancelled</option>
+        <option value="all_cancelled">All Cancelled</option>
         <option value="Cancelled by Customer">7. Cancelled by Customer</option>
         <option value="Cancelled by Company/Admin">8. Cancelled by Company/Admin</option>
       </select>
@@ -166,8 +166,8 @@
 
     <!-- Reset Button -->
     <div style="display:flex; align-items:flex-end;">
-      <button type="button" class="btn btn-secondary" onclick="DS_Dispatch.resetFilters()" title="Reset Filters" style="height:38px; padding:0 12px; font-size:12px; font-weight:700;">
-        ↺ Reset
+      <button type="button" class="btn btn-secondary" onclick="DS_Dispatch.resetFilters()" title="Reset Filters" style="height:34px; padding:0 10px; font-size:11.5px; font-weight:700;">
+        Reset
       </button>
     </div>
   </div>
@@ -199,8 +199,8 @@
   <div class="modal-card" style="width:min(560px, 95%);">
     <div class="modal-header" style="border-bottom:1px solid #fee2e2; background:#fff1f2;">
       <div>
-        <h3 class="modal-title" id="cancelOrderTitle" style="color:#9f1239; display:flex; align-items:center; gap:6px;">
-          ❌ Order Cancellation & Remark
+        <h3 class="modal-title" id="cancelOrderTitle" style="color:#9f1239;">
+          Order Cancellation & Remark
         </h3>
         <p style="margin:2px 0 0; font-size:12px; color:#be123c;">
           Specify whether cancellation is by Party/Customer or Internal/Own, and record remark note.
@@ -209,34 +209,34 @@
       <button type="button" class="modal-close" onclick="DS_Orders.closeCancelOrderModal()" aria-label="Close">×</button>
     </div>
 
-    <form id="formCancelOrder" onsubmit="DS_Orders.confirmCancelOrder(event)" style="padding:16px; display:flex; flex-direction:column; gap:14px;">
+    <form id="formCancelOrder" onsubmit="DS_Orders.confirmCancelOrder(event)" style="padding:12px; display:flex; flex-direction:column; gap:10px;">
       <input type="hidden" id="cancelOrderId" value="" />
 
       <!-- Order Summary Card -->
-      <div id="cancelOrderSummaryCard" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 14px; font-size:12px;">
+      <div id="cancelOrderSummaryCard" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:8px 10px; font-size:12px;">
       </div>
 
       <!-- Cancellation Type Radio Options (Customer vs Company/Admin) -->
       <div>
-        <label class="form-label" style="font-weight:800; margin-bottom:8px; display:block;">Who Cancelled the Order? *</label>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-          <label style="border:2px solid #fecdd3; background:#fff1f2; border-radius:8px; padding:10px; cursor:pointer; display:flex; flex-direction:column; gap:4px;" id="lblCancelParty">
-            <div style="display:flex; align-items:center; gap:8px;">
+        <label class="form-label" style="font-weight:800; margin-bottom:6px; display:block;">Who Cancelled the Order? *</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <label style="border:1px solid #fecdd3; background:#fff1f2; border-radius:6px; padding:8px; cursor:pointer; display:flex; flex-direction:column; gap:2px;" id="lblCancelParty">
+            <div style="display:flex; align-items:center; gap:6px;">
               <input type="radio" name="cancelTypeRadio" id="radioCancelParty" value="Cancelled by Customer" checked onchange="DS_Orders.handleCancelTypeChange(this.value)" />
-              <strong style="color:#9f1239; font-size:13px;">Cancelled by Customer</strong>
+              <strong style="color:#9f1239; font-size:12px;">Cancelled by Customer</strong>
             </div>
-            <div style="font-size:11px; color:#be123c; margin-left:24px;">
-              Grahak / Store retailer ne order lene se mana kar diya (Party Refused)
+            <div style="font-size:10.5px; color:#be123c; margin-left:20px;">
+              Party Refused Delivery
             </div>
           </label>
 
-          <label style="border:2px solid #ddd6fe; background:#f5f3ff; border-radius:8px; padding:10px; cursor:pointer; display:flex; flex-direction:column; gap:4px;" id="lblCancelOwn">
-            <div style="display:flex; align-items:center; gap:8px;">
+          <label style="border:1px solid #ddd6fe; background:#f5f3ff; border-radius:6px; padding:8px; cursor:pointer; display:flex; flex-direction:column; gap:2px;" id="lblCancelOwn">
+            <div style="display:flex; align-items:center; gap:6px;">
               <input type="radio" name="cancelTypeRadio" id="radioCancelOwn" value="Cancelled by Company/Admin" onchange="DS_Orders.handleCancelTypeChange(this.value)" />
-              <strong style="color:#5b21b6; font-size:13px;">Cancelled by Company/Admin</strong>
+              <strong style="color:#5b21b6; font-size:12px;">Cancelled by Company/Admin</strong>
             </div>
-            <div style="font-size:11px; color:#6d28d9; margin-left:24px;">
-              Internal / Company issue (Stock Shortage, Overdue Credit, Logistics)
+            <div style="font-size:10.5px; color:#6d28d9; margin-left:20px;">
+              Internal / Company issue
             </div>
           </label>
         </div>
@@ -252,19 +252,19 @@
 
       <!-- Detailed Remark / Note Input -->
       <div class="form-group">
-        <label class="form-label" for="cancelOrderRemark">Mandatory Cancellation Remarks / Note (विवरण / टिप्पणी) *</label>
-        <textarea id="cancelOrderRemark" class="form-control" rows="3" required placeholder="Grahak ya company ke cancel karne ka vishesh kaaran anivarya roop se likhein..." style="resize:vertical;"></textarea>
+        <label class="form-label" for="cancelOrderRemark">Mandatory Cancellation Remarks / Note *</label>
+        <textarea id="cancelOrderRemark" class="form-control" rows="2" required placeholder="Enter cancellation reason..." style="resize:vertical;"></textarea>
       </div>
 
       <!-- Stock Recovery Notice -->
-      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:8px 12px; font-size:11px; color:#1e40af;">
-        ℹ️ <strong>Stock Auto-Restoration:</strong> Cancelling this order will automatically restore the booked SKU quantities back into warehouse stock inventory.
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:6px 10px; font-size:11px; color:#1e40af;">
+        <strong>Stock Auto-Restoration:</strong> Cancelling this order will automatically restore the booked SKU quantities back into warehouse stock inventory.
       </div>
 
-      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px; padding-top:6px;">
-        <button type="button" class="btn btn-secondary" onclick="DS_Orders.closeCancelOrderModal()">Close</button>
-        <button type="submit" class="btn btn-danger" style="font-weight:800; background:#be123c; border-color:#be123c; color:#fff;">
-          ✓ Confirm Order Cancellation
+      <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:6px; padding-top:4px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="DS_Orders.closeCancelOrderModal()">Close</button>
+        <button type="submit" class="btn btn-danger btn-sm" style="font-weight:700; background:#be123c; border-color:#be123c; color:#fff;">
+          Confirm Order Cancellation
         </button>
       </div>
     </form>
@@ -276,7 +276,7 @@
   <div class="modal-card" style="width:min(680px, 95%); max-height:90vh; display:flex; flex-direction:column;">
     <div class="modal-header">
       <div>
-        <h3 class="modal-title" id="orderDetailsTitle">📦 Order Manifest & Tracking Details</h3>
+        <h3 class="modal-title" id="orderDetailsTitle">Order Manifest & Tracking Details</h3>
         <p style="margin:2px 0 0; font-size:12px; color:var(--ds-text-muted);" id="orderDetailsSubtitle">Order Information</p>
       </div>
       <button type="button" class="modal-close" onclick="DS_Orders.closeOrderDetailsModal()" aria-label="Close">×</button>

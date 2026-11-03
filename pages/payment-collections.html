@@ -39,43 +39,43 @@
 
     <main class="ds-main-content">
       <!-- Unified Receivables Workflow Navigation Bar -->
-      <div class="ds-tab-bar">
-        <a href="payment-collections.html" class="ds-subnav-pill active">💵 Record Collection</a>
-        <a href="outstanding.html" class="ds-subnav-pill">⏳ Outstanding & Aging Hub</a>
-        <a href="bill-management.html" class="ds-subnav-pill">🧾 Bill Management</a>
-        <a href="route-analysis.html" class="ds-subnav-pill">📍 Route & Beat Tracker</a>
-        <a href="order-punching.html" class="ds-subnav-pill">🛒 Field Order Punching</a>
+      <div class="ds-tab-bar" style="margin-bottom:8px; gap:4px;">
+        <a href="payment-collections.html" class="ds-subnav-pill active">Record Collection</a>
+        <a href="outstanding.html" class="ds-subnav-pill">Outstanding & Aging Hub</a>
+        <a href="bill-management.html" class="ds-subnav-pill">Bill Management</a>
+        <a href="route-analysis.html" class="ds-subnav-pill">Route & Beat Tracker</a>
+        <a href="order-punching.html" class="ds-subnav-pill">Field Order Punching</a>
       </div>
 
-<div class="ds-grid-split">
+<div class="ds-grid-split" style="gap:10px;">
   <!-- Collection Entry Form -->
-  <div class="ds-panel">
-    <div class="ds-panel-header">
+  <div class="ds-panel" style="padding:10px 12px;">
+    <div class="ds-panel-header" style="margin-bottom:8px;">
       <div>
-        <h3 class="ds-panel-title">💵 Record Field Collection</h3>
+        <h3 class="ds-panel-title">Record Field Collection</h3>
         <p class="ds-panel-subtitle">Punch cash, UPI or cheque recovery</p>
       </div>
     </div>
 
     <form onsubmit="DS_Payments.recordPayment(event)">
-      <div class="form-group" style="margin-bottom:12px;">
+      <div class="form-group" style="margin-bottom:8px;">
         <label class="form-label">Retail Store / Kirana</label>
         <select id="paymentPartySelect" class="form-control" required>
           <option value="">-- Choose Store --</option>
         </select>
       </div>
 
-      <div style="background:var(--ds-surface-subtle); padding:10px 14px; border-radius:8px; margin-bottom:12px; border:1px solid var(--ds-border-light);">
-        <div style="font-size:11px; text-transform:uppercase; color:var(--ds-text-muted); font-weight:700;">Current Outstanding Balance</div>
-        <div id="paymentCurrentOutstanding" style="font-size:18px; font-weight:800; color:var(--ds-danger-dark);">₹ 0.00</div>
+      <div style="background:var(--ds-surface-subtle); padding:6px 10px; border-radius:6px; margin-bottom:8px; border:1px solid var(--ds-border-light);">
+        <div style="font-size:10.5px; text-transform:uppercase; color:var(--ds-text-muted); font-weight:700;">Current Outstanding Balance</div>
+        <div id="paymentCurrentOutstanding" style="font-size:16px; font-weight:800; color:var(--ds-danger-dark);">₹ 0.00</div>
       </div>
 
-      <div class="form-group" style="margin-bottom:12px;">
+      <div class="form-group" style="margin-bottom:8px;">
         <label class="form-label">Collection Amount (₹)</label>
         <input type="number" id="paymentAmountInput" min="1" step="any" class="form-control" placeholder="e.g. 5000" required />
       </div>
 
-      <div class="form-group" style="margin-bottom:12px;">
+      <div class="form-group" style="margin-bottom:8px;">
         <label class="form-label">Payment Mode</label>
         <select id="paymentModeSelect" class="form-control">
           <option value="Cash">Cash</option>
@@ -84,27 +84,27 @@
         </select>
       </div>
 
-      <div class="form-group" style="margin-bottom:12px;">
+      <div class="form-group" style="margin-bottom:8px;">
         <label class="form-label">Reference No / Cheque No / UPI ID</label>
         <input type="text" id="paymentRefInput" class="form-control" placeholder="e.g. UPI88371940" autocomplete="off" spellcheck="false" />
       </div>
 
-      <div class="form-group" style="margin-bottom:16px;">
+      <div class="form-group" style="margin-bottom:10px;">
         <label class="form-label">Remarks</label>
         <input type="text" id="paymentRemarksInput" class="form-control" value="Weekly recovery clearance" autocomplete="off" spellcheck="false" />
       </div>
 
-      <button type="submit" class="btn btn-success btn-lg" style="width:100%;">
-        ✓ Save Collection & WhatsApp Receipt
+      <button type="submit" class="btn btn-success btn-sm" style="width:100%; font-weight:700; padding:7px 12px;">
+        Save Collection & WhatsApp Receipt
       </button>
     </form>
   </div>
 
   <!-- Collections History Table -->
-  <div class="ds-panel">
-    <div class="ds-panel-header">
+  <div class="ds-panel" style="padding:10px 12px;">
+    <div class="ds-panel-header" style="margin-bottom:8px;">
       <div>
-        <h3 class="ds-panel-title">📋 Payment Collection History</h3>
+        <h3 class="ds-panel-title">Payment Collection History</h3>
         <p class="ds-panel-subtitle">Log of field recoveries and electronic receipts</p>
       </div>
     </div>

@@ -15,7 +15,16 @@
   let previewData = null;
 
   const DS_RouteAssignment = {
+    _initialized: false,
+
     init: function () {
+      if (this._initialized) {
+        this.loadRoutes();
+        this.loadAssignments();
+        return;
+      }
+      this._initialized = true;
+
       const today = new Date().toISOString().slice(0, 10);
       const dateInp = document.getElementById('routeFilterDate');
       if (dateInp && !dateInp.value) dateInp.value = today;
@@ -94,19 +103,19 @@
         const pct = total > 0 ? Math.round((delivered / total) * 100) : 0;
 
         return `
-          <div class="ds-panel" style="margin-bottom:0; background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:16px; position:relative; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+          <div class="ds-panel" style="margin-bottom:0; background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px; position:relative; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
               <div>
-                <span class="badge" style="background:#eff6ff; color:#1e40af; font-size:10px; margin-bottom:4px;">${DS_App.escapeHtml(r.id)}</span>
-                <h4 style="margin:2px 0 0; font-size:14px; font-weight:800; color:#0f172a;">${DS_App.escapeHtml(r.name)}</h4>
-                <div style="font-size:11px; color:var(--ds-text-muted); margin-top:2px;">📍 ${DS_App.escapeHtml(r.area || 'General Beat')}</div>
+                <span class="badge" style="background:#eff6ff; color:#1e40af; font-size:9.5px; margin-bottom:2px;">${DS_App.escapeHtml(r.id)}</span>
+                <h4 style="margin:1px 0 0; font-size:13.5px; font-weight:800; color:#0f172a;">${DS_App.escapeHtml(r.name)}</h4>
+                <div style="font-size:10.5px; color:var(--ds-text-muted); margin-top:1px;">${DS_App.escapeHtml(r.area || 'General Beat')}</div>
               </div>
-              <div style="display:flex; gap:6px;">
-                <a href="route-analysis.html?route=${encodeURIComponent(r.name || r.id)}" class="btn btn-secondary btn-sm" title="View Beat Tracker & Retailers" style="padding:4px 8px; font-size:11px; text-decoration:none; display:inline-flex; align-items:center; gap:2px;">
-                  📍 Beat
+              <div style="display:flex; gap:4px;">
+                <a href="route-analysis.html?route=${encodeURIComponent(r.name || r.id)}" class="btn btn-secondary btn-sm" title="View Beat Tracker & Retailers" style="padding:3px 6px; font-size:11px; text-decoration:none;">
+                  Beat
                 </a>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_RouteAssignment.openPrintManifestModal('${DS_App.escapeHtml(r.id)}')" title="Print Route Delivery Manifest Sheet" style="padding:4px 8px; font-size:11px;">
-                  🖨️ Manifest
+                <button type="button" class="btn btn-secondary btn-sm" onclick="DS_RouteAssignment.openPrintManifestModal('${DS_App.escapeHtml(r.id)}')" title="Print Route Delivery Manifest Sheet" style="padding:3px 6px; font-size:11px;">
+                  Manifest
                 </button>
               </div>
             </div>
@@ -268,13 +277,13 @@
               <div style="font-weight:700; font-size:12px; margin-top:2px;">${DS_App.escapeHtml(a.route_name || a.route_id)}</div>
             </td>
             <td>
-              ${a.order_id ? `<a href="order-report.html?search=${encodeURIComponent(a.order_id)}" style="font-weight:800; color:var(--ds-accent); font-size:12px;">${DS_App.escapeHtml(a.order_id)}</a>` : `<a href="order-punching.html?party=${encodeURIComponent(a.customer_name)}&route=${encodeURIComponent(a.route_id || a.route_name || '')}" class="btn btn-sm btn-primary" style="padding:2px 8px; font-size:10px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:2px;">🛒 Punch Order</a>`}
+              ${a.order_id ? `<a href="order-report.html?search=${encodeURIComponent(a.order_id)}" style="font-weight:800; color:var(--ds-accent); font-size:12px;">${DS_App.escapeHtml(a.order_id)}</a>` : `<a href="order-punching.html?party=${encodeURIComponent(a.customer_name)}&route=${encodeURIComponent(a.route_id || a.route_name || '')}" class="btn btn-sm btn-primary" style="padding:2px 6px; font-size:10px; font-weight:700; text-decoration:none;">Punch Order</a>`}
               <div style="font-size:11px; color:#16a34a; font-weight:700;">${DS_App.money(a.order_amount || 0)}</div>
             </td>
             <td>
               <div style="font-weight:800; font-size:13px; color:#0f172a;">${DS_App.escapeHtml(a.customer_name)}</div>
               <div style="font-size:11px; color:var(--ds-text-muted);">${DS_App.escapeHtml(a.address || 'Local Market')} ${a.area ? `• ${DS_App.escapeHtml(a.area)}` : ''}</div>
-              ${a.customer_phone ? `<a href="tel:${DS_App.escapeHtml(a.customer_phone)}" style="font-size:11px; color:#0284c7; text-decoration:none;">📞 ${DS_App.escapeHtml(a.customer_phone)}</a>` : ''}
+              ${a.customer_phone ? `<a href="tel:${DS_App.escapeHtml(a.customer_phone)}" style="font-size:11px; color:#0284c7; text-decoration:none;">${DS_App.escapeHtml(a.customer_phone)}</a>` : ''}
             </td>
             <td>
               <div style="display:flex; align-items:center; gap:6px;">
@@ -287,9 +296,9 @@
               <select class="form-control" style="font-size:11px; padding:4px 8px; font-weight:700;"
                 onchange="DS_RouteAssignment.handleStatusChange(${a.id}, this.value)">
                 <option value="Assigned" ${a.delivery_status === 'Assigned' ? 'selected' : ''}>Assigned (Pending)</option>
-                <option value="In Transit" ${a.delivery_status === 'In Transit' ? 'selected' : ''}>In Transit 🚚</option>
-                <option value="Delivered" ${a.delivery_status === 'Delivered' ? 'selected' : ''}>Delivered ✅</option>
-                <option value="Failed" ${a.delivery_status === 'Failed' ? 'selected' : ''}>Failed / Returned ❌</option>
+                <option value="In Transit" ${a.delivery_status === 'In Transit' ? 'selected' : ''}>In Transit</option>
+                <option value="Delivered" ${a.delivery_status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                <option value="Failed" ${a.delivery_status === 'Failed' ? 'selected' : ''}>Failed / Returned</option>
               </select>
             </td>
             <td>

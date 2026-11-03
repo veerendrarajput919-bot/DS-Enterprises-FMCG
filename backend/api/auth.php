@@ -18,8 +18,8 @@ $input = getJsonInput();
 $action = $_GET['action'] ?? $input['action'] ?? 'status';
 
 if ($method === 'POST') {
-    if ($action === 'verify_pin') {
-        $pin = trim($input['pin'] ?? '');
+    if ($action === 'verify_pin' || $action === 'login_admin') {
+        $pin = trim($input['password'] ?? $input['pin'] ?? '');
         $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = 'admin_pin'");
         $stmt->execute();
         $storedPin = $stmt->fetchColumn() ?: 'Admin@919';

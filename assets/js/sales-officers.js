@@ -12,7 +12,7 @@
 
   const PERMISSION_DEFINITIONS = [
     {
-      group: '📦 Product Catalog & Warehouse Inventory',
+      group: 'Product Catalog & Warehouse Inventory',
       items: [
         { key: 'canManageProducts', label: 'Product Catalog CRUD', desc: 'Create, update & delete products, brands and packaging' },
         { key: 'canAdjustStock', label: 'Stock Inward & Adjust', desc: 'Record physical stock adjustments, inward stock & reorder levels' },
@@ -20,7 +20,7 @@
       ]
     },
     {
-      group: '🛒 Field Orders & Logistics Fulfillment',
+      group: 'Field Orders & Logistics Fulfillment',
       items: [
         { key: 'canPunchOrders', label: 'Field Order Booking', desc: 'Punch store orders in beat routes and manage shopping carts' },
         { key: 'canApproveOrders', label: 'Order Status Approval', desc: 'Authorize booked orders and advance them to Approved status' },
@@ -28,21 +28,21 @@
       ]
     },
     {
-      group: '💰 Collections & Receivables',
+      group: 'Collections & Receivables',
       items: [
         { key: 'canCollectPayments', label: 'Payment Recovery', desc: 'Record cash/UPI payments in the field and trigger WhatsApp slips' },
         { key: 'canViewOutstanding', label: 'Party Outstanding Ledgers', desc: 'Access retail store outstanding balances and aging buckets' }
       ]
     },
     {
-      group: '📊 Business Intelligence & Export',
+      group: 'Business Intelligence & Export',
       items: [
         { key: 'canViewAnalytics', label: 'Sales & Beat Analytics', desc: 'Access deep party-wise, beat route and brand sales matrices' },
         { key: 'canExportReports', label: 'Export Excel & PDF', desc: 'Download system ledgers and invoices to Excel (.xlsx) and PDF' }
       ]
     },
     {
-      group: '⚙️ Administration & Master Control',
+      group: 'Administration & Master Control',
       items: [
         { key: 'canManageStaff', label: 'Staff & Role Admin', desc: 'Register staff members, assign security roles & configure credentials' },
         { key: 'canImportData', label: 'Excel / Tally Ingest', desc: 'Ingest 4-file workbooks to update inventory, parties and sales' },
@@ -225,57 +225,57 @@
 
         // Responsibility Pills
         const permPills = [];
-        if (perms.canManageProducts) permPills.push('<span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">📦 Products</span>');
-        if (perms.canAdjustStock) permPills.push('<span style="background:#fef3c7; color:#b45309; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">⚡ Stock Inward</span>');
-        if (perms.canViewMargins) permPills.push('<span style="background:#ecfdf5; color:#047857; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">💰 Margins</span>');
-        if (perms.canApproveOrders) permPills.push('<span style="background:#f3e8ff; color:#7e22ce; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">✅ Approvals</span>');
-        if (perms.canManageDispatch) permPills.push('<span style="background:#dbeafe; color:#1d4ed8; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">🚚 Dispatch</span>');
-        if (perms.canPunchOrders) permPills.push('<span style="background:#eff6ff; color:#1d4ed8; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">🛒 Order Punch</span>');
-        if (perms.canCollectPayments) permPills.push('<span style="background:#f0fdf4; color:#15803d; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">💵 Collections</span>');
-        if (perms.canViewOutstanding) permPills.push('<span style="background:#fef9c3; color:#854d0e; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">⏳ Outstanding</span>');
-        if (perms.canViewAnalytics) permPills.push('<span style="background:#e0e7ff; color:#4338ca; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">📈 Analytics</span>');
-        if (perms.canExportReports) permPills.push('<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">📊 Export</span>');
-        if (perms.canManageStaff) permPills.push('<span style="background:#faf5ff; color:#9333ea; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">👑 Staff Admin</span>');
-        if (perms.canImportData) permPills.push('<span style="background:#fef2f2; color:#991b1b; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">📥 Ingest</span>');
-        if (perms.canResetData) permPills.push('<span style="background:#fee2e2; color:#b91c1c; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">🧹 Reset</span>');
+        if (perms.canManageProducts) permPills.push('<span style="background:#e0f2fe; color:#0369a1; padding:2px 5px; border-radius:3px; font-size:9.5px; font-weight:700;">Products</span>');
+        if (perms.canAdjustStock) permPills.push('<span style="background:#fef3c7; color:#b45309; padding:2px 5px; border-radius:3px; font-size:9.5px; font-weight:700;">Stock Inward</span>');
+        if (perms.canViewMargins) permPills.push('<span style="background:#ecfdf5; color:#047857; padding:2px 5px; border-radius:3px; font-size:9.5px; font-weight:700;">Margins</span>');
+        if (perms.canApproveOrders) permPills.push('<span style="background:#f3e8ff; color:#7e22ce; padding:2px 5px; border-radius:3px; font-size:9.5px; font-weight:700;">Approvals</span>');
+        if (perms.canManageDispatch) permPills.push('<span style="background:#dbeafe; color:#1d4ed8; padding:2px 5px; border-radius:3px; font-size:9.5px; font-weight:700;">Dispatch</span>');
+        if (perms.canPunchOrders) permPills.push('<span style="background:#eff6ff; color:#1d4ed8; padding:2px 5px; border-radius:3px; font-size:9.5px; font-weight:700;">Order Punch</span>');
+        if (perms.canCollectPayments) permPills.push('<span style="background:#f0fdf4; color:#15803d; padding:2px 5px; border-radius:3px; font-size:9.5px; font-weight:700;">Collections</span>');
+        if (perms.canViewOutstanding) permPills.push('<span style="background:#fef9c3; color:#854d0e; padding:2px 5px; border-radius:3px; font-size:9.5px; font-weight:700;">Outstanding</span>');
+        if (perms.canViewAnalytics) permPills.push('<span style="background:#e0e7ff; color:#4338ca; padding:2px 5px; border-radius:3px; font-size:9.5px; font-weight:700;">Analytics</span>');
+        if (perms.canExportReports) permPills.push('<span style="background:#f1f5f9; color:#475569; padding:2px 5px; border-radius:3px; font-size:9.5px; font-weight:700;">Export</span>');
+        if (perms.canManageStaff) permPills.push('<span style="background:#faf5ff; color:#9333ea; padding:2px 5px; border-radius:3px; font-size:9.5px; font-weight:700;">Staff Admin</span>');
+        if (perms.canImportData) permPills.push('<span style="background:#fef2f2; color:#991b1b; padding:2px 5px; border-radius:3px; font-size:9.5px; font-weight:700;">Ingest</span>');
+        if (perms.canResetData) permPills.push('<span style="background:#fee2e2; color:#b91c1c; padding:2px 5px; border-radius:3px; font-size:9.5px; font-weight:700;">Reset</span>');
 
         return `
-          <div class="store-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:18px; border-radius:12px; background:#ffffff; border:1px solid #e2e8f0; box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+          <div class="store-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:12px; border-radius:8px; background:#ffffff; border:1px solid #e2e8f0; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
             <div>
               <!-- Header with Initial Avatar and Role Badge -->
-              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-                <div style="display:flex; align-items:center; gap:12px;">
-                  <div style="width:46px; height:46px; border-radius:12px; background:${roleInfo.badgeStyle || 'linear-gradient(135deg, #1e5eff, #0d9488)'}; color:#ffffff; display:grid; place-items:center; font-size:19px; font-weight:800; box-shadow:0 4px 10px rgba(0,0,0,0.12);">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <div style="width:36px; height:36px; border-radius:6px; background:${roleInfo.badgeStyle || 'linear-gradient(135deg, #1e5eff, #0d9488)'}; color:#ffffff; display:grid; place-items:center; font-size:15px; font-weight:800; box-shadow:0 2px 6px rgba(0,0,0,0.08);">
                     ${initial}
                   </div>
                   <div>
-                    <h4 style="margin:0 0 2px; font-size:15px; font-weight:800; color:var(--ds-text);">${officer.name}</h4>
-                    <span style="display:inline-block; font-size:11px; padding:1px 6px; border-radius:4px; background:#f1f5f9; color:#475569; font-family:monospace; font-weight:700;">
+                    <h4 style="margin:0 0 1px; font-size:13.5px; font-weight:800; color:var(--ds-text);">${officer.name}</h4>
+                    <span style="display:inline-block; font-size:10px; padding:1px 5px; border-radius:3px; background:#f1f5f9; color:#475569; font-family:monospace; font-weight:700;">
                       ${officer.id}
                     </span>
                   </div>
                 </div>
 
-                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:3px;">
                   <!-- Role Pill -->
-                  <span class="badge" style="${roleInfo.badgeStyle} font-size:11px; font-weight:800; padding:4px 8px; border-radius:6px; box-shadow:0 2px 5px rgba(0,0,0,0.08);">
-                    ${roleInfo.emoji} ${roleInfo.label}
+                  <span class="badge" style="${roleInfo.badgeStyle} font-size:10.5px; font-weight:800; padding:2px 6px; border-radius:4px;">
+                    ${roleInfo.label}
                   </span>
                   ${isFullyAuthorized ? `
-                    <span style="display:inline-flex; align-items:center; gap:3px; font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px; background:#dcfce7; color:#15803d; border:1px solid #86efac;">
-                      ✓ Fully Authorized
+                    <span style="display:inline-flex; align-items:center; gap:2px; font-size:9.5px; font-weight:800; padding:1px 5px; border-radius:3px; background:#dcfce7; color:#15803d; border:1px solid #86efac;">
+                      Authorized
                     </span>
                   ` : `
-                    <span style="display:inline-flex; align-items:center; gap:3px; font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px; background:#fef3c7; color:#b45309; border:1px solid #fde68a;">
-                      🛡️ ${grantedCount}/13 Active
+                    <span style="display:inline-flex; align-items:center; gap:2px; font-size:9.5px; font-weight:800; padding:1px 5px; border-radius:3px; background:#fef3c7; color:#b45309; border:1px solid #fde68a;">
+                      ${grantedCount}/13 Active
                     </span>
                   `}
                 </div>
               </div>
 
               <!-- Login Credentials Setup (Admin View) -->
-              <div style="background:#f8fafc; padding:8px 12px; border-radius:8px; margin-bottom:12px; font-size:12px; border:1px solid #f1f5f9;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+              <div style="background:#f8fafc; padding:6px 8px; border-radius:6px; margin-bottom:8px; font-size:11.5px; border:1px solid #f1f5f9;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
                   <span style="color:var(--ds-text-muted);">Login User ID:</span>
                   <strong style="color:var(--ds-primary); font-family:monospace;">${officer.userId || officer.id.toLowerCase()}</strong>
                 </div>
@@ -286,29 +286,29 @@
               </div>
 
               <!-- Route & Contact Details -->
-              <div style="display:flex; flex-direction:column; gap:5px; font-size:12px; color:var(--ds-text-secondary); margin-bottom:12px;">
+              <div style="display:flex; flex-direction:column; gap:4px; font-size:11.5px; color:var(--ds-text-secondary); margin-bottom:8px;">
                 <div style="display:flex; align-items:center; gap:6px;">
-                  <span>📍 Beat / Dept:</span>
+                  <span>Beat / Dept:</span>
                   <strong style="color:var(--ds-text);">${officer.route || 'General Beat'}</strong>
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
-                  <span>📞 Phone:</span>
+                  <span>Phone:</span>
                   <a href="tel:${officer.phone}" style="color:var(--ds-accent); text-decoration:none; font-weight:600;">${officer.phone || '-'}</a>
                 </div>
               </div>
 
               <!-- Granted Responsibilities Pills -->
-              <div style="margin-bottom:14px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                  <span style="font-size:11px; text-transform:uppercase; font-weight:800; color:var(--ds-text-muted);">
+              <div style="margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <span style="font-size:10.5px; text-transform:uppercase; font-weight:800; color:var(--ds-text-muted);">
                     Granted Responsibilities:
                   </span>
-                  <span style="font-size:11px; font-weight:700; color:#0284c7; background:#e0f2fe; padding:1px 6px; border-radius:10px;">
+                  <span style="font-size:10px; font-weight:700; color:#0284c7; background:#e0f2fe; padding:1px 5px; border-radius:8px;">
                     ${grantedCount} / 13 Active
                   </span>
                 </div>
-                <div style="display:flex; flex-wrap:wrap; gap:4px;">
-                  ${permPills.length ? permPills.join('') : '<span style="font-size:11px; color:#94a3b8;">No permissions assigned</span>'}
+                <div style="display:flex; flex-wrap:wrap; gap:3px;">
+                  ${permPills.length ? permPills.join('') : '<span style="font-size:10.5px; color:#94a3b8;">No permissions assigned</span>'}
                 </div>
               </div>
             </div>
@@ -316,32 +316,32 @@
             <!-- Target Achievement & Action Buttons -->
             <div>
               ${target > 0 ? `
-                <div style="margin-bottom:12px;">
-                  <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px; font-weight:700;">
+                <div style="margin-bottom:8px;">
+                  <div style="display:flex; justify-content:space-between; font-size:10.5px; margin-bottom:3px; font-weight:700;">
                     <span style="color:var(--ds-text-muted);">Target Achievement</span>
                     <span style="color:var(--ds-emerald); font-weight:800;">₹ ${officerSales.toLocaleString('en-IN')} / ₹ ${target.toLocaleString('en-IN')} (${percent}%)</span>
                   </div>
-                  <div style="height:6px; background:#e2e8f0; border-radius:10px; overflow:hidden;">
-                    <div style="height:100%; width:${percent}%; background:linear-gradient(90deg, #10b981, #059669); border-radius:10px;"></div>
+                  <div style="height:5px; background:#e2e8f0; border-radius:6px; overflow:hidden;">
+                    <div style="height:100%; width:${percent}%; background:linear-gradient(90deg, #10b981, #059669); border-radius:6px;"></div>
                   </div>
                 </div>
               ` : ''}
 
-              <div style="display:flex; gap:6px; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:10px; flex-wrap:wrap;">
-                <div style="display:flex; gap:6px; align-items:center;">
+              <div style="display:flex; gap:6px; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:6px; flex-wrap:wrap;">
+                <div style="display:flex; gap:4px; align-items:center;">
                   ${!isFullyAuthorized ? `
-                    <button type="button" class="btn btn-sm" onclick="DS_SalesOfficers.quickAuthorizeOfficer('${officer.id}')" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; font-weight:700; font-size:11px;" title="Is staff member ko sabhi 13 permissions instant grant karein">
-                      ✓ Sab Authorized
+                    <button type="button" class="btn btn-sm" onclick="DS_SalesOfficers.quickAuthorizeOfficer('${officer.id}')" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; font-weight:700; font-size:10.5px; padding:2px 6px;" title="Is staff member ko sabhi 13 permissions instant grant karein">
+                      Authorize All
                     </button>
-                  ` : '<span style="font-size:11px; color:#10b981; font-weight:700;">✓ Fully Authorized</span>'}
+                  ` : '<span style="font-size:10.5px; color:#10b981; font-weight:700;">Authorized</span>'}
                 </div>
                 ${isAdmin ? `
-                  <div style="display:flex; gap:6px;">
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="DS_SalesOfficers.openEditModal('${officer.id}')">
-                      ✏️ Edit
+                  <div style="display:flex; gap:4px;">
+                    <button type="button" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 6px;" onclick="DS_SalesOfficers.openEditModal('${officer.id}')">
+                      Edit
                     </button>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="DS_SalesOfficers.deleteOfficer('${officer.id}', '${officer.name}')">
-                      🗑️ Remove
+                    <button type="button" class="btn btn-danger btn-sm" style="font-size:11px; padding:2px 6px;" onclick="DS_SalesOfficers.deleteOfficer('${officer.id}', '${officer.name}')">
+                      Remove
                     </button>
                   </div>
                 ` : `
@@ -568,11 +568,11 @@
       if (!badge) return;
       const isUniversal = window.DS_Auth && typeof window.DS_Auth.isAllAuthorizedMode === 'function' && window.DS_Auth.isAllAuthorizedMode();
       if (isUniversal) {
-        badge.textContent = '🔓 Universal Full Access Mode Active';
+        badge.textContent = 'Universal Full Access Mode Active';
         badge.style.background = '#dcfce7';
         badge.style.color = '#15803d';
       } else {
-        badge.textContent = '✓ Dynamic Custom Permissions Active';
+        badge.textContent = 'Dynamic Custom Permissions Active';
         badge.style.background = '#e0f2fe';
         badge.style.color = '#0369a1';
       }
@@ -590,7 +590,7 @@
       if (errBox) errBox.style.display = 'none';
 
       document.getElementById('editOfficerId').value = '';
-      document.getElementById('addOfficerTitle').textContent = '👥 Register Staff & Assign IMS Role';
+      document.getElementById('addOfficerTitle').textContent = 'Register Staff & Assign IMS Role';
 
       document.getElementById('staffRoleSelect').value = 'so';
       this.handleRoleSelect('so');
@@ -634,7 +634,7 @@
       });
 
       this.updateRoleHint(role);
-      document.getElementById('addOfficerTitle').textContent = `✏️ Edit Role & Permissions — ${officer.name}`;
+      document.getElementById('addOfficerTitle').textContent = `Edit Role & Permissions — ${officer.name}`;
       DS_App.openModal('addOfficerModal');
     },
 
@@ -643,7 +643,7 @@
       const roleConfig = this.getRoleConfig();
       const cfg = roleConfig[role];
       if (hint && cfg) {
-        hint.textContent = `ℹ️ ${cfg.description || ''}`;
+        hint.textContent = `${cfg.description || ''}`;
       }
     },
 

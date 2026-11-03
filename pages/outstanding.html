@@ -36,13 +36,13 @@
       <div class="ds-panel" style="margin-bottom:12px;">
         <div class="ds-panel-header" style="margin-bottom:0;">
           <div>
-            <h3 class="ds-panel-title">⏳ Market Outstanding & Receivables Hub</h3>
+            <h3 class="ds-panel-title">Market Outstanding & Receivables Hub</h3>
             <p class="ds-panel-subtitle">Overdue credit tracking, retailer bill aging, WhatsApp reminders & brand exposure</p>
           </div>
           <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-            <a href="order-punching.html" class="btn btn-primary btn-sm" style="font-weight:700; display:inline-flex; align-items:center; gap:4px;">🛒 Order Punching</a>
-            <a href="route-analysis.html" class="btn btn-secondary btn-sm" style="font-weight:700; display:inline-flex; align-items:center; gap:4px;">📍 Route & Beat</a>
-            <a href="payment-collections.html" class="btn btn-success btn-sm" style="font-weight:700; display:inline-flex; align-items:center; gap:4px;">💵 Record Collection</a>
+            <a href="order-punching.html" class="btn btn-primary btn-sm" style="font-weight:700;">Order Punching</a>
+            <a href="route-analysis.html" class="btn btn-secondary btn-sm" style="font-weight:700;">Route & Beat</a>
+            <a href="payment-collections.html" class="btn btn-success btn-sm" style="font-weight:700;">Record Collection</a>
           </div>
         </div>
       </div>
@@ -50,10 +50,10 @@
       <!-- Unified Sub-Navigation Tabs: Party-wise vs Brand-wise -->
       <div class="ds-tab-bar">
         <button type="button" class="ds-tab-btn active" id="btnTabParty" onclick="switchOutstandingTab('party')">
-          🏪 Party-Wise Outstanding (Customer Ledger & Reminders)
+          Party-Wise Outstanding
         </button>
         <button type="button" class="ds-tab-btn" id="btnTabBrand" onclick="switchOutstandingTab('brand')">
-          🏢 Brand-Wise Outstanding (Brand Exposure & Risk)
+          Brand-Wise Outstanding
         </button>
       </div>
 
@@ -64,13 +64,13 @@
         <div class="ds-panel">
           <div class="ds-panel-header">
             <div>
-              <h4 class="ds-panel-title">🏪 Party Outstanding Summary</h4>
+              <h4 class="ds-panel-title">Party Outstanding Summary</h4>
               <p class="ds-panel-subtitle">City_1 → City → Beat Route → Retail Store • Invoice Aging Drilldown</p>
             </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button type="button" class="btn btn-secondary btn-sm" onclick="DS_OutParty.exportCSV()">⇩ CSV</button>
-              <button type="button" class="btn btn-success btn-sm" onclick="DS_OutParty.exportExcel()">⇩ Excel</button>
-              <button type="button" class="btn btn-primary btn-sm" onclick="DS_OutParty.exportPDF()">📄 Download PDF</button>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="DS_OutParty.exportCSV()">CSV</button>
+              <button type="button" class="btn btn-success btn-sm" onclick="DS_OutParty.exportExcel()">Excel</button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="DS_OutParty.exportPDF()">Download PDF</button>
             </div>
           </div>
 
@@ -217,11 +217,11 @@
         <div class="ds-panel">
           <div class="ds-panel-header">
             <div>
-              <h4 class="ds-panel-title">🏢 Brand-Wise Overdue Exposure</h4>
+              <h4 class="ds-panel-title">Brand-Wise Overdue Exposure</h4>
               <p class="ds-panel-subtitle">Total credit risk and uncollected dues divided across manufacturer brands</p>
             </div>
-            <div style="display:flex; gap:8px;">
-              <button type="button" class="btn btn-primary btn-sm" onclick="DS_OutBrand.exportPDF()">📄 Download Brand PDF</button>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="btn btn-primary btn-sm" onclick="DS_OutBrand.exportPDF()">Download Brand PDF</button>
             </div>
           </div>
 
@@ -763,8 +763,8 @@
               <td class="num font-mono" style="color:#b91c1c;"><strong>${DS_App.money(p.totalAmt)}</strong></td>
               <td style="text-align:center;">
                 <div style="display:flex; gap:6px; justify-content:center;">
-                  <button type="button" class="btn btn-sm btn-primary" onclick="DS_WhatsApp.sendPartyPaymentReminder('${esc(p.party)}')" title="Send WhatsApp Payment Reminder">💬 WhatsApp</button>
-                  <a href="payment-collections.html?party=${encodeURIComponent(p.party)}" class="btn btn-sm btn-success" title="Record Payment Receipt">💵 Collect</a>
+                  <button type="button" class="btn btn-sm btn-primary" onclick="DS_WhatsApp.sendPartyPaymentReminder('${esc(p.party)}')" title="Send WhatsApp Payment Reminder">WhatsApp Reminder</button>
+                  <a href="payment-collections.html?party=${encodeURIComponent(p.party)}" class="btn btn-sm btn-success" title="Record Payment Receipt">Collect</a>
                 </div>
               </td>
             </tr>
@@ -1052,15 +1052,15 @@
               return `
                 <tr>
                   <td><strong>${esc(item.party)}</strong></td>
-                  <td><span class="badge" style="font-family:monospace; background:#eff6ff; color:#1d4ed8; font-weight:700;">🧾 ${esc(item.inv || 'PENDING')}</span></td>
+                  <td><span class="badge" style="font-family:monospace; background:#eff6ff; color:#1d4ed8; font-weight:700;">${esc(item.inv || 'PENDING')}</span></td>
                   <td style="text-align:center; font-size:12px; color:var(--ds-text-secondary);">${esc(formatDisplayDate(item.date))}</td>
                   <td>${esc(item.route)}</td>
                   <td class="num">${ageBadge}</td>
                   <td class="num font-mono" style="color:#b91c1c; font-size:13px;"><strong>${DS_App.money(item.v)}</strong></td>
                   <td style="text-align:center;">
                     <div style="display:flex; gap:6px; justify-content:center;">
-                      <button type="button" class="btn btn-sm btn-primary" onclick="DS_WhatsApp.sendPartyPaymentReminder('${esc(item.party)}')" title="Send WhatsApp Payment Reminder">💬 WhatsApp</button>
-                      <a href="payment-collections.html?party=${encodeURIComponent(item.party)}&amount=${item.v}" class="btn btn-sm btn-success" title="Record Payment Receipt">💵 Collect</a>
+                      <button type="button" class="btn btn-sm btn-primary" onclick="DS_WhatsApp.sendPartyPaymentReminder('${esc(item.party)}')" title="Send WhatsApp Payment Reminder">WhatsApp Reminder</button>
+                      <a href="payment-collections.html?party=${encodeURIComponent(item.party)}&amount=${item.v}" class="btn btn-sm btn-success" title="Record Payment Receipt">Collect</a>
                     </div>
                   </td>
                 </tr>

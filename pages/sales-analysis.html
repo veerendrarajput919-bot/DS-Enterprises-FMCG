@@ -36,22 +36,22 @@
     <main class="ds-main-content">
       <!-- Unified Sales Analytics Navigation Bar -->
       <div class="ds-tab-bar">
-        <a href="sales-analysis.html" class="ds-subnav-pill active">📈 Overview & Trends</a>
-        <a href="party-wise.html" class="ds-subnav-pill">🏪 Party-Wise Sale</a>
-        <a href="route-analysis.html" class="ds-subnav-pill">📍 Route & Beat Analysis</a>
-        <a href="order-punching.html" class="ds-subnav-pill">🛒 Field Order Punching</a>
-        <a href="item-brand-wise-sale.html" class="ds-subnav-pill">📑 Item & Brand Matrix</a>
+        <a href="sales-analysis.html" class="ds-subnav-pill active">Overview & Trends</a>
+        <a href="party-wise.html" class="ds-subnav-pill">Party-Wise Sale</a>
+        <a href="route-analysis.html" class="ds-subnav-pill">Route & Beat Analysis</a>
+        <a href="order-punching.html" class="ds-subnav-pill">Field Order Punching</a>
+        <a href="item-brand-wise-sale.html" class="ds-subnav-pill">Item & Brand Matrix</a>
       </div>
 
       <div class="ds-panel">
         <div class="ds-panel-header">
           <div>
-            <h3 class="ds-panel-title">📈 Sales Analysis & Filtering Engine</h3>
+            <h3 class="ds-panel-title">Sales Analysis & Filtering Engine</h3>
             <p class="ds-panel-subtitle">DS SALES LOGIC V7 — Master Sales Ledger (Column O) • Filtered Party-wise & Brand Performance</p>
           </div>
-          <div style="display:flex; gap:8px;">
-            <button type="button" class="btn btn-success btn-sm" onclick="DS_Sales.exportCSV()">📊 Export CSV</button>
-            <button type="button" class="btn btn-primary btn-sm" onclick="DS_Sales.exportPDF()">📄 Download PDF</button>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-success btn-sm" onclick="DS_Sales.exportCSV()">Export CSV</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="DS_Sales.exportPDF()">Download PDF</button>
           </div>
         </div>
 
@@ -147,14 +147,14 @@
         <!-- Charts: Brand-wise Sales + City_1 Outstanding Doughnut + List -->
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:16px; margin-bottom:20px;">
           <div class="ds-panel" style="margin:0;">
-            <h4 style="margin:0 0 10px; font-size:15px; font-weight:700;">🏷 Brand-wise Sales</h4>
+            <h4 style="margin:0 0 10px; font-size:15px; font-weight:700;">Brand-wise Sales</h4>
             <div style="height:260px; position:relative;">
               <canvas id="salesBrandChart"></canvas>
             </div>
           </div>
 
           <div class="ds-panel" style="margin:0;">
-            <h4 style="margin:0 0 10px; font-size:15px; font-weight:700;">🏙 City_1-wise Outstanding Breakdown</h4>
+            <h4 style="margin:0 0 10px; font-size:15px; font-weight:700;">City_1-wise Outstanding Breakdown</h4>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:center;">
               <div style="height:240px; position:relative;">
                 <canvas id="salesCity1OutstandingChart"></canvas>
@@ -174,7 +174,7 @@
         <!-- Filtered Party Wise Summary Table (Excel Column O pivot with Grand Total) -->
         <div class="ds-panel" style="margin-bottom:20px;">
           <div class="ds-panel-header">
-            <h4 class="ds-panel-title">👥 Sales Party Wise — Filtered Summary</h4>
+            <h4 class="ds-panel-title">Sales Party Wise — Filtered Summary</h4>
             <span style="font-size:12px; color:var(--ds-text-muted);">Exact group-level turnover & quantity count</span>
           </div>
           <div class="ds-table-wrap" style="max-height:360px; overflow-y:auto;">
@@ -194,7 +194,7 @@
         <!-- 2-Grid: Item-wise Sales Qty & Brand-wise Sales with Margin -->
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(380px, 1fr)); gap:16px; margin-bottom:20px;">
           <div class="ds-panel" style="margin:0;">
-            <h4 style="margin:0 0 10px; font-size:15px; font-weight:700;">📦 Item-wise Sales & Margin</h4>
+            <h4 style="margin:0 0 10px; font-size:15px; font-weight:700;">Item-wise Sales & Margin</h4>
             <div class="ds-table-wrap" style="max-height:320px; overflow-y:auto;">
               <table class="ds-table" id="itemSaleTable">
                 <thead>
@@ -212,7 +212,7 @@
           </div>
 
           <div class="ds-panel" style="margin:0;">
-            <h4 style="margin:0 0 10px; font-size:15px; font-weight:700;">🏷 Brand-wise Sales & Margin</h4>
+            <h4 style="margin:0 0 10px; font-size:15px; font-weight:700;">Brand-wise Sales & Margin</h4>
             <div class="ds-table-wrap" style="max-height:320px; overflow-y:auto;">
               <table class="ds-table" id="brandSaleTable">
                 <thead>
@@ -233,7 +233,7 @@
         <!-- 2-Grid: Most Returns Item & Brand -->
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(380px, 1fr)); gap:16px; margin-bottom:20px;">
           <div class="ds-panel" style="margin:0;">
-            <h4 style="margin:0 0 10px; font-size:15px; font-weight:700; color:#b91c1c;">↩ Most Returns — Item</h4>
+            <h4 style="margin:0 0 10px; font-size:15px; font-weight:700; color:#b91c1c;">Most Returns — Item</h4>
             <div class="ds-table-wrap" style="max-height:240px; overflow-y:auto;">
               <table class="ds-table" id="returnItemTable">
                 <thead>
@@ -249,7 +249,7 @@
           </div>
 
           <div class="ds-panel" style="margin:0;">
-            <h4 style="margin:0 0 10px; font-size:15px; font-weight:700; color:#b91c1c;">↩ Most Returns — Brand</h4>
+            <h4 style="margin:0 0 10px; font-size:15px; font-weight:700; color:#b91c1c;">Most Returns — Brand</h4>
             <div class="ds-table-wrap" style="max-height:240px; overflow-y:auto;">
               <table class="ds-table" id="returnBrandTable">
                 <thead>
@@ -269,7 +269,7 @@
         <div class="ds-panel">
           <div class="ds-panel-header">
             <div>
-              <h4 class="ds-panel-title">📑 Sales Detail Ledger</h4>
+              <h4 class="ds-panel-title">Sales Detail Ledger</h4>
               <div id="salesTableContext" style="font-size:12px; color:var(--ds-text-muted);"></div>
             </div>
           </div>
